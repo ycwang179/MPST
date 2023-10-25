@@ -2,7 +2,7 @@
 #' @importFrom pracma eps
 #'
 
-HQblkdiag <- function (A, cnt) { # Function HQblkdiag() should be the same for 2D & 3D
+HQblkdiag3D <- function (A, cnt) { # Function HQblkdiag() should be the same for 2D & 3D
   n <- dim(A)[1]
   m <- dim(A)[2]
   k <- length(cnt) - 1

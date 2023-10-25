@@ -9,7 +9,7 @@
 #' @return A data frame.
 #'
 #' @export
-dataGenerator = function(Z, V, Tr, sigmma = 1, func = 1, seed = 2023) {
+dataGenerator3D <- function(Z, V, Tr, func = 1, sigmma = 1, seed = 2023) {
   set.seed(seed)
   
   # location information
@@ -17,10 +17,12 @@ dataGenerator = function(Z, V, Tr, sigmma = 1, func = 1, seed = 2023) {
     stop("The location information is required for data generation.")
   }
   
-  Z <- matrix(Z, ncol = 2);
-  z1 = as.vector(Z[, 1]); z2 = as.vector(Z[, 2]);
+  Z <- matrix(Z, ncol = 3);
+  z1 = as.vector(Z[, 1]); z2 = as.vector(Z[, 2]); z3 = as.vector(Z[, 3]);
   n = nrow(Z)
+  t0 = proc.time()
   inVT.list <- inVT(V, Tr, Z)
+  proc.time() - t0
   ind.inside = inVT.list$ind.inside
   ind.T = inVT.list$ind.T
   r0 = 0.1; r = 0.5; l = 3; b = 1;

@@ -56,7 +56,9 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   this.call <- match.call()
   
   n <- length(Y)
-  ind.inside = which(inVT(V, Tr, Z)$ind.inside == 1)
+
+  inVT.list = inVT(V, Tr, Z)
+  ind.inside = which(inVT.list$ind.inside == 1)
   ind.nna <- (1:n)[!is.na(Y)]
   ind = intersect(ind.inside, ind.nna)
   Zi <- Z[ind, ]
@@ -69,7 +71,6 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   } else if (nd == 4) {
     nq = (d + 3) * (d + 2) * (d + 1) / 2 / 3
   }
-  inVT.list = inVT(V, Tr, Z)
   
   if (method == "G") {
     mfit = fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda) 
