@@ -18,6 +18,8 @@ License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.0)
 Depends:
     Matrix,
-    pracma
+    pracma,
+    parallel,
+    MGLM
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
