@@ -5,7 +5,7 @@
 #'
 #' @param V The \code{nV} by three matrix of vertices of a tetrahedron, where \code{nV} is the number of vertices. Each row is the coordinates for a vertex.
 #' \cr
-#' @param Th The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
+#' @param Tr The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
 #' \cr
 #' @param d The degree of piecewise polynomials -- default is 9, and usually \code{d} is greater than one. -1 represents piecewise constant.
 #' \cr
@@ -68,19 +68,19 @@
 #' B.all = basis3D(V, Th, d, r, Z)
 #' @export
 
-basis3D <- function (V, Th, d, r, Z) {
+basis3D <- function (V, Tr, d, r, Z) {
   # memory.size(max = TRUE) # Windows-specific function
   Z <- as.matrix(Z);
   m <- choose(d + 3, 3)
-  Th <- t(apply(t(Th), 2, sort))
-  nT <- nrow(Th)
+  Tr <- t(apply(t(Tr), 2, sort))
+  nT <- nrow(Tr)
 
-  inVT.list = inVT(V, Th, Z)
+  inVT.list = inVT(V, Tr, Z)
   ind.inside = inVT.list$ind.inside
   ind.T = inVT.list$ind.T
   lam = inVT.list$lam
 
-  # pointlocation3D.list <- pointLocation3D(Z, V, Th)
+  # pointlocation3D.list <- pointLocation3D(Z, V, Tr)
   # ind.T <- pointlocation3D.list$ind.VT
   # lam <- pointlocation3D.list$lam
   # ind.inside <- which(ind.T != 0)

@@ -1,4 +1,4 @@
-seval <- function(V,Tr,c,sz,IndP,cnt,Lam){
+seval <- function(V, Tr, c, sz, IndP, cnt, Lam){
   k <- dim(Tr)[1]
   Z <- rep(0,sz)
   m <- length(c)/k

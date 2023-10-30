@@ -57,7 +57,6 @@ fit.MPST.g <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.
   n <- length(Y)
   
   B <- as.matrix(basis(V, Tr, d, r, Z)$B)
-  
   if (d < 1 | r < 0 | nrow(Tr) <= 1) {
     warning("The degree of Bernstein polynomials d has be greater than zero, the smoothness parameter r has be nonnegative!")
     H <- NA; Q2 <- NA;
