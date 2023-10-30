@@ -1,6 +1,10 @@
 rm(list = ls())
 
-library(MPST)  
+library(parallel)
+library(Matrix)
+library(pracma)
+library(MGLM)
+library(MPST)
 data(VT.square)
 Triangulation::TriPlot(V, Tr)
 
