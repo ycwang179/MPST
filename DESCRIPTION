@@ -20,6 +20,7 @@ Depends:
     Matrix,
     pracma,
     parallel,
-    MGLM
+    MGLM,
+    prodlim
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
