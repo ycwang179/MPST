@@ -55,23 +55,24 @@ fit.MPST.g <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.
   
   # 1. Preparation: basis generation, smoothness conditions, and penalty function
   n <- length(Y)
-  
-  B <- as.matrix(basis(V, Tr, d, r, Z)$B)
+  nd = ncol(Tr)
   if (d < 1 | r < 0 | nrow(Tr) <= 1) {
     warning("The degree of Bernstein polynomials d has be greater than zero, the smoothness parameter r has be nonnegative!")
+    B <- NA
     H <- NA; Q2 <- NA;
-  } else {
-    H <- as.matrix(smoothness(V, Tr, d, r))
-    Q2 <- qrH(H)
-  }
-  
-  if (d < 1) {
-    warning("The degree of Bernstein polynomials d has be greater than zero.")
     K <- NA
   } else {
-    K <- as.matrix(energy(V, Tr, d))
+    if (nd == 3) {
+      B <- as.matrix(basis(V, Tr, d, r, Z)$B)
+      H <- as.matrix(smoothness(V, Tr, d, r))
+      K <- as.matrix(energy(V, Tr, d))
+    } else if (nd == 4) {
+      B <- as.matrix(basis3D(V, Tr, d, r, Z)$B)
+      H <- as.matrix(smoothness3D(V, Tr, d, r))
+      K <- energy3D(V, Tr, d)
+    }
+    Q2 <- qrH(H)
   }
-  
   # tria.all <- TArea(V, Tr, Z)
   
   # 2. Model fitting

@@ -77,9 +77,12 @@ dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023){
   eps <- rnorm(n, mean = 0, sd = sigma)
   mu[ind.inside == 0] <- NA; eps[ind.inside == 0] <- NA;
   Y <- mu + eps
-  list(Y = Y, 
-       mu = mu, 
-       Z = Z, 
-       ind.inside = ind.inside,
-       ind.T  = ind.T)
+  
+  dat = list(Y = Y, 
+             mu = mu, 
+             Z = Z, 
+             ind.inside = ind.inside, 
+             ind.T  = ind.T)
+  
+  return(dat)
 }

@@ -69,9 +69,10 @@
 #' @export
 
 basis3D <- function (V, Tr, d, r, Z) {
-  # memory.size(max = TRUE) # Windows-specific function
+  
   Z <- as.matrix(Z);
-  m <- choose(d + 3, 3)
+  n <- nrow(Z)
+  nq <- choose(d + 3, 3)
   Tr <- t(apply(t(Tr), 2, sort))
   nT <- nrow(Tr)
 
@@ -80,15 +81,6 @@ basis3D <- function (V, Tr, d, r, Z) {
   ind.T = inVT.list$ind.T
   lam = inVT.list$lam
 
-  # pointlocation3D.list <- pointLocation3D(Z, V, Tr)
-  # ind.T <- pointlocation3D.list$ind.VT
-  # lam <- pointlocation3D.list$lam
-  # ind.inside <- which(ind.T != 0)
-
-  Z <- Z[ind.inside == 1, ]; dim(Z)
-  n <- nrow(Z)
-  lam <- lam[ind.inside == 1, ]
-  ind.T <- matrix(ind.T[ind.inside == 1], ncol = 1)
   sind.T <- sort(ind.T)
   ind <- matrix(order(ind.T), ncol = 1)
 
@@ -97,7 +89,7 @@ basis3D <- function (V, Tr, d, r, Z) {
   b3 <- matrix(lam[ind, 3], ncol = 1)
   b4 <- matrix(lam[ind, 4], ncol = 1)
 
-  exps <- loop(d); ne = nrow(exps);
+  exps <- loop3D(d); ne = nrow(exps);
   div <- matrix(factorial(exps[, 1]) * factorial(exps[, 2]) * factorial(exps[, 3]) * factorial(exps[, 4]), ncol = 1)
   exps.1 <- matrix(exps[, 1], ncol = 1)
   exps.2 <- matrix(exps[, 2], ncol = 1)
@@ -112,14 +104,14 @@ basis3D <- function (V, Tr, d, r, Z) {
   val.6 <- sweep(val.5, 1, div, "/")
   val <- val.6 * factorial(d)
 
-  rind1 <- matrix(rep(matrix((1:m), nrow = 1), n), ncol = n)
-  row.shift <- m * (t(sind.T) - 1)
+  rind1 <- matrix(rep(matrix((1:nq), nrow = 1), n), ncol = n)
+  row.shift <- nq * (t(sind.T) - 1)
   rind <- sweep(rind1, 2, row.shift, "+")
-  cind <- t(matrix(rep((1:n), m), nrow = n))
-  Bi.full <- matrix(0, m * nT, n)
+  cind <- t(matrix(rep((1:n), nq), nrow = n))
+  Bi.full <- matrix(0, nq * nT, n)
   Bi <- as.matrix(sparseMatrix(i = as.vector(rind), j = as.vector(cind), x = as.vector(val)))
   Bi.full[1:dim(Bi)[1], 1:dim(Bi)[2]] <- Bi
-  B <- matrix(0, m * nT, n)
+  B <- matrix(0, nq * nT, n)
   B[, ind] <- as.matrix(Bi.full)
   Bi <- t(as.matrix(Bi)); B <- t(B);
   Bi <- Matrix(Bi, sparse = TRUE)
@@ -129,7 +121,8 @@ basis3D <- function (V, Tr, d, r, Z) {
                      Bi = Bi,
                      ind = ind,
                      ind.inside = ind.inside,
-                     ind.T = ind.T)
+                     ind.T = ind.T,
+                     inVT.list = inVT.list)
 
   return(basis.list)
 }

@@ -3,6 +3,7 @@
 #' This function conducts the model fitting via multivariate penlized spline over triangulation.
 #'
 #' @importFrom Matrix Matrix
+#' @importFrom MatrixExtra t_shallow t_deep
 #' 
 #' @param Y The response variable observed over the domain.
 #' \cr
@@ -67,9 +68,9 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   
   nd = ncol(Tr)
   if (nd == 3) {
-    nq = (d + 2) * (d + 1) / 2
+    nq = choose(d + 2, 2)
   } else if (nd == 4) {
-    nq = (d + 3) * (d + 2) * (d + 1) / 2 / 3
+    nq = choose(d + 3, 3)
   }
   
   if (method == "G") {
@@ -81,7 +82,11 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
     lambdac = mfit$lamc
   } else if (method == "D") {
     ns = parallel::detectCores()
-    TV = as.matrix(tdata(V, Tr)$TV)
+    if (nd == 3) {
+      TV = as.matrix(tdata(V, Tr)$TV)
+    } else if (nd == 4) {
+      TV = as.matrix(thdata(V, Tr)$TV)
+    }
     
     load.all = worker.load(V = V, Tr = Tr, TV = TV, inVT.list = inVT.list, 
                            Y = Yi, Z = Zi, d = d, nl = nl, ns = ns)
@@ -104,7 +109,12 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
     gamma.star <- unlist(gamma.star)
     
     # linear coefficients gamma for bivariate function
-    H = as.matrix(smoothness(V, Tr, d, r))
+    if (nd == 3) {
+      H = as.matrix(smoothness(V, Tr, d, r))
+    } else if (nd == 4) {
+      H = as.matrix(smoothness3D(V, Tr, d, r))
+    }
+   
     a = H %*% gamma.star
     HH = crossprod(t(H)); nH = nrow(HH)
     b = chol2inv(chol(HH + 1e-12 * diag(nH))) %*% a

@@ -68,21 +68,35 @@ fit.MPST.d <- function(ind.Tr, Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6,
   Zs = Z[inds, ]
   
   # 2. basis generation, smoothness conditions, and penalty function
-  Bs <- as.matrix(basis(Vs, Trs, d, r, Zs)$B)
+  nd = ncol(Tr)
+  if (nd == 3) {
+    Bs <- as.matrix(basis(Vs, Trs, d, r, Zs)$B)
+  } else if (nd == 4) {
+    Bs <- as.matrix(basis3D(Vs, Trs, d, r, Zs)$B)
+  }
   
   if (d < 1 | r < 0 | nrow(Trs) <= 1) {
     warning("The degree of Bernstein polynomials d has be greater than zero, the smoothness parameter r has be nonnegative!")
     H <- NA; Q2 <- NA;
   } else {
-    H <- as.matrix(smoothness(Vs, Trs, d, r))
+    if (nd == 3) {
+      H <- as.matrix(smoothness(Vs, Trs, d, r))
+    } else if (nd == 4) {
+      H <- as.matrix(smoothness3D(Vs, Trs, d, r))
+    }
     Q2 <- qrH(H)
+    
   }
   
   if (d < 1) {
     warning("The degree of Bernstein polynomials d has be greater than zero.")
     K <- NA
   } else {
-    K <- as.matrix(energy(Vs, Trs, d))
+    if (nd == 3) {
+      K <- as.matrix(energy(Vs, Trs, d))
+    } else if (nd == 4) {
+      K <- energy3D(Vs, Trs, d)
+    }
   }
   
   # 2. Sub-model fitting

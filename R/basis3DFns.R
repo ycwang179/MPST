@@ -1,7 +1,6 @@
 #' @importFrom Matrix sparseMatrix det
 #' @importFrom pracma eps
 #'
-
 HQblkdiag3D <- function (A, cnt) { # Function HQblkdiag() should be the same for 2D & 3D
   n <- dim(A)[1]
   m <- dim(A)[2]
@@ -16,7 +15,6 @@ HQblkdiag3D <- function (A, cnt) { # Function HQblkdiag() should be the same for
 # A <- matrix(c(1, 4, 7, 10, 2, 5, 8, 11, 3, 6, 9, 12), nrow = 4, ncol = 3)
 # cnt <- matrix(c(1, 2, 3, 4), ncol = 1)
 # HQblkdiag(A, cnt)
-
 
 HQbary3D <- function (V, Th, X, Y, Z) { # Function HQbary() need to consider 3D locations instead of 2D
   k <- dim(Th)[1]
@@ -45,3 +43,29 @@ HQbary3D <- function (V, Th, X, Y, Z) { # Function HQbary() need to consider 3D 
 # HQbary3D(V, Th, X, Y, Z)
 
 # HQgetInd() might be unnecessary;
+
+loop3Dold <- function(d){
+  nq <- choose(d + 3, 3)
+  B <- matrix(0, nq, 4)
+  l <- -1
+  k <- -1
+  a <- 0
+  for (m in d:0) {
+    l <- l + 1
+    for (i in m:0) {
+      k <- k + 1
+      for (j in 0:i) {
+        a <- a + 1
+        B[a, ] <- c(i - j, j, k, l)
+      }
+    }
+    k <- -1
+  }
+  return(B)
+}
+
+loop3D <- function (d) {
+  tmp = expand.grid(d:0, 0:d, 0:d, 0:d)
+  B = as.matrix(tmp[rowSums(tmp) == d, ])
+  return(B)
+}
