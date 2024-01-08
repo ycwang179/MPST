@@ -2,9 +2,12 @@ rm(list = ls())
 
 # library(devtools)
 # install_github("funstatpackages/MPST")
-
 library(MPST)  
-library(profvis)
+
+# install_github("funstatpackages/Triangulation")
+library(Triangulation)
+
+# library(profvis)
 data(VT.square)
 Triangulation::TriPlot(V, Tr)
 
@@ -53,5 +56,11 @@ B <- basis.d(V, Tr, d, r, Zi)$B
 t1 = proc.time() - t0
 cat("Time for generating the spline basis via distributed method is", t1[3], "\n")
 
-dim(B.original); dim(B);
-sum(B.original == B); max(abs(B.original - B))
+t0 = proc.time()
+B.new <- basis2D.d(V, Tr, d, r, Zi)$B
+t1 = proc.time() - t0
+cat("Time for generating the spline basis via new distributed method is", t1[3], "\n")
+
+dim(B.original); dim(B); dim(B.new)
+max(abs(B.original - B))
+max(abs(B.original - B.new))
