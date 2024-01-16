@@ -71,7 +71,6 @@
 basis2D.d <- function (V, Tr, d, r, Z) {
   
   Z <- as.matrix(Z);
-  nZ <- nrow(Z)
   nq <- choose(d + 2, 2)
   nT <- nrow(Tr)
   
@@ -83,6 +82,8 @@ basis2D.d <- function (V, Tr, d, r, Z) {
   ind.T = ind.T[ind.inside]
   lam = lam[ind.inside, ]
   sind.T <- sort(ind.T)
+  Zi = Z[ind.inside, ]
+  nZ = nrow(Zi)
   
   B = Matrix(0, nrow = nZ, ncol = nT * nq, sparse = TRUE)
   tmp = expand.grid(d:0, 0:d, 0:d)
