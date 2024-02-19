@@ -42,9 +42,16 @@ predict.MPST <- function(mfit, Znew = NULL){
     Ypred <- mfit$beta.hat
     ind.inside <- mfit$ind.inside
   }else{
-    B.all <- basis(mfit$V, mfit$Tr, mfit$d, mfit$r, Znew)
-    Bnew = B.all$B
-    ind.inside <- B.all$ind.inside
+    nd = ncol(mfit$Tr)
+    if (nd == 3) {
+      B.all <- basis2D.d(mfit$V, mfit$Tr, mfit$d, mfit$r, Znew)
+      Bnew = B.all$B
+      ind.inside <- B.all$ind.inside
+    } else if (nd == 4) {
+      B.all <- basis3D.d(mfit$V, mfit$Tr, mfit$d, mfit$r, Znew)
+      Bnew = B.all$B
+      ind.inside <- B.all$ind.inside
+    }
     Ypred <- rep(NA, nrow(Znew))
     Ypred[ind.inside] <- Bnew %*% mfit$gamma.hat
   }

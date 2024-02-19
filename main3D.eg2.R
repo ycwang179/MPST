@@ -1,5 +1,7 @@
 rm(list = ls())
 
+library(devtools)
+install_github("funstatpackages/MPST")
 library(MPST) 
 data(VT1.cube)
 
