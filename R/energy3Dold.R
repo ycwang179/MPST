@@ -3,9 +3,9 @@
 #' @importFrom pracma cross kron
 #' @importFrom Matrix sparseMatrix
 #' @importFrom pryr mem_used
-#' @param V The \code{N} by three matrix of vertices of a tetrahedron, where \code{N} is the number of vertices. Each row is the coordinates for a vertex.
+#' @param V The \code{nV} by three matrix of vertices of a tetrahedron, where \code{nV} is the number of vertices. Each row is the coordinates for a vertex.
 #' \cr
-#' @param Th The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
+#' @param Tr The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
 #' \cr
 #' @param d The degree of piecewise polynomials -- default is 9, and usually \code{d} is greater than one.
 #' \cr
@@ -22,11 +22,11 @@
 #' P <- energyM3D(V, Tr, d)
 #' @export
 #'
-energy3D <- function (V, Tr, d) {
-  n <- nrow(Tr)
-  m <- choose((d + 3), 3)
+energy3Dold <- function (V, Tr, d) {
+  nT <- nrow(Tr)
+  nq <- choose((d + 3), 3)
   Vl <- V[t(Tr), ]
-  idx4 <- matrix(c(1:n), ncol = 1) * 4
+  idx4 <- matrix(c(1:nT), ncol = 1) * 4
   idx3 <- idx4 - 1
   idx2 <- idx3 - 1
   idx1 <- idx2 - 1
@@ -36,10 +36,10 @@ energy3D <- function (V, Tr, d) {
   Volv <- matrix(abs(apply(E1 * cross(E2, E3), 1, sum)), ncol = 1)
   ridx1 <- t(matrix(rep(1:4, 3), 4, 3))
   cidx1 <- matrix(rep(1:3, 4), 3, 4)
-  rvidx <- matrix(rep(matrix(ridx1, ncol = 1), n), ncol = 1)
-  cvidx <- matrix(rep(matrix(rep(1:3, 4), 3, 4), n), ncol = 1)
-  addrow <- 4 * matrix((floor((0:(12 * n - 1)) / 12)), ncol = 1)
-  addcol <- 3 * matrix((floor((0:(12 * n - 1)) / 12)), ncol = 1)
+  rvidx <- matrix(rep(matrix(ridx1, ncol = 1), nT), ncol = 1)
+  cvidx <- matrix(rep(matrix(rep(1:3, 4), 3, 4), nT), ncol = 1)
+  addrow <- 4 * matrix((floor((0:(12 * nT - 1)) / 12)), ncol = 1)
+  addcol <- 3 * matrix((floor((0:(12 * nT - 1)) / 12)), ncol = 1)
   Bm1 <- matrix(0, nrow = nrow(addrow), ncol = 3)
   Bm1[, 1] <- rvidx + addrow
   Bm1[, 2] <- cvidx + addcol
@@ -54,18 +54,16 @@ energy3D <- function (V, Tr, d) {
   suppressMessages(Bm1.sparse[, 3] <- Bm1.sparse.0[Bm1.sparse.0 != 0])
   Bm1 <- Bm1.sparse
   sumbary <- matrix(c(1, 1, 1, 1), nrow = 1)
-  Idn.1 <- Matrix::which(diag(n) != 0, arr.ind = T)
-  Idn <- cbind(Idn.1, matrix(1, nrow = nrow(Idn.1), ncol = 1))
+  Idn.1 <- which(diag(nT) != 0, arr.ind = T)
+  Idn <- cbind(Idn.1, matrix(1, nrow = dim(Idn.1)[1], ncol = 1))
 
-  # for Matrix::kronecker(Idn,sumbary)
   Idn.full <- sparseMatrix(i = Idn[, 1], j = Idn[, 2], x = Idn[, 3])
-  Idn.S.0 <- Matrix::kronecker(Idn.full, sumbary)
+  Idn.S.0 = Matrix::kronecker(Idn.full, sumbary)
   Idn.S.1 <- Matrix::which(Idn.S.0 != 0, arr.ind = T)
-  Idn.S.2 <- matrix(nrow = nrow(Idn.S.1), ncol = 3)
+  Idn.S.2 <- matrix(nrow = dim(Idn.S.1)[1], ncol = 3)
   Idn.S.2[, 1:2] <- Idn.S.1[, 1:2]
   Idn.S.2[, 3] <- Idn.S.0[Idn.S.0 != 0]
   Idn.S.sparse <- sparseMatrix(i = Idn.S.2[, 1], j = Idn.S.2[, 2], x = Idn.S.2[, 3])
-  # end Matrix::kronecker(Idn,sumbary)
   
   Bm1.sparse <- sparseMatrix(i = Bm1.sparse[, 1], j = Bm1.sparse[, 2], x = Bm1.sparse[, 3])
   B.sparse.0 <- rbind(Bm1.sparse, Idn.S.sparse)
@@ -73,12 +71,12 @@ energy3D <- function (V, Tr, d) {
   B <- matrix(nrow = nrow(B.sparse.1), ncol = 3)
   B[, 1:2] <- B.sparse.1[, 1:2]
   B[, 3] <- B.sparse.0[B.sparse.0 != 0]
-
-  vxv <- matrix(rep(c(1, 0, 0), n), ncol = 1)
-  vyv <- matrix(rep(c(0, 1, 0), n), ncol = 1)
-  vzv <- matrix(rep(c(0, 0, 1), n), ncol = 1)
-  sv <- matrix(1, nrow = n, ncol = 1)
-  vz <- matrix(0, nrow = (3 * n), ncol = 1)
+  
+  vxv <- matrix(rep(c(1, 0, 0), nT), ncol = 1)
+  vyv <- matrix(rep(c(0, 1, 0), nT), ncol = 1)
+  vzv <- matrix(rep(c(0, 0, 1), nT), ncol = 1)
+  sv <- matrix(1, nrow = nT, ncol = 1)
+  vz <- matrix(0, nrow = (3 * nT), ncol = 1)
   B.full <- sparseMatrix(i = B[, 1], j = B[, 2], x = B[, 3])
   
   bvdx <- solve(B.full, rbind(vxv, sv))
@@ -92,10 +90,7 @@ energy3D <- function (V, Tr, d) {
   Mat1 <- build3D(d - 2)
   B <- loop3D(d)
   C <- loop3D(d - 1)
-  I <- matrix(C[, 1], ncol = 1)
-  J <- matrix(C[, 2], ncol = 1)
-  K <- matrix(C[, 3], ncol = 1)
-  L <- matrix(C[, 4], ncol = 1)
+  I <- C[, 1]; J <- C[, 2]; K <- C[, 3]; L <- C[, 4]
   C.1a <- cbind(I + 1, J, K, L)
   C.2a <- cbind(I, J + 1, K, L)
   C.3a <- cbind(I, J, K + 1, L)
@@ -106,261 +101,252 @@ energy3D <- function (V, Tr, d) {
   Index3a = which(!is.na(prodlim::row.match(data.frame(B), data.frame(C.3a))))
   Index4a = which(!is.na(prodlim::row.match(data.frame(B), data.frame(C.4a))))
   
-  Bin.1 <- Matrix::which(diag(m) != 0, arr.ind = T)
-  Bin <- cbind(Bin.1, matrix(1, nrow = nrow(Bin.1), ncol = 1))
+  Bin.1 <- which(diag(nq) != 0, arr.ind = T)
+  Bin <- cbind(Bin.1, 1)
   
   Bin.full <- sparseMatrix(i = Bin[, 1], j = Bin[, 2], x = Bin[, 3])
   S1.0 <- Bin.full[Index1a, ]
   S1.1 <- Matrix::which(S1.0 != 0, arr.ind = T)
-  S1 <- cbind(S1.1, matrix(1, nrow = nrow(S1.1), ncol = 1))
+  S1 <- cbind(S1.1, matrix(1, nrow = dim(S1.1)[1], ncol = 1))
   S2.0 <- Bin.full[Index2a, ]
   S2.1 <- Matrix::which(S2.0 != 0, arr.ind = T)
-  S2 <- cbind(S2.1, matrix(1, nrow = nrow(S2.1), ncol = 1))
+  S2 <- cbind(S2.1, matrix(1, nrow = dim(S2.1)[1], ncol = 1))
   S3.0 <- Bin.full[Index3a, ]
   S3.1 <- Matrix::which(S3.0 != 0, arr.ind = T)
-  S3 <- cbind(S3.1, matrix(1, nrow = nrow(S3.1), ncol = 1))
+  S3 <- cbind(S3.1, matrix(1, nrow = dim(S3.1)[1], ncol = 1))
   S4.0 <- Bin.full[Index4a, ]
   S4.1 <- Matrix::which(S4.0 != 0, arr.ind = T)
-  S4 <- cbind(S4.1, matrix(1, nrow = nrow(S4.1), ncol = 1))
+  S4 <- cbind(S4.1, matrix(1, nrow = dim(S4.1)[1], ncol = 1))
   
-  # for Matrix::kronecker(thdx(idx1),S1)
   thdx.idx1 <- matrix(thdx[idx1], ncol = 1)
   S1.full <- sparseMatrix(i = S1[, 1], j = S1[, 2], x = S1[, 3])
-  thdx.idx1.S1.0 <- Matrix::kronecker(thdx.idx1, S1.full)
+  thdx.idx1.S1.0 <- kronecker(thdx.idx1, S1.full)
   thdx.idx1.S1.1 <- Matrix::which(thdx.idx1.S1.0 != 0, arr.ind = T)
   thdx.idx1.S1.2 <- matrix(nrow = nrow(thdx.idx1.S1.1), ncol = 3)
   thdx.idx1.S1.2[, 1:2] <- thdx.idx1.S1.1[, 1:2]
   thdx.idx1.S1.2[, 3] <- thdx.idx1.S1.0[thdx.idx1.S1.0 != 0]
   if (nrow(thdx.idx1.S1.2) == 0) {
-    thdx.idx1.S1.full <- thdx.idx1.S1.0
+    thdx.idx1.S1 <- thdx.idx1.S1.0
   } else {
-    thdx.idx1.S1.sparse <- sparseMatrix(i = thdx.idx1.S1.2[, 1], j = thdx.idx1.S1.2[, 2], x = thdx.idx1.S1.2[, 3])
+    thdx.idx1.S1 <- sparseMatrix(i = thdx.idx1.S1.2[, 1], j = thdx.idx1.S1.2[, 2], x = thdx.idx1.S1.2[, 3], 
+                                 dims = c(nrow(thdx.idx1) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdx(idx1),S1)
   
-  # for Matrix::kronecker(thdx(idx2),S2)
   thdx.idx2 <- matrix(thdx[idx2], ncol = 1)
   S2.full <- sparseMatrix(i = S2[, 1], j = S2[, 2], x = S2[, 3])
-  thdx.idx2.S2.0 <- Matrix::kronecker(thdx.idx2, S2.full)
+  thdx.idx2.S2.0 <- kronecker(thdx.idx2, S2.full)
   thdx.idx2.S2.1 <- Matrix::which(thdx.idx2.S2.0 != 0, arr.ind = T)
   thdx.idx2.S2.2 <- matrix(nrow = nrow(thdx.idx2.S2.1), ncol = 3)
   thdx.idx2.S2.2[, 1:2] <- thdx.idx2.S2.1[, 1:2]
   thdx.idx2.S2.2[, 3] <- thdx.idx2.S2.0[thdx.idx2.S2.0 != 0]
   if (nrow(thdx.idx2.S2.2) == 0) {
-    thdx.idx2.S2.full <- thdx.idx2.S2.0
+    thdx.idx2.S2 <- thdx.idx2.S2.0
   } else {
-    thdx.idx2.S2.sparse <- sparseMatrix(i = thdx.idx2.S2.2[, 1], j = thdx.idx2.S2.2[, 2], x = thdx.idx2.S2.2[, 3])
+    thdx.idx2.S2 <- sparseMatrix(i = thdx.idx2.S2.2[, 1], j = thdx.idx2.S2.2[, 2], x = thdx.idx2.S2.2[, 3],
+                                 dims = c(nrow(thdx.idx2) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdx(idx2),S2)
   
-  # for Matrix::kronecker(thdx(idx3),S3)
   thdx.idx3 <- matrix(thdx[idx3], ncol = 1)
   S3.full <- sparseMatrix(i = S3[, 1], j = S3[, 2], x = S3[, 3])
-  thdx.idx3.S3.0 <- Matrix::kronecker(thdx.idx3, S3.full)
+  thdx.idx3.S3.0 <- kronecker(thdx.idx3, S3.full)
   thdx.idx3.S3.1 <- Matrix::which(thdx.idx3.S3.0 != 0, arr.ind = T)
   thdx.idx3.S3.2 <- matrix(nrow = nrow(thdx.idx3.S3.1), ncol = 3)
   thdx.idx3.S3.2[, 1:2] <- thdx.idx3.S3.1[, 1:2]
   thdx.idx3.S3.2[, 3] <- thdx.idx3.S3.0[thdx.idx3.S3.0 != 0]
   if (nrow(thdx.idx3.S3.2) == 0) {
-    thdx.idx3.S3.full <- thdx.idx3.S3.0
+    thdx.idx3.S3 <- thdx.idx3.S3.0
   } else {
-    thdx.idx3.S3.sparse <- sparseMatrix(i = thdx.idx3.S3.2[, 1], j = thdx.idx3.S3.2[, 2], x = thdx.idx3.S3.2[, 3])
+    thdx.idx3.S3 <- sparseMatrix(i = thdx.idx3.S3.2[, 1], j = thdx.idx3.S3.2[, 2], x = thdx.idx3.S3.2[, 3], 
+                                 dims = c(nrow(thdx.idx3) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdx(idx3),S3)
-  
-  # for Matrix::kronecker(thdx(idx4),S4)
+
   thdx.idx4 <- matrix(thdx[idx4], ncol = 1)
   S4.full <- sparseMatrix(i = S4[, 1], j = S4[, 2], x = S4[, 3])
-  thdx.idx4.S4.0 <- Matrix::kronecker(thdx.idx4, S4.full)
+  thdx.idx4.S4.0 <- kronecker(thdx.idx4, S4.full)
   thdx.idx4.S4.1 <- Matrix::which(thdx.idx4.S4.0 != 0, arr.ind = T)
   thdx.idx4.S4.2 <- matrix(nrow = nrow(thdx.idx4.S4.1), ncol = 3)
   thdx.idx4.S4.2[, 1:2] <- thdx.idx4.S4.1[, 1:2]
   thdx.idx4.S4.2[, 3] <- thdx.idx4.S4.0[thdx.idx4.S4.0 != 0]
   if (nrow(thdx.idx4.S4.2) == 0) {
-    thdx.idx4.S4.full <- thdx.idx4.S4.0
+    thdx.idx4.S4 <- thdx.idx4.S4.0
   } else {
-    thdx.idx4.S4.sparse <- sparseMatrix(i = thdx.idx4.S4.2[, 1], j = thdx.idx4.S4.2[, 2], x = thdx.idx4.S4.2[, 3])
+    thdx.idx4.S4 <- sparseMatrix(i = thdx.idx4.S4.2[, 1], j = thdx.idx4.S4.2[, 2], x = thdx.idx4.S4.2[, 3],
+                                 dims = c(nrow(thdx.idx4) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdx(idx4),S4)
   
-  # for Dxgv
-  thdx.idx1.S1.full.0 <- Matrix(0, nrow = (nrow(thdx.idx1) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdx.idx1.S1.full.0[1:nrow(thdx.idx1.S1.sparse), 1:ncol(thdx.idx1.S1.sparse)] <- thdx.idx1.S1.sparse
+  # # for Dxgv
+  # thdx.idx1.S1.full.0 <- Matrix(0, nrow = (nrow(thdx.idx1) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
+  # thdx.idx1.S1.full.0[1:nrow(thdx.idx1.S1), 1:ncol(thdx.idx1.S1)] <- thdx.idx1.S1
+  # 
+  # thdx.idx2.S2.full.0 <- Matrix(0, nrow = (nrow(thdx.idx2) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
+  # thdx.idx2.S2.full.0[1:nrow(thdx.idx2.S2), 1:ncol(thdx.idx2.S2)] <- thdx.idx2.S2
+  # 
+  # thdx.idx3.S3.full.0 <- Matrix(0, nrow = (nrow(thdx.idx3) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
+  # thdx.idx3.S3.full.0[1:nrow(thdx.idx3.S3), 1:ncol(thdx.idx3.S3)] <- thdx.idx3.S3
+  # 
+  # thdx.idx4.S4.full.0 <- Matrix(0, nrow = (nrow(thdx.idx4) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
+  # thdx.idx4.S4.full.0[1:nrow(thdx.idx4.S4), 1:ncol(thdx.idx4.S4)] <- thdx.idx4.S4
   
-  thdx.idx2.S2.full.0 <- Matrix(0, nrow = (nrow(thdx.idx2) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdx.idx2.S2.full.0[1:nrow(thdx.idx2.S2.sparse), 1:ncol(thdx.idx2.S2.sparse)] <- thdx.idx2.S2.sparse
-  
-  thdx.idx3.S3.full.0 <- Matrix(0, nrow = (nrow(thdx.idx3) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdx.idx3.S3.full.0[1:nrow(thdx.idx3.S3.sparse), 1:ncol(thdx.idx3.S3.sparse)] <- thdx.idx3.S3.sparse
-  
-  thdx.idx4.S4.full.0 <- Matrix(0, nrow = (nrow(thdx.idx4) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdx.idx4.S4.full.0[1:nrow(thdx.idx4.S4.sparse), 1:ncol(thdx.idx4.S4.sparse)] <- thdx.idx4.S4.sparse
-  
-  thdx.idx.full.0 <- thdx.idx1.S1.full.0 + thdx.idx2.S2.full.0 + thdx.idx3.S3.full.0 + thdx.idx4.S4.full.0
+  # thdx.idx.full.0 <- thdx.idx1.S1.full.0 + thdx.idx2.S2.full.0 + thdx.idx3.S3.full.0 + thdx.idx4.S4.full.0
+  thdx.idx.full.0 <- thdx.idx1.S1 + thdx.idx2.S2 + thdx.idx3.S3 + thdx.idx4.S4
   thdx.idx.full.1 <- Matrix::which(thdx.idx.full.0 != 0, arr.ind = T)
   thdx.idx.full.2 <- matrix(nrow = nrow(thdx.idx.full.1), ncol = 3)
   thdx.idx.full.2[, 1:2] <- thdx.idx.full.1[, 1:2]
-  thdx.idx.full.2[, 3] <- thdx.idx.full.0[Matrix::which(thdx.idx.full.0 != 0, arr.ind = T)]
+  thdx.idx.full.2[, 3] <- thdx.idx.full.0[thdx.idx.full.0 != 0]
   thdx.idx.full.2[, 3] <- d * thdx.idx.full.2[, 3]
   Dxgv <- thdx.idx.full.2
   # end Dxgv
   
-  # for Matrix::kronecker(thdy(idx1),S1)
   thdy.idx1 <- matrix(thdy[idx1], ncol = 1)
   S1.full <- sparseMatrix(i = S1[, 1], j = S1[, 2], x = S1[, 3])
-  thdy.idx1.S1.0 <- Matrix::kronecker(thdy.idx1, S1.full)
+  thdy.idx1.S1.0 <- kronecker(thdy.idx1, S1.full)
   thdy.idx1.S1.1 <- Matrix::which(thdy.idx1.S1.0 != 0, arr.ind = T)
   thdy.idx1.S1.2 <- matrix(nrow = nrow(thdy.idx1.S1.1), ncol = 3)
   thdy.idx1.S1.2[, 1:2] <- thdy.idx1.S1.1[, 1:2]
   thdy.idx1.S1.2[, 3] <- thdy.idx1.S1.0[thdy.idx1.S1.0 != 0]
   if (nrow(thdy.idx1.S1.2) == 0) {
-    thdy.idx1.S1.full <- thdy.idx1.S1.0
+    thdy.idx1.S1 <- thdy.idx1.S1.0
   } else {
-    thdy.idx1.S1.sparse <- sparseMatrix(i = thdy.idx1.S1.2[, 1], j = thdy.idx1.S1.2[, 2], x = thdy.idx1.S1.2[, 3])
+    thdy.idx1.S1 <- sparseMatrix(i = thdy.idx1.S1.2[, 1], j = thdy.idx1.S1.2[, 2], x = thdy.idx1.S1.2[, 3],
+                                 dims = c(nrow(thdy.idx1) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdy(idx1),S1)
   
-  # for Matrix::kronecker(thdy(idx2),S2)
   thdy.idx2 <- matrix(thdy[idx2], ncol = 1)
   S2.full <- sparseMatrix(i = S2[, 1], j = S2[, 2], x = S2[, 3])
-  thdy.idx2.S2.0 <- Matrix::kronecker(thdy.idx2, S2.full)
+  thdy.idx2.S2.0 <- kronecker(thdy.idx2, S2.full)
   thdy.idx2.S2.1 <- Matrix::which(thdy.idx2.S2.0 != 0, arr.ind = T)
   thdy.idx2.S2.2 <- matrix(nrow = nrow(thdy.idx2.S2.1), ncol = 3)
   thdy.idx2.S2.2[, 1:2] <- thdy.idx2.S2.1[, 1:2]
   thdy.idx2.S2.2[, 3] <- thdy.idx2.S2.0[thdy.idx2.S2.0 != 0]
   if (nrow(thdy.idx2.S2.2) == 0) {
-    thdy.idx2.S2.full <- thdy.idx2.S2.0
+    thdy.idx2.S2 <- thdy.idx2.S2.0
   } else {
-    thdy.idx2.S2.sparse <- sparseMatrix(i = thdy.idx2.S2.2[, 1], j = thdy.idx2.S2.2[, 2], x = thdy.idx2.S2.2[, 3])
+    thdy.idx2.S2 <- sparseMatrix(i = thdy.idx2.S2.2[, 1], j = thdy.idx2.S2.2[, 2], x = thdy.idx2.S2.2[, 3],
+                                        dims = c(nrow(thdy.idx2) * nrow(C), nrow(Bin)))
   } 
-  # end Matrix::kronecker(thdy(idx2),S2)
-  
-  # for Matrix::kronecker(thdy(idx3),S3)
+
   thdy.idx3 <- matrix(thdy[idx3], ncol = 1)
   S3.full <- sparseMatrix(i = S3[, 1], j = S3[, 2], x = S3[, 3])
-  thdy.idx3.S3.0 <- Matrix::kronecker(thdy.idx3, S3.full)
+  thdy.idx3.S3.0 <- kronecker(thdy.idx3, S3.full)
   thdy.idx3.S3.1 <- Matrix::which(thdy.idx3.S3.0 != 0, arr.ind = T)
   thdy.idx3.S3.2 <- matrix(nrow = nrow(thdy.idx3.S3.1), ncol = 3)
   thdy.idx3.S3.2[, 1:2] <- thdy.idx3.S3.1[, 1:2]
   thdy.idx3.S3.2[, 3] <- thdy.idx3.S3.0[thdy.idx3.S3.0 != 0]
   if (nrow(thdy.idx3.S3.2) == 0) {
-    thdy.idx3.S3.full <- thdy.idx3.S3.0
+    thdy.idx3.S3 <- thdy.idx3.S3.0
   } else {
-    thdy.idx3.S3.sparse <- sparseMatrix(i = thdy.idx3.S3.2[, 1], j = thdy.idx3.S3.2[, 2], x = thdy.idx3.S3.2[, 3])
+    thdy.idx3.S3 <- sparseMatrix(i = thdy.idx3.S3.2[, 1], j = thdy.idx3.S3.2[, 2], x = thdy.idx3.S3.2[, 3],
+                                        dims = c(nrow(thdy.idx3) * nrow(C), nrow(Bin)))
   } 
-  # end Matrix::kronecker(thdy(idx3),S3)
   
-  # for Matrix::kronecker(thdy(idx4),S4)
   thdy.idx4 <- matrix(thdy[idx4], ncol = 1)
   S4.full <- sparseMatrix(i = S4[, 1], j = S4[, 2], x = S4[, 3])
-  thdy.idx4.S4.0 <- Matrix::kronecker(thdy.idx4, S4.full)
+  thdy.idx4.S4.0 <- kronecker(thdy.idx4, S4.full)
   thdy.idx4.S4.1 <- Matrix::which(thdy.idx4.S4.0 != 0, arr.ind = T)
   thdy.idx4.S4.2 <- matrix(nrow = nrow(thdy.idx4.S4.1), ncol = 3)
   thdy.idx4.S4.2[, 1:2] <- thdy.idx4.S4.1[, 1:2]
   thdy.idx4.S4.2[, 3] <- thdy.idx4.S4.0[thdy.idx4.S4.0 != 0]
   if (nrow(thdy.idx4.S4.2) == 0) {
-    thdy.idx4.S4.full <- thdy.idx4.S4.0
+    thdy.idx4.S4 <- thdy.idx4.S4.0
   } else {
-    thdy.idx4.S4.sparse <- sparseMatrix(i = thdy.idx4.S4.2[, 1], j = thdy.idx4.S4.2[, 2], x = thdy.idx4.S4.2[, 3])
+    thdy.idx4.S4 <- sparseMatrix(i = thdy.idx4.S4.2[, 1], j = thdy.idx4.S4.2[, 2], x = thdy.idx4.S4.2[, 3],
+                                 dims = c(nrow(thdy.idx4) * nrow(C), nrow(Bin)))
   } 
-  # end Matrix::kronecker(thdy(idx4),S4)
-  
+
   # for Dygv
-  thdy.idx1.S1.full.0 <- Matrix(0, nrow = (nrow(thdy.idx1) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdy.idx1.S1.full.0[1:nrow(thdy.idx1.S1.sparse), 1:ncol(thdy.idx1.S1.sparse)] <- thdy.idx1.S1.sparse
-  
-  thdy.idx2.S2.full.0 <- Matrix(0, nrow = (nrow(thdy.idx2) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdy.idx2.S2.full.0[1:nrow(thdy.idx2.S2.sparse), 1:ncol(thdy.idx2.S2.sparse)] <- thdy.idx2.S2.sparse
-  
-  thdy.idx3.S3.full.0 <- Matrix(0, nrow = (nrow(thdy.idx3) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdy.idx3.S3.full.0[1:nrow(thdy.idx3.S3.sparse), 1:ncol(thdy.idx3.S3.sparse)] <- thdy.idx3.S3.sparse
-  
-  thdy.idx4.S4.full.0 <- Matrix(0, nrow = (nrow(thdy.idx4) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdy.idx4.S4.full.0[1:nrow(thdy.idx4.S4.sparse), 1:ncol(thdy.idx4.S4.sparse)] <- thdy.idx4.S4.sparse
-  
-  thdy.idx.full.0 <- thdy.idx1.S1.full.0 + thdy.idx2.S2.full.0 + thdy.idx3.S3.full.0 + thdy.idx4.S4.full.0
+  # thdy.idx1.S1.full.0 <- matrix(0, nrow = (dim(thdy.idx1)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdy.idx1.S1.full.0[1:dim(thdy.idx1.S1.full)[1], 1:dim(thdy.idx1.S1.full)[2]] <- thdy.idx1.S1.full
+  # 
+  # thdy.idx2.S2.full.0 <- matrix(0, nrow = (dim(thdy.idx2)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdy.idx2.S2.full.0[1:dim(thdy.idx2.S2.full)[1], 1:dim(thdy.idx2.S2.full)[2]] <- thdy.idx2.S2.full
+  # 
+  # thdy.idx3.S3.full.0 <- matrix(0, nrow = (dim(thdy.idx3)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdy.idx3.S3.full.0[1:dim(thdy.idx3.S3.full)[1], 1:dim(thdy.idx3.S3.full)[2]] <- thdy.idx3.S3.full
+  # 
+  # thdy.idx4.S4.full.0 <- matrix(0, nrow = (dim(thdy.idx4)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdy.idx4.S4.full.0[1:dim(thdy.idx4.S4.full)[1], 1:dim(thdy.idx4.S4.full)[2]] <- thdy.idx4.S4.full
+  # 
+  # thdy.idx.full.0 <- thdy.idx1.S1.full.0 + thdy.idx2.S2.full.0 + thdy.idx3.S3.full.0 + thdy.idx4.S4.full.0
+  thdy.idx.full.0 <- thdy.idx1.S1 + thdy.idx2.S2 + thdy.idx3.S3 + thdy.idx4.S4
   thdy.idx.full.1 <- Matrix::which(thdy.idx.full.0 != 0, arr.ind = T)
   thdy.idx.full.2 <- matrix(nrow = nrow(thdy.idx.full.1), ncol = 3)
   thdy.idx.full.2[, 1:2] <- thdy.idx.full.1[, 1:2]
-  thdy.idx.full.2[, 3] <- thdy.idx.full.0[Matrix::which(thdy.idx.full.0 != 0, arr.ind = T)]
+  thdy.idx.full.2[, 3] <- thdy.idx.full.0[thdy.idx.full.0 != 0]
   thdy.idx.full.2[, 3] <- d * thdy.idx.full.2[, 3]
   Dygv <- thdy.idx.full.2
   # end Dygv
   
-  # for Matrix::kronecker(thdz(idx1),S1)
   thdz.idx1 <- matrix(thdz[idx1], ncol = 1)
   S1.full <- sparseMatrix(i = S1[, 1], j = S1[, 2], x = S1[, 3])
-  thdz.idx1.S1.0 <- Matrix::kronecker(thdz.idx1, S1.full)
+  thdz.idx1.S1.0 <- kronecker(thdz.idx1, S1.full)
   thdz.idx1.S1.1 <- Matrix::which(thdz.idx1.S1.0 != 0, arr.ind = T)
   thdz.idx1.S1.2 <- matrix(nrow = nrow(thdz.idx1.S1.1), ncol = 3)
   thdz.idx1.S1.2[, 1:2] <- thdz.idx1.S1.1[, 1:2]
   thdz.idx1.S1.2[, 3] <- thdz.idx1.S1.0[thdz.idx1.S1.0 != 0]
-  if (nrow(thdz.idx1.S1.2)==0) {
-    thdz.idx1.S1.sparse <- thdz.idx1.S1.0
+  if (nrow(thdz.idx1.S1.2) == 0) {
+    thdz.idx1.S1 <- thdz.idx1.S1.0
   } else {
-    thdz.idx1.S1.sparse <- sparseMatrix(i = thdz.idx1.S1.2[, 1], j = thdz.idx1.S1.2[, 2], x = thdz.idx1.S1.2[, 3])
+    thdz.idx1.S1 <- sparseMatrix(i = thdz.idx1.S1.2[, 1], j = thdz.idx1.S1.2[, 2], x = thdz.idx1.S1.2[, 3],
+                                 dims = c(nrow(thdz.idx1) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdz(idx1),S1)
   
-  # for Matrix::kronecker(thdz(idx2),S2)
   thdz.idx2 <- matrix(thdz[idx2], ncol = 1)
   S2.full <- sparseMatrix(i = S2[, 1], j = S2[, 2], x = S2[, 3])
-  thdz.idx2.S2.0 <- Matrix::kronecker(thdz.idx2, S2.full)
+  thdz.idx2.S2.0 <- kronecker(thdz.idx2, S2.full)
   thdz.idx2.S2.1 <- Matrix::which(thdz.idx2.S2.0 != 0, arr.ind = T)
   thdz.idx2.S2.2 <- matrix(nrow = nrow(thdz.idx2.S2.1), ncol = 3)
   thdz.idx2.S2.2[, 1:2] <- thdz.idx2.S2.1[, 1:2]
   thdz.idx2.S2.2[, 3] <- thdz.idx2.S2.0[thdz.idx2.S2.0 != 0]
   if (nrow(thdz.idx2.S2.2) == 0) {
-    thdz.idx2.S2.sparse <- thdz.idx2.S2.0
+    thdz.idx2.S2 <- thdz.idx2.S2.0
   } else {
-    thdz.idx2.S2.sparse <- sparseMatrix(i = thdz.idx2.S2.2[, 1], j = thdz.idx2.S2.2[, 2], x = thdz.idx2.S2.2[, 3])
+    thdz.idx2.S2 <- sparseMatrix(i = thdz.idx2.S2.2[, 1], j = thdz.idx2.S2.2[, 2], x = thdz.idx2.S2.2[, 3],
+                                 dims = c(nrow(thdz.idx2) * nrow(C), nrow(Bin)))
   } 
-  # end Matrix::kronecker(thdz(idx2),S2)
-  
-  # for Matrix::kronecker(thdz(idx3),S3)
+
   thdz.idx3 <- matrix(thdz[idx3], ncol = 1)
   S3.full <- sparseMatrix(i = S3[, 1], j = S3[, 2], x = S3[, 3])
-  thdz.idx3.S3.0 <- Matrix::kronecker(thdz.idx3, S3.full)
+  thdz.idx3.S3.0 <- kronecker(thdz.idx3, S3.full)
   thdz.idx3.S3.1 <- Matrix::which(thdz.idx3.S3.0 != 0, arr.ind = T)
   thdz.idx3.S3.2 <- matrix(nrow = nrow(thdz.idx3.S3.1), ncol = 3)
   thdz.idx3.S3.2[, 1:2] <- thdz.idx3.S3.1[, 1:2]
   thdz.idx3.S3.2[, 3] <- thdz.idx3.S3.0[thdz.idx3.S3.0 != 0]
   if (nrow(thdz.idx3.S3.2) == 0) {
-    thdz.idx3.S3.sparse <- thdz.idx3.S3.0
+    thdz.idx3.S3 <- thdz.idx3.S3.0
   } else {
-    thdz.idx3.S3.sparse <- sparseMatrix(i = thdz.idx3.S3.2[, 1], j = thdz.idx3.S3.2[, 2], x = thdz.idx3.S3.2[, 3])
+    thdz.idx3.S3 <- sparseMatrix(i = thdz.idx3.S3.2[, 1], j = thdz.idx3.S3.2[, 2], x = thdz.idx3.S3.2[, 3],
+                                 dims = c(nrow(thdz.idx3) * nrow(C), nrow(Bin)))
   }
-  # end Matrix::kronecker(thdz(idx3),S3)
-  
-  # for Matrix::kronecker(thdz(idx4),S4)
+
   thdz.idx4 <- matrix(thdz[idx4], ncol = 1)
   S4.full <- sparseMatrix(i = S4[, 1], j = S4[,2], x = S4[, 3])
-  thdz.idx4.S4.0 <- Matrix::kronecker(thdz.idx4, S4.full)
+  thdz.idx4.S4.0 <- kronecker(thdz.idx4, S4.full)
   thdz.idx4.S4.1 <- Matrix::which(thdz.idx4.S4.0 != 0, arr.ind = T)
   thdz.idx4.S4.2 <- matrix(nrow = nrow(thdz.idx4.S4.1), ncol = 3)
   thdz.idx4.S4.2[, 1:2] <- thdz.idx4.S4.1[, 1:2]
   thdz.idx4.S4.2[, 3] <- thdz.idx4.S4.0[thdz.idx4.S4.0 != 0]
   if (nrow(thdz.idx4.S4.2) == 0) {
-    thdz.idx4.S4.sparse <- thdz.idx4.S4.0
+    thdz.idx4.S4 <- thdz.idx4.S4.0
   } else {
-    thdz.idx4.S4.sparse <- sparseMatrix(i=thdz.idx4.S4.2[, 1], j = thdz.idx4.S4.2[, 2], x = thdz.idx4.S4.2[, 3])
+    thdz.idx4.S4 <- sparseMatrix(i=thdz.idx4.S4.2[, 1], j = thdz.idx4.S4.2[, 2], x = thdz.idx4.S4.2[, 3],
+                                 dims = c(nrow(thdz.idx4) * nrow(C), nrow(Bin)))
   } 
-  # end Matrix::kronecker(thdz(idx4),S4)
 
-  # for Dzgv
-  thdz.idx1.S1.full.0 <- Matrix(0, nrow = (nrow(thdz.idx1) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdz.idx1.S1.full.0[1:nrow(thdz.idx1.S1.sparse), 1:ncol(thdz.idx1.S1.sparse)] <- thdz.idx1.S1.sparse
-  
-  thdz.idx2.S2.full.0 <- Matrix(0, nrow = (nrow(thdz.idx2) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdz.idx2.S2.full.0[1:nrow(thdz.idx2.S2.sparse), 1:ncol(thdz.idx2.S2.sparse)] <- thdz.idx2.S2.sparse
-  
-  thdz.idx3.S3.full.0 <- Matrix(0, nrow = (nrow(thdz.idx3) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdz.idx3.S3.full.0[1:nrow(thdz.idx3.S3.sparse), 1:ncol(thdz.idx3.S3.sparse)] <- thdz.idx3.S3.sparse
-  
-  thdz.idx4.S4.full.0 <- Matrix(0, nrow = (nrow(thdz.idx4) * nrow(C)), ncol = nrow(Bin), sparse = TRUE)
-  thdz.idx4.S4.full.0[1:nrow(thdz.idx4.S4.sparse), 1:ncol(thdz.idx4.S4.sparse)] <- thdz.idx4.S4.sparse
-  
-  thdz.idx.full.0 <- thdz.idx1.S1.full.0 + thdz.idx2.S2.full.0 + thdz.idx3.S3.full.0 + thdz.idx4.S4.full.0
+  # # for Dzgv
+  # thdz.idx1.S1.full.0 <- matrix(0, nrow = (dim(thdz.idx1)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdz.idx1.S1.full.0[1:dim(thdz.idx1.S1.full)[1], 1:dim(thdz.idx1.S1.full)[2]] <- thdz.idx1.S1.full
+  # 
+  # thdz.idx2.S2.full.0 <- matrix(0, nrow = (dim(thdz.idx2)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdz.idx2.S2.full.0[1:dim(thdz.idx2.S2.full)[1], 1:dim(thdz.idx2.S2.full)[2]] <- thdz.idx2.S2.full
+  # 
+  # thdz.idx3.S3.full.0 <- matrix(0, nrow = (dim(thdz.idx3)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdz.idx3.S3.full.0[1:dim(thdz.idx3.S3.full)[1], 1:dim(thdz.idx3.S3.full)[2]] <- thdz.idx3.S3.full
+  # 
+  # thdz.idx4.S4.full.0 <- matrix(0, nrow = (dim(thdz.idx4)[1] * dim(C)[1]), ncol = dim(Bin)[1])
+  # thdz.idx4.S4.full.0[1:dim(thdz.idx4.S4.full)[1], 1:dim(thdz.idx4.S4.full)[2]] <- thdz.idx4.S4.full
+  # 
+  # thdz.idx.full.0 <- thdz.idx1.S1.full.0 + thdz.idx2.S2.full.0 + thdz.idx3.S3.full.0 + thdz.idx4.S4.full.0
+  thdz.idx.full.0 <- thdz.idx1.S1 + thdz.idx2.S2 + thdz.idx3.S3 + thdz.idx4.S4
   thdz.idx.full.1 <- Matrix::which(thdz.idx.full.0 != 0, arr.ind = T)
   thdz.idx.full.2 <- matrix(nrow = nrow(thdz.idx.full.1), ncol = 3)
   thdz.idx.full.2[, 1:2] <- thdz.idx.full.1[, 1:2]
@@ -385,11 +371,11 @@ energy3D <- function (V, Tr, d) {
   Index3 = which(!is.na(prodlim::row.match(data.frame(B), data.frame(C.3))))
   Index4 = which(!is.na(prodlim::row.match(data.frame(B), data.frame(C.4))))
   
-  sidx <- t(matrix(rep((0:(n-1)) * length(Index1a), length(Index1)), nrow = n))
-  Ir1 <- matrix(rep(Index1, n), ncol = 1) + matrix(sidx, ncol = 1)
-  Ir2 <- matrix(rep(Index2, n), ncol = 1) + matrix(sidx, ncol = 1)
-  Ir3 <- matrix(rep(Index3, n), ncol = 1) + matrix(sidx, ncol = 1)
-  Ir4 <- matrix(rep(Index4, n), ncol = 1) + matrix(sidx, ncol = 1)
+  sidx <- t(matrix(rep((0:(nT-1)) * length(Index1a), length(Index1)), nrow = nT))
+  Ir1 <- matrix(rep(Index1, nT), ncol = 1) + matrix(sidx, ncol = 1)
+  Ir2 <- matrix(rep(Index2, nT), ncol = 1) + matrix(sidx, ncol = 1)
+  Ir3 <- matrix(rep(Index3, nT), ncol = 1) + matrix(sidx, ncol = 1)
+  Ir4 <- matrix(rep(Index4, nT), ncol = 1) + matrix(sidx, ncol = 1)
   
   thxv1 <- t(matrix(rep(thdx.idx1, length(Index1)), nrow = length(thdx.idx1)))
   thxv2 <- t(matrix(rep(thdx.idx2, length(Index1)), nrow = length(thdx.idx2)))
@@ -492,12 +478,12 @@ energy3D <- function (V, Tr, d) {
   dyzv.1 <- Matrix::which(dyzv.0 != 0, arr.ind = T)
   dyzv.2 <- matrix(nrow = nrow(dyzv.1), ncol = 3)
   dyzv.2[, 1:2] <- dyzv.1[, 1:2]
-  dyzv.2[, 3] <- dyzv.0[dyzv.0!=0]
+  dyzv.2[, 3] <- dyzv.0[dyzv.0 != 0]
   dyzv <- dyzv.2
   # end dyzv
   
-  cidx <- t(matrix(rep((1:m), length(Index1) * n), nrow = m))
-  cs <- matrix(rep(t(matrix(rep((0:(n-1)) * m, length(Index1)), nrow = n)), m), ncol = (n * m))
+  cidx <- t(matrix(rep((1:nq), (length(Index1)) * nT), nrow = nq))
+  cs <- matrix(rep(t(matrix(rep((0:(nT-1)) * nq, length(Index1)[1]), nrow = nT)), nq), ncol = (nT * nq))
   dxxv.full <- sparseMatrix(i = dxxv[, 1], j = dxxv[, 2], x = dxxv[, 3])
   ridx <- matrix(rep((1:nrow(dxxv.full)), ncol(dxxv.full)), ncol = 1)
 
@@ -578,51 +564,32 @@ energy3D <- function (V, Tr, d) {
   suppressMessages(Dyz[, 3] <- Dyz.0[Dyz.0 != 0])
   # End Dyz
 
-  szv <- nrow(Volv)
   # for Mat1gv
-  diag.volv <- diag(szv)
-  diag(diag.volv) <- Volv
-  kron.Volv.Mat1.0 <- Matrix::kronecker(diag.volv, Mat1)
+  diag.volv = diag(as.vector(Volv))
+  kron.Volv.Mat1.0 <- kron(diag.volv, Mat1)
   kron.Volv.Mat1.1 <- Matrix::which(kron.Volv.Mat1.0 != 0, arr.ind = T)
   kron.Volv.Mat1.2 <- matrix(nrow = nrow(kron.Volv.Mat1.1), ncol = 3)
   kron.Volv.Mat1.2[, 1:2] <- kron.Volv.Mat1.1[, 1:2]
   kron.Volv.Mat1.2[, 3] <- kron.Volv.Mat1.0[kron.Volv.Mat1.0 != 0]
   Mat1gv <- kron.Volv.Mat1.2
-  Mat1gv.sparse <- sparseMatrix(i = Mat1gv[, 1], j = Mat1gv[, 2], x = Mat1gv[, 3])
   # end Mat1gv
-  
+
   # for Eg
-  Dxx.full.0 <- sparseMatrix(i = Dxx[, 1], j = Dxx[, 2], x = Dxx[, 3])
-  Dyy.full.0 <- sparseMatrix(i = Dyy[, 1], j = Dyy[, 2], x = Dyy[, 3])
-  Dzz.full.0 <- sparseMatrix(i = Dzz[, 1], j = Dzz[, 2], x = Dzz[, 3])
-  Dxy.full.0 <- sparseMatrix(i = Dxy[, 1], j = Dxy[, 2], x = Dxy[, 3])
-  Dxz.full.0 <- sparseMatrix(i = Dxz[, 1], j = Dxz[, 2], x = Dxz[, 3])
-  Dyz.full.0 <- sparseMatrix(i = Dyz[, 1], j = Dyz[, 2], x = Dyz[, 3])
+  Mat1gv.full <- sparseMatrix(i = Mat1gv[, 1], j = Mat1gv[, 2], x = Mat1gv[, 3])
+  nr = nrow(Mat1gv.full)
+  Dxx.full <- sparseMatrix(i = Dxx[, 1], j = Dxx[, 2], x = Dxx[, 3], dims = c(nr, nT * nq))
+  Dyy.full <- sparseMatrix(i = Dyy[, 1], j = Dyy[, 2], x = Dyy[, 3], dims = c(nr, nT * nq))
+  Dzz.full <- sparseMatrix(i = Dzz[, 1], j = Dzz[, 2], x = Dzz[, 3], dims = c(nr, nT * nq))
+  Dxy.full <- sparseMatrix(i = Dxy[, 1], j = Dxy[, 2], x = Dxy[, 3], dims = c(nr, nT * nq))
+  Dxz.full <- sparseMatrix(i = Dxz[, 1], j = Dxz[, 2], x = Dxz[, 3], dims = c(nr, nT * nq))
+  Dyz.full <- sparseMatrix(i = Dyz[, 1], j = Dyz[, 2], x = Dyz[, 3], dims = c(nr, nT * nq))
   
-  Mrow <- max(nrow(Dxx.full.0), nrow(Dyy.full.0), nrow(Dzz.full.0), nrow(Dxy.full.0), nrow(Dxz.full.0), nrow(Dyz.full.0))
-  Mcol <- max(ncol(Dxx.full.0), ncol(Dyy.full.0), ncol(Dzz.full.0), ncol(Dxy.full.0), ncol(Dxz.full.0), ncol(Dyz.full.0))
-  
-  Dxx.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  Dyy.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  Dzz.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  Dxy.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  Dxz.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  Dyz.full <- Matrix(0, nrow = Mrow, ncol = Mcol, sparse = TRUE)
-  
-  Dxx.full[1:nrow(Dxx.full.0), 1:ncol(Dxx.full.0)] <- Dxx.full.0
-  Dyy.full[1:nrow(Dyy.full.0), 1:ncol(Dyy.full.0)] <- Dyy.full.0
-  Dzz.full[1:nrow(Dzz.full.0), 1:ncol(Dzz.full.0)] <- Dzz.full.0
-  Dxy.full[1:nrow(Dxy.full.0), 1:ncol(Dxy.full.0)] <- Dxy.full.0
-  Dxz.full[1:nrow(Dxz.full.0), 1:ncol(Dxz.full.0)] <- Dxz.full.0
-  Dyz.full[1:nrow(Dyz.full.0), 1:ncol(Dyz.full.0)] <- Dyz.full.0
-  
-  Eg <- Matrix::t(Dxx.full) %*% Mat1gv.sparse %*% Dxx.full + 
-    Matrix::t(Dyy.full) %*% Mat1gv.sparse %*% Dyy.full + 
-    Matrix::t(Dzz.full) %*% Mat1gv.sparse %*% Dzz.full + 
-    2 * (Matrix::t(Dxy.full) %*% Mat1gv.sparse %*% Dxy.full + 
-         Matrix::t(Dxz.full) %*% Mat1gv.sparse %*% Dxz.full + 
-         Matrix::t(Dyz.full) %*% Mat1gv.sparse %*% Dyz.full)
+  Eg <- Matrix::t(Dxx.full) %*% Mat1gv.full %*% Dxx.full + 
+    Matrix::t(Dyy.full) %*% Mat1gv.full %*% Dyy.full + 
+    Matrix::t(Dzz.full) %*% Mat1gv.full %*% Dzz.full + 
+    2 * (Matrix::t(Dxy.full) %*% Mat1gv.full %*% Dxy.full + 
+         Matrix::t(Dxz.full) %*% Mat1gv.full %*% Dxz.full + 
+         Matrix::t(Dyz.full) %*% Mat1gv.full %*% Dyz.full)
   
   return(Eg)
-  
 }
