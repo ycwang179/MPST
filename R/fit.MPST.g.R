@@ -63,11 +63,11 @@ fit.MPST.g <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.
     K <- NA
   } else {
     if (nd == 3) {
-      B <- as.matrix(basis(V, Tr, d, r, Z)$B)
+      B <- basis2D.d(V, Tr, d, r, Z)$B
       H <- as.matrix(smoothness(V, Tr, d, r))
-      K <- as.matrix(energy(V, Tr, d))
+      K <- energy(V, Tr, d)
     } else if (nd == 4) {
-      B <- as.matrix(basis3D(V, Tr, d, r, Z)$B)
+      B <- basis3D.d(V, Tr, d, r, Z)$B
       H <- as.matrix(smoothness3D(V, Tr, d, r))
       K <- energy3D(V, Tr, d)
     }

@@ -70,9 +70,9 @@ fit.MPST.d <- function(ind.Tr, Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6,
   # 2. basis generation, smoothness conditions, and penalty function
   nd = ncol(Tr)
   if (nd == 3) {
-    Bs <- as.matrix(basis(Vs, Trs, d, r, Zs)$B)
+    Bs <- as.matrix(basis2D.d(Vs, Trs, d, r, Zs)$B)
   } else if (nd == 4) {
-    Bs <- as.matrix(basis3D(Vs, Trs, d, r, Zs)$B)
+    Bs <- as.matrix(basis3D.d(Vs, Trs, d, r, Zs)$B)
   }
   
   if (d < 1 | r < 0 | nrow(Trs) <= 1) {
@@ -85,7 +85,6 @@ fit.MPST.d <- function(ind.Tr, Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6,
       H <- as.matrix(smoothness3D(Vs, Trs, d, r))
     }
     Q2 <- qrH(H)
-    
   }
   
   if (d < 1) {
