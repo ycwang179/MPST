@@ -1,11 +1,11 @@
 rm(list = ls())
 
-library(devtools)
-install_github("funstatpackages/MPST")
+# library(devtools)
+# install_github("funstatpackages/MPST")
 library(MPST)  
 library(profvis)
 data(VT.square)
-Triangulation::TriPlot(V, Tr)
+# Triangulation::TriPlot(V, Tr)
 
 d = 5; r = 1; 
 
