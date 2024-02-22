@@ -71,7 +71,6 @@
 basis3D.d <- function (V, Tr, d, r, Z) {
   
   Z <- as.matrix(Z);
-  nZ <- nrow(Z)
   nq <- choose(d + 3, 3)
   nT <- nrow(Tr)
   
@@ -83,21 +82,21 @@ basis3D.d <- function (V, Tr, d, r, Z) {
   ind.T = ind.T[ind.inside]
   lam = lam[ind.inside, ]
   sind.T <- sort(ind.T)
-  ind <- matrix(order(ind.T), ncol = 1)
+  Z = Z[ind.inside, ]
+  nZ = nrow(Z)
   
   B = Matrix(0, nrow = nZ, ncol = nT * nq, sparse = TRUE)
-  exps <- loop3D(d); ne = nrow(exps)
-  # exps1 <- matrix(exps[, 1], ncol = 1)
-  # exps2 <- matrix(exps[, 2], ncol = 1)
-  # exps3 <- matrix(exps[, 3], ncol = 1)
-  # exps4 <- matrix(exps[, 4], ncol = 1)
+  tmp = expand.grid(d:0, 0:d, 0:d, 0:d)
+  exps <- as.matrix(tmp[rowSums(tmp) == d, ]) 
+  # exps <- loop3D(d); 
+  ne = nrow(exps)
   div <- factorial(exps[, 1]) * factorial(exps[, 2]) * factorial(exps[, 3]) * factorial(exps[, 4])
-  # div <- matrix(factorial(exps[, 1]) * factorial(exps[, 2]) * factorial(exps[, 3]) * factorial(exps[, 4]), ncol = 1)
+  
   for (i in sort(unique(ind.T))) {
-    Tr.i = matrix(Tr[i, ], ncol = 4); dim(Tr.i)
-    V.i = matrix(V[Tr.i, ], ncol = 3); dim(V.i)
+    Tr.i = matrix(Tr[i, ], ncol = 4);
+    V.i = matrix(V[Tr.i, ], ncol = 3); 
     ind.i = (1:nZ)[ind.T == i]
-    Z.i = matrix(Z[ind.i, ], ncol = 3); dim(Z.i)
+    Z.i = matrix(Z[ind.i, ], ncol = 3); 
     nZ.i = length(ind.i)
     
     # b1 <- matrix(lam[ind.i, 1], ncol = 1)

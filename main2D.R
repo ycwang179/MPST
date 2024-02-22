@@ -47,8 +47,6 @@ profvis({
 mfit.d = fit.MPST(Y = Y, Z = Z, V = V, Tr = Tr, d = d, r = r, lambda = lambda, nl = 1, method = "D")
 })
 proc.time() - t0.d
-
-t1.d = proc.time()
 mpred.d = predict.MPST(mfit.d, Z.grid)
 proc.time() - t1.d
 mspe.d = mean((Y.grid - mpred.d$Ypred)^2, na.rm = TRUE)
