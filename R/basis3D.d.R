@@ -87,8 +87,7 @@ basis3D.d <- function (V, Tr, d, r, Z) {
   
   B = Matrix(0, nrow = nZ, ncol = nT * nq, sparse = TRUE)
   tmp = expand.grid(d:0, 0:d, 0:d, 0:d)
-  exps <- as.matrix(tmp[rowSums(tmp) == d, ]) 
-  # exps <- loop3D(d); 
+  exps <- as.matrix(tmp[rowSums(tmp) == d, ]); # exps <- loop3D(d); 
   ne = nrow(exps)
   div <- factorial(exps[, 1]) * factorial(exps[, 2]) * factorial(exps[, 3]) * factorial(exps[, 4])
   
