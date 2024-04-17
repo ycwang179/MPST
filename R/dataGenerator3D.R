@@ -9,7 +9,7 @@
 #' @return A data frame.
 #'
 #' @export
-dataGenerator3D <- function(Z, V, Tr, func = 1, sigmma = 1, seed = 2023) {
+dataGenerator3D <- function(Z, V, Tr, func = 1, sigma = 1, seed = 2023) {
   set.seed(seed)
   
   # location information
