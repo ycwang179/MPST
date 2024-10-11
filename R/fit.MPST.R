@@ -52,12 +52,12 @@
 #' @export
 #' 
 
-fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method = "G") {
+fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method = "G") {
   
   this.call <- match.call()
   
   n <- length(Y)
-
+  
   inVT.list = inVT(V, Tr, Z)
   ind.inside = which(inVT.list$ind.inside == 1)
   ind.nna <- (1:n)[!is.na(Y)]
@@ -68,23 +68,63 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   
   nd = ncol(Tr)
   if (nd == 3) {
-    nq = choose(d + 2, 2)
+    #nq = choose(d + 2, 2)
+    i.max <- 4
   } else if (nd == 4) {
-    nq = choose(d + 3, 3)
+    #nq = choose(d + 3, 3)
+    i.max <- 9
   }
   
   if (method == "G") {
-    mfit = fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda) 
+    
+    all.info <- list()
+    best.list <- list()
+    
+    if ((!hasArg(d)) || is.null(d) || (d < 1)) {
+      
+      for (i in (1 : i.max)) {
+        d <- i + 1
+        mfit.temp <- fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda)
+        all.info[[length(all.info) + 1]] <- list(d = d, mfit.temp)
+      }
+      
+      gcv.d.all <- sapply(all.info, function(x) x[[2]]$gcv)
+      index.d.gcv <- which.min(gcv.d.all)
+      best.list <- all.info[[index.d.gcv]]
+      
+    } else {
+      
+      d <- d
+      mfit.temp <- fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda)
+      best.list <- list(d = d, mfit.temp)
+      
+    }
+    
+    mfit <- unlist(best.list, recursive = FALSE)
+    
+    all.info <- list()
+    best.list <- list()
+    
+    d = mfit$d
     gamma.hat = mfit$gamma.hat
     gamma.star = NULL
     B = mfit$B
     B.star = mfit$B.star
     lambdac = mfit$lamc
+    
   } else if (method == "D") {
-    ns = parallel::detectCores()
+    #ns = parallel::detectCores()
+    ns = 1
+    
+    if ((!hasArg(d)) || is.null(d) || (d < 1)) {
+      d <- 5
+    }
+    
     if (nd == 3) {
+      nq = choose(d + 2, 2)
       TV = as.matrix(tdata(V, Tr)$TV)
     } else if (nd == 4) {
+      nq = choose(d + 3, 3)
       TV = as.matrix(thdata(V, Tr)$TV)
     }
     
@@ -92,8 +132,8 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
                            Y = Yi, Z = Zi, d = d, nl = nl, ns = ns)
     
     mfit.all <- parallel::mclapply(1:nrow(Tr), FUN = fit.MPST.d, mc.cores = ns,
-                         Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
-                         lambda = lambda, nl = nl, load.all = load.all)
+                                   Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
+                                   lambda = lambda, nl = nl, load.all = load.all)
     
     # mfit.all = vector(mode = "list", length = nrow(Tr))
     # for (iT in 1:nrow(Tr)) {
@@ -114,7 +154,7 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
     } else if (nd == 4) {
       H = as.matrix(smoothness3D(V, Tr, d, r))
     }
-   
+    
     a = H %*% gamma.star
     HH = crossprod(t(H)); nH = nrow(HH)
     b = chol2inv(chol(HH + 1e-12 * diag(nH))) %*% a
@@ -131,7 +171,7 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   res = Y - Y.hat
   sse = sum(res^2, na.rm = TRUE)
   mse = mean(res^2, na.rm = TRUE)
-
+  
   mfit <- list(gamma.hat = gamma.hat, 
                gamma.star = gamma.star, 
                B = B,
