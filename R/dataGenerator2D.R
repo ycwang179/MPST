@@ -23,9 +23,10 @@
 #' 
 #' @export
 
-dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023){
+
+dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
   set.seed(seed)
-  
+  cat("(dataGenerator2D) sigma =", sigma, " \n")
   # location information
   if (isempty(Z)) {
     stop("The location information is required for data generation.")
@@ -38,8 +39,9 @@ dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023){
   ind.T = inVT.list$ind.T
   
   # test functions
-  if (!(func %in% (1:8))) {
-    stop("Test function can only be integers between 1 and 8.")
+  # if (!(func %in% (1:8))) {
+  if (!(func %in% (1:14))) {
+    stop("Test function can only be integers between 1 and 14.")
   }
   if (func == 1) {
     mu <- z1^2 + z2^2 + 2*z1*z2 # Quadratic
@@ -73,6 +75,32 @@ dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023){
     mu <- atan((4 * z1 - 4)^2 - (4 * z2 - 4)^2) # arctan
     hist(mu)
   }
+  if (func == 9) {
+    mu <- (-1) * z1^3 + z2^3 # Cubic
+    hist(mu)
+  }
+  if (func == 10) {
+    mu <- (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) # Sine
+    hist(mu)
+    cat("function =", func, ": (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) \n")
+  }
+  if (func == 11) {
+    mu <- (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) # Sine
+    hist(mu)
+    cat("function =", func, ": (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) \n")
+  }
+  if (func == 12) {
+    mu <- exp(-50 * ((z1-0.5)^2 + (z2-0.5)^2)) # Bump
+    hist(mu)
+  }
+  if (func == 13) {
+    mu <- 1 / (1 + exp(-10 * (z1 + z2) + 10)) # Logit
+    hist(mu)
+  }
+  if (func == 14) {
+    mu <- atan((8 * z1 - 4)^2 - (8 * z2 - 4)^2) # arctan
+    hist(mu)
+  }
     
   eps <- rnorm(n, mean = 0, sd = sigma)
   mu[ind.inside == 0] <- NA; eps[ind.inside == 0] <- NA;
@@ -86,3 +114,4 @@ dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023){
   
   return(dat)
 }
+
