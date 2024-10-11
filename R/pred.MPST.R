@@ -56,6 +56,7 @@ pred.MPST <- function(mfit, Znew = NULL){
     Ypred[ind.inside] <- Bnew %*% mfit$gamma.hat
   }
   mpred = list(Ypred = Ypred, 
-               ind.inside = ind.inside)
+               ind.inside = ind.inside,
+               d = mfit$d)
   return(mpred)
 }
