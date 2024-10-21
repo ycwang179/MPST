@@ -40,8 +40,8 @@ dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
   
   # test functions
   # if (!(func %in% (1:8))) {
-  if (!(func %in% (1:14))) {
-    stop("Test function can only be integers between 1 and 14.")
+  if (!(func %in% (1:15))) {
+    stop("Test function can only be integers between 1 and 15.")
   }
   if (func == 1) {
     mu <- z1^2 + z2^2 + 2*z1*z2 # Quadratic
@@ -99,6 +99,11 @@ dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
   }
   if (func == 14) {
     mu <- atan((8 * z1 - 4)^2 - (8 * z2 - 4)^2) # arctan
+    hist(mu)
+  }
+  if (func == 15) {
+    require(mgcv)
+    mu <- mgcv::fs.test(xx, yy) # mgcv::fs.test(xx, yy)
     hist(mu)
   }
     
