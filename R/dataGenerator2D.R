@@ -102,7 +102,7 @@ dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
     hist(mu)
   }
   if (func == 15) {
-    require(mgcv)
+    library(mgcv)
     mu <- mgcv::fs.test(z1, z2) # mgcv::fs.test(xx, yy)
     hist(mu)
   }
