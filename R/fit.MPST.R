@@ -113,8 +113,8 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     lambdac = mfit$lamc
     
   } else if (method == "D") {
-    ns = parallel::detectCores()
-    #ns = 1
+    # ns = parallel::detectCores()
+    ns = 16
     
     if ((!hasArg(d)) || is.null(d) || (d < 1)) {
       d <- 5
