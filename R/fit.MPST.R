@@ -45,14 +45,14 @@
 #' func = 1; sigma = 1;
 #' n = 2000;
 #' Z = matrix(runif(2*n, 0, 1), nrow = n, ncol = 2)
-#' sam = dataGenerator2D(Z, V, Tr, func, sigma)
+#' sam = dataGenerator2D(Z, V, Tr, func, sigma, seed)
 #' Y = as.vector(sam$Y); Z = as.matrix(sam$Z);
 #' mfit = fit.MPST(Y, Z, V, Tr, d, r)
 #' rmse = sqrt(mean((Y - mfit$Yhat)^2, na.rm = TRUE)); rmse
 #' @export
 #' 
 
-fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method = "G", P.func) {
+fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method, P.func) {
   
   this.call <- match.call()
   
@@ -115,7 +115,6 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
   } else if (method == "D") {
     ns <- parallel::detectCores()
     N.cores <- ns
-    #ns = 16
     
     if ((!hasArg(d)) || is.null(d) || (d < 1)) {
       d <- 5
@@ -151,7 +150,6 @@ fit.MPST <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)
       # Export custom functions and variables to the cluster
       parallel::clusterExport(cl, varlist = c("fit.MPST.d", "n","Yi", "Zi", "V", "Tr", "d", "r", "lambda", "nl", "load.all", "mtxcbind"), envir = environment())
       
-      # Replace mclapply with parLapply
       mfit.all <- parallel::parLapply(cl, 1:nrow(Tr), function(iT) {
         fit.MPST.d(iT, Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
                    lambda = lambda, nl = nl, load.all = load.all)
