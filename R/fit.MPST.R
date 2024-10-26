@@ -45,14 +45,14 @@
 #' func = 1; sigma = 1;
 #' n = 2000;
 #' Z = matrix(runif(2*n, 0, 1), nrow = n, ncol = 2)
-#' sam = dataGenerator2D(Z, V, Tr, func, sigma)
+#' sam = dataGenerator2D(Z, V, Tr, func, sigma, seed)
 #' Y = as.vector(sam$Y); Z = as.matrix(sam$Z);
 #' mfit = fit.MPST(Y, Z, V, Tr, d, r)
 #' rmse = sqrt(mean((Y - mfit$Yhat)^2, na.rm = TRUE)); rmse
 #' @export
 #' 
 
-fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method = "G") {
+fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method = "D", P.func) {
   
   this.call <- match.call()
   
@@ -76,7 +76,7 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
   }
   
   if (method == "G") {
-    
+    N.cores <- 1
     all.info <- list()
     best.list <- list()
     
@@ -113,8 +113,9 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     lambdac = mfit$lamc
     
   } else if (method == "D") {
-    # ns = parallel::detectCores()
-    ns = 16
+    ns <- parallel::detectCores()
+    N.cores <- ns
+    #ns = 16
     
     if ((!hasArg(d)) || is.null(d) || (d < 1)) {
       d <- 5
@@ -128,12 +129,38 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
       TV = as.matrix(thdata(V, Tr)$TV)
     }
     
-    load.all = worker.load(V = V, Tr = Tr, TV = TV, inVT.list = inVT.list, 
-                           Y = Yi, Z = Zi, d = d, nl = nl, ns = ns)
+    #load.all = worker.load(V = V, Tr = Tr, TV = TV, inVT.list = inVT.list, 
+    #                       Y = Yi, Z = Zi, d = d, nl = nl, ns = ns)
     
-    mfit.all <- parallel::mclapply(1:nrow(Tr), FUN = fit.MPST.d, mc.cores = ns,
-                                   Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
-                                   lambda = lambda, nl = nl, load.all = load.all)
+    load.all = worker.load(V = V, Tr = Tr, TV = TV, inVT.list = inVT.list, 
+                           Y = Yi, Z = Zi, d = d, nl = nl, ns = ns, P.func = P.func)
+    
+    if (P.func == 1) {
+      mfit.all <- parallel::mclapply(1:nrow(Tr), FUN = fit.MPST.d, mc.cores = ns,
+                                     Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
+                                     lambda = lambda, nl = nl, load.all = load.all)
+    } else if (P.func == 2) {
+      cl <- parallel::makeCluster(ns)
+      
+      # Load the necessary packages on each worker node
+      parallel::clusterEvalQ(cl, {
+        library(pracma)
+        library(Matrix)
+      })
+      
+      # Export custom functions and variables to the cluster
+      parallel::clusterExport(cl, varlist = c("fit.MPST.d", "n","Yi", "Zi", "V", "Tr", "d", "r", "lambda", "nl", "load.all", "mtxcbind"), envir = environment())
+      
+      # Replace mclapply with parLapply
+      mfit.all <- parallel::parLapply(cl, 1:nrow(Tr), function(iT) {
+        fit.MPST.d(iT, Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
+                   lambda = lambda, nl = nl, load.all = load.all)
+      })
+      
+      # Stop the parallel cluster
+      parallel::stopCluster(cl)
+      
+    }
     
     # mfit.all = vector(mode = "list", length = nrow(Tr))
     # for (iT in 1:nrow(Tr)) {
@@ -186,7 +213,8 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
                d = d,
                r = r,
                Y = Y,
-               Z = Z)
+               Z = Z,
+               N.cores = N.cores)
   
   mfit$call <- this.call;
   class(mfit) <- "MPST"
