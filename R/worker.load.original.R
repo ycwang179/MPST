@@ -1,4 +1,4 @@
-worker.load <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 1, ns = 1) {
+worker.load.original <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 1, ns = 1) {
   nd = ncol(Tr)
   
   conditions.all <- c()
