@@ -57,6 +57,7 @@ pred.MPST <- function(mfit, Znew = NULL){
   }
   mpred = list(Ypred = Ypred, 
                ind.inside = ind.inside,
-               d = mfit$d)
+               d = mfit$d,
+               N.cores = mfit$N.cores)
   return(mpred)
 }
