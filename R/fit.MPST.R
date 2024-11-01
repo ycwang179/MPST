@@ -72,7 +72,7 @@ fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     i.max <- 4
   } else if (nd == 4) {
     #nq = choose(d + 3, 3)
-    i.max <- 9
+    i.max <- 8
   }
   
   if (method == "G") {
