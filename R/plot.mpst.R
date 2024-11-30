@@ -168,7 +168,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   select_color_palette <- function(color_choice) {
     print(paste("Color choice:", color_choice))  
     base_palette <- switch(color_choice,
-                           "1" = gray.colors(64, start = 0.2, end = 0.9),
+                           "1" = gray.colors(64),
                            "2" = rainbow(64),
                            "3" = heat.colors(64),
                            "4" = terrain.colors(64),
