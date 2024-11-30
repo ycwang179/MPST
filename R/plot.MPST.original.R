@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-plot.MPST <- function(mfit, Zgrid = NULL){
+plot.MPST.original <- function(mfit, Zgrid = NULL){
   if (isempty(Zgrid)) {
     z1.min <- min(mfit$Z[, 1]) - 0.1; z1.max <- max(mfit$Z[, 1]) + 0.1;
     z2.min <- min(mfit$Z[, 2]) - 0.1; z2.max <- max(mfit$Z[, 2]) + 0.1;
