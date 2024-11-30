@@ -1,3 +1,5 @@
 useDynLib(MPST, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
+export(plot.MPST)
+S3method(plot, MPST)
