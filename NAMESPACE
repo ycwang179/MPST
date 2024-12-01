@@ -1,6 +1,8 @@
 useDynLib(MPST, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
-exportPattern("^[[:alpha:]]+")
+# exportPattern("^[[:alpha:]]+")
+# Export all public functions
 export(plot.MPST)
+# S3 method declarations
 S3method(plot, MPST)
 S3method(print, MPST)
