@@ -51,7 +51,7 @@
 #' @export
 #' 
 
-fit.MPST.d <- function(ind.Tr, Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl, load.all) {
+fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl, load.all) {
   # ns = parallel::detectCores()
   # TV = as.matrix(tdata(V, Tr)$TV)
   # inVT.list = inVT(V, Tr, Z)
