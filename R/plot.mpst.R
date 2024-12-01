@@ -46,17 +46,14 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
 #' Initialize Grid for MPST Plotting
 #'
 #' @description Generates a grid for plotting based on the input MPST model and dimensionality.
+#' This function is used internally and is not intended for direct use by end users.
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid. If NULL, a grid is created automatically.
 #' @param n1 Number of points in the first dimension.
 #' @param n2 Number of points in the second dimension.
 #' @param n3 Number of points in the third dimension (if applicable).
 #' @return A list containing the generated grid and corresponding coordinate vectors.
-#' @examples
-#' \dontrun{
-#' grid_info <- initialize.grid(model_object, n1 = 101, n2 = 101)
-#' }
-#' @export
+#' @keywords internal
 initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
   nd <- ncol(mfit$Tr)
   if (is.null(Zgrid)) {
@@ -98,15 +95,12 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
 
 #' Plot Contour for MPST Models
 #'
-#' @description Generates a contour plot for a 3D MPST model.
+#' @description Generates a contour plot for a 3D MPST model. This function is used internally
+#' by `plot.MPST` and is not intended for direct use by end users.
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid will be generated.
 #' @return A plotly object representing the contour plot.
-#' @examples
-#' \dontrun{
-#' plot.contour.mpst(model_object)
-#' }
-#' @export
+#' @keywords internal
 plot.contour.mpst <- function(mfit, Zgrid = NULL) {
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
@@ -136,15 +130,12 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
 
 #' Plot Surface for MPST Models
 #'
-#' @description Generates a 3D surface plot for an MPST model using the specified grid or automatically generated grid.
+#' @description Generates a 3D surface plot for an MPST model. This function is used internally
+#' by `plot.MPST` and is not intended for direct use by end users.
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
 #' @return A plotly object representing the surface plot.
-#' @examples
-#' \dontrun{
-#' plot.surface.mpst(model_object)
-#' }
-#' @export
+#' @keywords internal
 plot.surface.mpst <- function(mfit, Zgrid = NULL) {
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
@@ -189,15 +180,12 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
 
 #' Plot Slices for 3D MPST Models
 #'
-#' @description Generates interactive 2D slices for a 3D MPST model.
+#' @description Generates interactive 2D slices for a 3D MPST model. This function is used internally
+#' by `plot.MPST` and is not intended for direct use by end users.
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
 #' @return A manipulate object that provides interactive slices through the 3D array.
-#' @examples
-#' \dontrun{
-#' plot.slice.mpst(model_object)
-#' }
-#' @export
+#' @keywords internal
 plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
