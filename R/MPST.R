@@ -1,15 +1,13 @@
-#' Print Method for MPST Objects
+# Define the print.MPST function
+#' Print Method for MPST Models
 #'
-#' @description Provides a custom print method for objects of class "MPST".
-#' @param x An object of class "MPST".
-#' @param digits Number of significant digits to display (default: 4).
-#' @param max Maximum number of elements to print for long vectors (default: 10).
-#' @return Invisibly returns the input object `x`.
-#' @examples
-#' \dontrun{
-#' print.MPST(mpst_object)
-#' }
+#' @description Prints the summary of an MPST model.
+#' @param x An MPST object.
+#' @param digits Number of digits to round numeric outputs. Default is 4.
+#' @param max Number of rows to display for long outputs. Default is 10.
+#' @return No return value; prints to the console.
 #' @export
+
 print.MPST <- function(x, digits = 4, max = 10) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
@@ -72,6 +70,7 @@ print.MPST <- function(x, digits = 4, max = 10) {
   invisible(x)
 }
 
+# Define the interpret.mpst function
 #' Interpret an MPST Formula
 #'
 #' @description Parses and interprets an MPST formula for use in model fitting.
@@ -79,6 +78,7 @@ print.MPST <- function(x, digits = 4, max = 10) {
 #' @param extra.special Additional special terms to recognize (default: NULL).
 #' @return A list containing parsed terms and the response variable.
 #' @keywords internal
+
 interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.tf <- terms.formula(mpstf, specials = c("m", extra.special)) 
   mpst.terms <- attr(mpst.tf, "term.labels") 
@@ -92,10 +92,10 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.parameters <- eval(parse(text = paste(mpst.terms[1])))
 }
 
+# Define the m function
 #' Generate MPST Parameters
 #'
-#' @description Internal function to create a list of parameters for MPST based on input arguments.
-#' This function is not intended for direct use by users.
+#' @description Internal function to create a list of parameters for MPST.
 #' @param ... Additional arguments (not used).
 #' @param V Matrix of vertices (optional).
 #' @param Tr Matrix of triangulations (optional).
