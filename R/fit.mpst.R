@@ -52,7 +52,7 @@
 #' @export
 #' 
 
-fit.MPST <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method, P.func) {
+fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method, P.func) {
   
   this.call <- match.call()
   
