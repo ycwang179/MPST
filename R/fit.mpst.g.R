@@ -51,7 +51,7 @@
 #' @export
 #' 
 
-fit.MPST.g <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)) {
+fit.mpst.g <- function(Y, Z, V, Tr, d = 5, r = 1, lambda = 10^seq(-6, 6, by = 0.5)) {
   
   # 1. Preparation: basis generation, smoothness conditions, and penalty function
   n <- length(Y)
