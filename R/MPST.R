@@ -129,7 +129,6 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param r Smoothness parameter (must be an integer).
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
-
 m <- function(..., V = NULL, Tr = NULL, d, r) {
   if (missing(d) || is.null(d) || d < 1) {
     d.new <- NULL
