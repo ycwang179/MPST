@@ -101,9 +101,10 @@ print.MPST <- function(x, digits = 4, max = 10) {
 #' @description Parses and interprets an MPST formula for use in model fitting.
 #' @param mpstf An MPST formula object.
 #' @param extra.special Additional special terms to recognize (default: NULL).
-#' @return A list containing parsed terms and the response variable.
+#' @return A list containing:
+#'   - `terms`: Parsed formula terms.
+#'   - `response`: Response variable (if present).
 #' @keywords internal
-
 interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.tf <- terms.formula(mpstf, specials = c("m", extra.special)) 
   mpst.terms <- attr(mpst.tf, "term.labels") 
@@ -128,6 +129,7 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param r Smoothness parameter (must be an integer).
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
+
 m <- function(..., V = NULL, Tr = NULL, d, r) {
   if (missing(d) || is.null(d) || d < 1) {
     d.new <- NULL
