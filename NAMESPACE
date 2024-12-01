@@ -3,6 +3,10 @@ importFrom(Rcpp, evalCpp)
 # exportPattern("^[[:alpha:]]+")
 # Export all public functions
 export(plot.MPST)
+export(fit.MPST)
+export(predict.MPST)
 # S3 method declarations
 S3method(plot, MPST)
 S3method(print, MPST)
+S3method(fit, MPST)
+S3method(predict, MPST)
