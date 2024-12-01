@@ -1,3 +1,29 @@
+# MPST.R - Core Functions and Generic Definitions
+
+# Define the fit generic function
+#' Fit a Model
+#'
+#' @description A generic function for fitting models.
+#' @param object An object to be fitted.
+#' @param ... Additional arguments passed to specific methods.
+#' @return Depends on the specific method used.
+#' @export
+fit <- function(object, ...) {
+  UseMethod("fit")
+}
+
+# Define the predict generic function
+#' Predict from a Model
+#'
+#' @description A generic function for making predictions from models.
+#' @param object A fitted model object.
+#' @param ... Additional arguments passed to specific methods.
+#' @return Depends on the specific method used.
+#' @export
+predict <- function(object, ...) {
+  UseMethod("predict")
+}
+
 # Define the print.MPST function
 #' Print Method for MPST Models
 #'
@@ -7,7 +33,6 @@
 #' @param max Number of rows to display for long outputs. Default is 10.
 #' @return No return value; prints to the console.
 #' @export
-
 print.MPST <- function(x, digits = 4, max = 10) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
