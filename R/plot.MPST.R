@@ -40,7 +40,7 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
   } else {
     stop("Invalid mview or unsupported dimensionality")
   }
-  invisible(x)
+  invisible()
 }
 
 #' Initialize Grid for MPST Plotting
