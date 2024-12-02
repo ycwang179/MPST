@@ -95,6 +95,11 @@ predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), 
 #' Predict Values for New Data
 #'
 #' @description Internal function for making predictions using a fitted MPST model.
+#'
+#' @importFrom Matrix Matrix
+#' @importFrom pracma isempty
+#' @importFrom Rcpp evalCpp
+#'
 #' @param mfit A fitted MPST model object.
 #' @param Znew A matrix of new coordinates for prediction.
 #' @return A list containing:
