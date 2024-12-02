@@ -130,20 +130,29 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
 m <- function(..., V = NULL, Tr = NULL, d, r) {
-  if (missing(d) || is.null(d) || d < 1) {
-    d.new <- NULL
-  } else {
-    d.new <- round(d)
-    if (!isTRUE(all.equal(d.new, d))) {
-      stop("Argument 'd' should be an integer.")
-    }
+  # Validate d
+  if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
+    stop("Argument 'd' must be a numeric value greater than or equal to 1.")
   }
   
+  # Round d and ensure it's an integer
+  d.new <- round(d)
+  if (!isTRUE(all.equal(d.new, d))) {
+    stop("Argument 'd' must be an integer. It was rounded, but this is not allowed.")
+  }
+  
+  # Validate r
+  if (missing(r) || is.null(r) || !is.numeric(r)) {
+    stop("Argument 'r' must be a numeric value.")
+  }
+  
+  # Round r and ensure it's an integer
   r.new <- round(r)
   if (!isTRUE(all.equal(r.new, r))) {
-    stop("Argument 'r' should be an integer.")
+    stop("Argument 'r' must be an integer. It was rounded, but this is not allowed.")
   }
   
+  # Return the validated list
   ret <- list(d = d.new, r = r.new)
   return(ret)
 }
