@@ -1,6 +1,6 @@
 useDynLib(MPST, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
-#exportPattern("^[[:alpha:]]+")
+exportPattern("^[[:alpha:]]+")
 
 # Export all public functions
 export(plot.MPST)
