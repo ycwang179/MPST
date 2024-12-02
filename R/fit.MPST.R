@@ -4,6 +4,9 @@
 #' global ("G") or distributed ("D") learning methods. The function supports data provided 
 #' either as a formula or through individual arguments.
 #'
+#' @importFrom Matrix Matrix
+#' @importFrom MatrixExtra t_shallow t_deep
+#'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
