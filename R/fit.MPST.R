@@ -213,6 +213,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
       parallel::clusterEvalQ(cl, {
         library(pracma)
         library(Matrix)
+        library(MatrixExtra) 
       })
       
       # Export custom functions and variables to the cluster
