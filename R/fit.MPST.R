@@ -237,7 +237,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     
     # linear coefficients gamma for bivariate function
     if (nd == 3) {
-      H = as.matrix(smoothness(V, Tr, d, r))
+      H = as.matrix(smoothness2D(V, Tr, d, r))
     } else if (nd == 4) {
       H = as.matrix(smoothness3D(V, Tr, d, r))
     }
@@ -309,7 +309,7 @@ fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by =
   } else {
     if (nd == 3) {
       B <- basis2D.d(V, Tr, d, r, Z)$B
-      H <- as.matrix(smoothness(V, Tr, d, r))
+      H <- as.matrix(smoothness2D(V, Tr, d, r))
       K <- energy(V, Tr, d)
     } else if (nd == 4) {
       B <- basis3D.d(V, Tr, d, r, Z)$B
@@ -446,7 +446,7 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6,
     H <- NA; Q2 <- NA;
   } else {
     if (nd == 3) {
-      H <- as.matrix(smoothness(Vs, Trs, d, r))
+      H <- as.matrix(smoothness2D(Vs, Trs, d, r))
     } else if (nd == 4) {
       H <- as.matrix(smoothness3D(Vs, Trs, d, r))
     }
