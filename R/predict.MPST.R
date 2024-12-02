@@ -13,7 +13,7 @@
 #' - `d`: Degree of piecewise polynomials.
 #' - `r`: Smoothness parameter.
 #'
-#' @param lambda The tuning parameter(s). Should be a numeric vector.
+#' @param lambda The tuning parameter -- default is \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
 #' @param method A character string specifying the learning method:
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
