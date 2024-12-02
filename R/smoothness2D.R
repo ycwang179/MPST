@@ -1,4 +1,4 @@
-smoothness <- function(V,Tr,d,r){
+smoothness2D <- function(V,Tr,d,r){
 	fit_tdata <- tdata(V,Tr)
 	E <- fit_tdata$E
 	TE <- fit_tdata$TE
