@@ -216,7 +216,6 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   dim.size <- dim(new.array)
   # Define the function to select a color palette
   select_color_palette <- function(color_choice) {
-    print(paste("Color choice:", color_choice))  
     base_palette <- switch(color_choice,
                            "1" = gray.colors(64),
                            "2" = rainbow(64),
@@ -224,7 +223,6 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
                            "4" = terrain.colors(64),
                            "5" = topo.colors(64),
                            "6" = cm.colors(64))
-    print(base_palette[1:3])  
     return(base_palette)
   }
   
