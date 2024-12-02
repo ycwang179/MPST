@@ -11,5 +11,5 @@ export(fit.MPST)
 # S3 method declarations
 S3method(plot, MPST)
 S3method(print, MPST)
-#S3method(fit, MPST)
+S3method(fit, MPST)
 #S3method(predict, MPST)
