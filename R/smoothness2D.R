@@ -11,17 +11,10 @@
 #' The sparse matrix returned represents the constraints that enforce continuity across the shared edges of adjacent triangles.
 #' 
 #' This implementation is adapted from the MATLAB code by Ming-Jun Lai from the University of Georgia.
-#'
-#' @examples
-#' # Example usage
-#' d <- 3; r <- 1;
-#' V <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), ncol = 2, byrow = TRUE)
-#' Tr <- matrix(c(1, 2, 3, 2, 3, 4), ncol = 3, byrow = TRUE)
-#' H <- smoothness2D(V, Tr, d, r)
 #' @importFrom Matrix sparseMatrix
 #' @export
-smoothness2D <- function(V,Tr,d,r){
-	fit_tdata <- tdata(V,Tr)
+smoothness2D <- function(V, Tr, d, r){
+	fit_tdata <- tdata(V, Tr)
 	E <- fit_tdata$E
 	TE <- fit_tdata$TE
 	TV <- fit_tdata$TV
@@ -31,7 +24,7 @@ smoothness2D <- function(V,Tr,d,r){
 	n <- length(int)
 	N <- 0
 	Neq <- 0
-	I_fit <- CrArrays(d,r)
+	I_fit <- CrArrays(d, r)
 	I1 <- I_fit$I1
 	I2 <- I_fit$I2
 	Is <- list()
