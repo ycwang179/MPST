@@ -111,9 +111,9 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
   u1 <- grid_info$u1
   v1 <- grid_info$v1
   
-  mpred <- pred.MPST(mfit, Znew = Zgrid)
+  mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
-    stop("'pred.MPST()' did not return the expected 'Ypred' component.")
+    stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
   
   z1 <- matrix(mpred$Ypred, length(u1), length(v1), byrow = TRUE)
@@ -146,9 +146,9 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
   u1 <- grid_info$u1
   v1 <- grid_info$v1
   
-  mpred <- pred.MPST(mfit, Znew = Zgrid)
+  mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
-    stop("'pred.MPST()' did not return the expected 'Ypred' component.")
+    stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
   
   z1 <- matrix(mpred$Ypred, nrow = length(u1), byrow = TRUE)
@@ -197,9 +197,9 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   z2.grid <- grid_info$v1
   z3.grid <- grid_info$v2
   
-  mpred <- pred.MPST(mfit, Znew = Zgrid)
+  mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
-    stop("'pred.MPST()' did not return the expected 'Ypred' component.")
+    stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
   
   # Fill 3D array
@@ -207,7 +207,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   indices.matrix <- as.matrix(indices.matrix)
   new.array <- array(NA, dim = c(length(z1.grid), length(z2.grid), length(z3.grid)))
   
-  for (row in 1:nrow(indices.matrix)) {
+  for (row in 1 : nrow(indices.matrix)) {
     coords <- indices.matrix[row, ]
     new.array[coords[1], coords[2], coords[3]] <- mpred$Ypred[row]
   }
@@ -234,17 +234,17 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
     par(mfrow = c(1, 3))  
     
     # Draw the axial slice
-    image.plot(1:dim.size[1], 1:dim.size[2], new.array[,,axial_slice], 
+    image.plot(1 : dim.size[1], 1 : dim.size[2], new.array[, , axial_slice], 
                main = paste("Axial Plane (z =", axial_slice, ")"), 
                xlab = "x", ylab = "y", col = col_palette, axes = FALSE, useRaster = TRUE)
     
     # Draw the coronal slice
-    image.plot(1:dim.size[1], 1:dim.size[3], new.array[,coronal_slice,], 
+    image.plot(1 : dim.size[1], 1 : dim.size[3], new.array[, coronal_slice, ], 
                main = paste("Coronal Plane (y =", coronal_slice, ")"), 
                xlab = "x", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
     
     # Draw the sagittal slice
-    image.plot(1:dim.size[2], 1:dim.size[3], new.array[sagittal_slice,,], 
+    image.plot(1 : dim.size[2], 1 : dim.size[3], new.array[sagittal_slice, , ], 
                main = paste("Sagittal Plane (x =", sagittal_slice, ")"), 
                xlab = "y", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
   }
