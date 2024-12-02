@@ -24,23 +24,22 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
     stop("Invalid mview. Must be one of 'contour', 'surface', or 'slice'.")
   }
   
+  #fig <- NULL
+  
   nd <- ncol(x$Tr)
   if ((mview == "contour") && (nd == 3)) {
     fig <- plot.contour.mpst(x, Zgrid = Zgrid, ...)
     print(fig)
-  } else if ((mview == "contour") && (nd == 4)) {
-    fig <- plot.contour.mpst(x, Zgrid = Zgrid, ...)
-    print(fig)
-  } else if (mview == "surface") {
+  } else if ((mview == "surface") && (nd == 3)) {
     fig <- plot.surface.mpst(x, Zgrid = Zgrid, ...)
     print(fig)
   } else if ((mview == "slice") && (nd == 4)) {
-    fig <- plot.slice.mpst(x, Zgrid = Zgrid, ...)
-    print(fig)
+    plot.slice.mpst(x, Zgrid = Zgrid, ...)
   } else {
     stop("Invalid mview or unsupported dimensionality")
   }
-  invisible()
+  #return(fig)
+  invisible(NULL)
 }
 
 #' Initialize Grid for MPST Plotting
