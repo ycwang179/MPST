@@ -2,6 +2,9 @@
 #'
 #' @description Computes the smoothness constraints matrix for bivariate splines defined over a triangular partition.
 #' @param V A matrix of vertices (\code{nV} x 2), where \code{nV} is the number of vertices. Each row represents the coordinates of a vertex in 2D space.
+#'
+#' @importFrom Matrix sparseMatrix
+#'
 #' @param Tr A matrix of triangular partitions (\code{nT} x 3), where \code{nT} is the number of triangles. Each row contains indices of vertices in \code{V}.
 #' @param d The degree of piecewise polynomials. Must be an integer greater than or equal to 1.
 #' @param r The smoothness parameter. Must be an integer where \code{0 <= r < d}.
