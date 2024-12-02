@@ -1,16 +1,35 @@
 #' Predict for MPST Models
 #'
 #' @description Predicts from a fitted MPST model using global ("G") or distributed ("D") methods.
-#' @param formula A formula specifying the model to predict, e.g., `y ~ m(Z, V, Tr, d = 2, r = 1)`.
-#' @param lambda A numeric vector specifying the smoothing parameters.
-#' @param method A character string specifying the method: "G" (Global) or "D" (Distributed).
-#' @param P.func An integer indicating the parallelization function: 1 (`mclapply`) or 2 (`parLapply`).
-#' @param data A list containing required data for the model fitting.
-#' @param data.pred A list containing prediction grid data, including `Z.grid`, `Y.grid`, and `mu.grid`.
-#' @param debug Logical, if TRUE, prints additional debugging information.
+#' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates (n by k). Rows represent points in 
+#'   2D or 3D space (k = 2 or k = 3).
+#' - `V`: Matrix of vertices (nV by k). Rows represent coordinates of vertices 
+#'   in the triangulation.
+#' - `Tr`: Triangulation matrix (nT by k+1). Rows represent vertex indices:
+#'   - For 2D: Rows have three indices for triangles.
+#'   - For 3D: Rows have four indices for tetrahedra.
+#' - `d`: Degree of piecewise polynomials.
+#' - `r`: Smoothness parameter.
+#'
+#' @param lambda The tuning parameter(s). Should be a numeric vector.
+#' @param method A character string specifying the learning method:
+#' - `"G"`: Global learning.
+#' - `"D"`: Distributed learning.
+#' @param P.func An integer specifying the parallelization method for distributed learning (default: 2):
+#' - `1`: Use `mclapply`.
+#' - `2`: Use `parLapply`.
+#' @param data A list containing the following components:
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates.
+#' - `V`: Matrix of triangulation vertices.
+#' - `Tr`: Triangulation matrix.
+#' @param data.pred A list containing prediction grid data:
+#' - `Z.grid`: The prediction grid coordinates.
+#' - `mu.grid`: (Optional) True mean values for computing mean integrated squared error (MISE).
 #' @return An object of class "MPST" containing prediction results.
 #' @export
-
 predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), data.pred = list()) {
   # Validate 'method'
   if (missing(method) || !(method %in% c("G", "D"))) {
@@ -57,8 +76,10 @@ predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), 
   mfit <- fit.mpst(mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, method = mpst.p$method, P.func = mpst.p$P.func)
   mpred <- pred.mpst(mfit, Z.grid)
   
-  # Compute MISE
-  mpred$mise <- mean((mu.grid - mpred$Ypred)^2, na.rm = TRUE)
+  # Compute MISE if 'mu.grid' is provided
+  if (!is.null(mu.grid)) {
+    mpred$mise <- mean((mu.grid - mpred$Ypred)^2, na.rm = TRUE)
+  }
   
   # Assign additional attributes
   mpred$P.func <- P.func
@@ -71,6 +92,17 @@ predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), 
   return(mpred)
 }
 
+#' Predict Values for New Data
+#'
+#' @description Internal function for making predictions using a fitted MPST model.
+#' @param mfit A fitted MPST model object.
+#' @param Znew A matrix of new coordinates for prediction.
+#' @return A list containing:
+#' - `Ypred`: Predicted values.
+#' - `ind.inside`: Indices of the points inside the domain.
+#' - `d`: Degree of the spline.
+#' - `N.cores`: Number of cores used for computation.
+#' @keywords internal
 pred.mpst <- function(mfit, Znew = NULL){
   if(identical(Znew, mfit$Z) | isempty(Znew)){
     Ypred <- mfit$beta.hat
