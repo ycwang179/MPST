@@ -197,6 +197,10 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   z2.grid <- grid_info$v1
   z3.grid <- grid_info$v2
   
+  if (anyNA(Zgrid)) {
+    stop("Generated Zgrid contains NA values. Please check input data.")
+  }
+  
   mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
     stop("'pred.mpst()' did not return the expected 'Ypred' component.")
@@ -207,17 +211,18 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   indices.matrix <- as.matrix(indices.matrix)
   new.array <- array(NA, dim = c(length(z1.grid), length(z2.grid), length(z3.grid)))
   
-  for (row in 1 : nrow(indices.matrix)) {
+  for (row in 1:nrow(indices.matrix)) {
     coords <- indices.matrix[row, ]
     new.array[coords[1], coords[2], coords[3]] <- mpred$Ypred[row]
   }
   
   # Interactive slices
   dim.size <- dim(new.array)
+  
   # Define the function to select a color palette
   select_color_palette <- function(color_choice) {
     base_palette <- switch(color_choice,
-                           "1" = gray.colors(64),
+                           "1" = gray.colors(64, start = 0.2, end = 0.9),
                            "2" = rainbow(64),
                            "3" = heat.colors(64),
                            "4" = terrain.colors(64),
@@ -228,31 +233,49 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   
   # Define the function to plot slices
   plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 4) {
-    col_palette <- select_color_palette(color)  
-    par(mfrow = c(1, 3))  
+    col_palette <- select_color_palette(color)
+    par(mfrow = c(1, 3))
     
-    # Draw the axial slice
-    image.plot(1 : dim.size[1], 1 : dim.size[2], new.array[, , axial_slice], 
-               main = paste("Axial Plane (z =", axial_slice, ")"), 
-               xlab = "x", ylab = "y", col = col_palette, axes = FALSE, useRaster = TRUE)
+    # Axial slice
+    if (all(is.na(new.array[, , axial_slice]))) {
+      warning("Axial slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Axial slice contains only NA values.", cex = 1.5)
+    } else {
+      image.plot(1 : dim.size[1], 1 : dim.size[2], new.array[, , axial_slice], 
+                 main = paste("Axial Plane (z =", axial_slice, ")"), 
+                 xlab = "x", ylab = "y", col = col_palette, axes = FALSE, useRaster = TRUE)
+    }
     
-    # Draw the coronal slice
-    image.plot(1 : dim.size[1], 1 : dim.size[3], new.array[, coronal_slice, ], 
-               main = paste("Coronal Plane (y =", coronal_slice, ")"), 
-               xlab = "x", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
+    # Coronal slice
+    if (all(is.na(new.array[, coronal_slice, ]))) {
+      warning("Coronal slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Coronal slice contains only NA values.", cex = 1.5)
+    } else {
+      image.plot(1 : dim.size[1], 1 : dim.size[3], new.array[, coronal_slice, ], 
+                 main = paste("Coronal Plane (y =", coronal_slice, ")"), 
+                 xlab = "x", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
+    }
     
-    # Draw the sagittal slice
-    image.plot(1 : dim.size[2], 1 : dim.size[3], new.array[sagittal_slice, , ], 
-               main = paste("Sagittal Plane (x =", sagittal_slice, ")"), 
-               xlab = "y", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
+    # Sagittal slice
+    if (all(is.na(new.array[sagittal_slice, , ]))) {
+      warning("Sagittal slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Sagittal slice contains only NA values.", cex = 1.5)
+    } else {
+      image.plot(1 : dim.size[2], 1 : dim.size[3], new.array[sagittal_slice, , ], 
+                 main = paste("Sagittal Plane (x =", sagittal_slice, ")"), 
+                 xlab = "y", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
+    }
   }
   
   # Use manipulate to create an interactive interface
   manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
-    axial_slice = slider(1, dim.size[3], initial = dim.size[3] %/% 2, label = "Axial Slice"),
-    coronal_slice = slider(1, dim.size[2], initial = dim.size[2] %/% 2, label = "Coronal Slice"),
-    sagittal_slice = slider(1, dim.size[1], initial = dim.size[1] %/% 2, label = "Sagittal Slice"),
+    axial_slice = slider(1, max(1, dim.size[3]), initial = max(1, dim.size[3] %/% 2), label = "Axial Slice"),
+    coronal_slice = slider(1, max(1, dim.size[2]), initial = max(1, dim.size[2] %/% 2), label = "Coronal Slice"),
+    sagittal_slice = slider(1, max(1, dim.size[1]), initial = max(1, dim.size[1] %/% 2), label = "Sagittal Slice"),
     color = slider(1, 6, initial = 1, label = "Color Table (1-Gray, 2-Rainbow, 3-Heat, 4-Terrain, 5-Topo, 6-Cyan Magenta)")
   )
 }
