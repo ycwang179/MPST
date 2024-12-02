@@ -5,9 +5,8 @@ exportPattern("^[[:alpha:]]+")
 # Export all public functions
 export(plot.MPST)
 export(fit)
-#export(fit.MPST)
-#export(predict)
-#export(predict.MPST)
+export(fit.MPST)
+
 
 # S3 method declarations
 S3method(plot, MPST)
