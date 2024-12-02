@@ -37,7 +37,7 @@
 #'
 #' @export
 #'
-pred.MPST <- function(mfit, Znew = NULL){
+pred.mpst <- function(mfit, Znew = NULL){
   if(identical(Znew, mfit$Z) | isempty(Znew)){
     Ypred <- mfit$beta.hat
     ind.inside <- mfit$ind.inside
