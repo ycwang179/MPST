@@ -84,7 +84,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
       
       for (i in (1 : i.max)) {
         d <- i + 1
-        mfit.temp <- fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda)
+        mfit.temp <- fit.mpst.g(Yi, Zi, V, Tr, d, r, lambda)
         all.info[[length(all.info) + 1]] <- list(d = d, mfit.temp)
       }
       
@@ -95,7 +95,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     } else {
       
       d <- d
-      mfit.temp <- fit.MPST.g(Yi, Zi, V, Tr, d, r, lambda)
+      mfit.temp <- fit.mpst.g(Yi, Zi, V, Tr, d, r, lambda)
       best.list <- list(d = d, mfit.temp)
       
     }
@@ -135,7 +135,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
                            Y = Yi, Z = Zi, d = d, nl = nl, ns = ns, P.func = P.func)
     
     if (P.func == 1) {
-      mfit.all <- parallel::mclapply(1:nrow(Tr), FUN = fit.MPST.d, mc.cores = ns,
+      mfit.all <- parallel::mclapply(1:nrow(Tr), FUN = fit.mpst.d, mc.cores = ns,
                                      Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
                                      lambda = lambda, nl = nl, load.all = load.all)
     } else if (P.func == 2) {
@@ -148,10 +148,10 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
       })
       
       # Export custom functions and variables to the cluster
-      parallel::clusterExport(cl, varlist = c("fit.MPST.d", "n","Yi", "Zi", "V", "Tr", "d", "r", "lambda", "nl", "load.all", "mtxcbind"), envir = environment())
+      parallel::clusterExport(cl, varlist = c("fit.mpst.d", "n","Yi", "Zi", "V", "Tr", "d", "r", "lambda", "nl", "load.all", "mtxcbind"), envir = environment())
       
       mfit.all <- parallel::parLapply(cl, 1:nrow(Tr), function(iT) {
-        fit.MPST.d(iT, Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
+        fit.mpst.d(iT, Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
                    lambda = lambda, nl = nl, load.all = load.all)
       })
       
@@ -162,7 +162,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
     
     # mfit.all = vector(mode = "list", length = nrow(Tr))
     # for (iT in 1:nrow(Tr)) {
-    #   mfit.all[[iT]] = fit.MPST.d(iT, Y, Z, V, Tr, d, r, lambda, nl, load.all)
+    #   mfit.all[[iT]] = fit.mpst.d(iT, Y, Z, V, Tr, d, r, lambda, nl, load.all)
     # }
     
     # combine results from workers
