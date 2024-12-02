@@ -21,7 +21,7 @@
 #'
 #' @details This R program is modified based on Lai and Wang (2013).
 #' 
-#' @export
+#' @keywords internal
 
 
 dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
