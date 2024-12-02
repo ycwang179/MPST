@@ -1,3 +1,25 @@
+#' Smoothness Constraints Matrix for Bivariate Spline over Triangular Partition
+#'
+#' @description Computes the smoothness constraints matrix for bivariate splines defined over a triangular partition.
+#' @param V A matrix of vertices (\code{nV} x 2), where \code{nV} is the number of vertices. Each row represents the coordinates of a vertex in 2D space.
+#' @param Tr A matrix of triangular partitions (\code{nT} x 3), where \code{nT} is the number of triangles. Each row contains indices of vertices in \code{V}.
+#' @param d The degree of piecewise polynomials. Must be an integer greater than or equal to 1.
+#' @param r The smoothness parameter. Must be an integer where \code{0 <= r < d}.
+#' @return A sparse matrix representing the smoothness constraints.
+#' @details This function computes the smoothness constraints for bivariate splines over a triangular partition using barycentric coordinates. It ensures that adjacent triangles satisfy the required smoothness conditions based on the given degree (\code{d}) and smoothness parameter (\code{r}).
+#'
+#' The sparse matrix returned represents the constraints that enforce continuity across the shared edges of adjacent triangles.
+#' 
+#' This implementation is adapted from the MATLAB code by Ming-Jun Lai from the University of Georgia.
+#'
+#' @examples
+#' # Example usage
+#' d <- 3; r <- 1;
+#' V <- matrix(c(0, 0, 1, 0, 0, 1, 1, 1), ncol = 2, byrow = TRUE)
+#' Tr <- matrix(c(1, 2, 3, 2, 3, 4), ncol = 3, byrow = TRUE)
+#' H <- smoothness2D(V, Tr, d, r)
+#' @importFrom Matrix sparseMatrix
+#' @export
 smoothness2D <- function(V,Tr,d,r){
 	fit_tdata <- tdata(V,Tr)
 	E <- fit_tdata$E
