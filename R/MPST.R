@@ -114,7 +114,6 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
   } else { 
     mpst.response <- NULL
   }
-  
   mpst.parameters <- eval(parse(text = paste(mpst.terms[1])))
 }
 
