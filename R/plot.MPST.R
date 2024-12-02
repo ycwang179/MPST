@@ -278,4 +278,5 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
     sagittal_slice = slider(1, max(1, dim.size[1]), initial = max(1, dim.size[1] %/% 2), label = "Sagittal Slice"),
     color = slider(1, 6, initial = 1, label = "Color Table (1-Gray, 2-Rainbow, 3-Heat, 4-Terrain, 5-Topo, 6-Cyan Magenta)")
   )
+  invisible(NULL)
 }
