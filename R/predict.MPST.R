@@ -2,10 +2,6 @@
 #'
 #' @description Predicts from a fitted MPST model using global ("G") or distributed ("D") methods.
 #'
-#' @importFrom Matrix Matrix
-#' @importFrom pracma isempty
-#' @importFrom Rcpp evalCpp
-#'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (n by k). Rows represent points in 
