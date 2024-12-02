@@ -24,6 +24,7 @@ Depends:
     MGLM,
     prodlim,
     plotly,
+    fields,
     manipulate
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
