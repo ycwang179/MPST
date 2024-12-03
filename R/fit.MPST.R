@@ -48,8 +48,10 @@
 #' }
 #' @export
 fit.MPST <- function(formula, lambda, method, P.func = NULL, data = list()) {
-  # Validate 'method'
-  if (missing(method) || !(method %in% c("G", "D"))) {
+  # Set default for 'method'
+  if (is.null(method)) {
+    method <- "G" # Default to Global learning
+  } else if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
   }
   
