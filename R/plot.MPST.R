@@ -68,7 +68,7 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
       z2.grid <- seq(limits[1, 2], limits[2, 2], length.out = n2)
       z3.grid <- seq(limits[1, 3], limits[2, 3], length.out = n3)
       Zgrid <- as.matrix(expand.grid(z1.grid, z2.grid, z3.grid))
-      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, v2 = z3.grid))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, w1 = z3.grid))
     } else {
       stop("Unsupported dimensionality for grid initialization.")
     }
@@ -81,8 +81,8 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
     } else if (nd == 4) {
       u1 <- sort(unique(Zgrid[, 1]))
       v1 <- sort(unique(Zgrid[, 2]))
-      v2 <- sort(unique(Zgrid[, 3]))
-      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1, v2 = v2))
+      w1 <- sort(unique(Zgrid[, 3]))
+      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1, w1 = w1))
     } else {
       stop("Unsupported dimensionality for grid initialization.")
     }
@@ -191,7 +191,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   Zgrid <- grid_info$Zgrid
   z1.grid <- grid_info$u1
   z2.grid <- grid_info$v1
-  z3.grid <- grid_info$v2
+  z3.grid <- grid_info$w1
   
   if (anyNA(Zgrid)) {
     stop("Generated Zgrid contains NA values. Please check input data.")
