@@ -24,7 +24,7 @@
 #' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
 #' - `1`: Use `mclapply`.
 #' - `2`: Use `parLapply`.
-#' @param data A list containing the following components:
+#' @param data (Optional) A list containing the following components:
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates.
 #' - `V`: Matrix of triangulation vertices.
