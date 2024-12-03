@@ -23,9 +23,7 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
   if (!mview %in% c("contour", "surface", "slice")) {
     stop("Invalid mview. Must be one of 'contour', 'surface', or 'slice'.")
   }
-  
-  #fig <- NULL
-  
+   
   nd <- ncol(x$Tr)
   if ((mview == "contour") && (nd == 3)) {
     fig <- plot.contour.mpst(x, Zgrid = Zgrid, ...)
