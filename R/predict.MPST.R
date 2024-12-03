@@ -32,13 +32,17 @@
 #' @return An object of class "MPST" containing prediction results.
 #' @export
 predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), data.pred = list()) {
-  # Validate 'method'
-  if (missing(method) || !(method %in% c("G", "D"))) {
+  # Set default for 'method'
+  if (is.null(method)) {
+    method <- "G" # Default to Global learning
+  } else if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Validate 'lambda'
-  if (missing(lambda) || !is.numeric(lambda)) {
+  # Set default for 'lambda'
+  if (is.null(lambda)) {
+    lambda <- 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  } else if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
