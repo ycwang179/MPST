@@ -118,7 +118,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
 #' @param P.func Parallelization method for distributed learning.
 #' @return A list containing model fit components.
 #' @keywords internal
-fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method, P.func) {
+fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
   
   this.call <- match.call()
   
@@ -303,7 +303,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
 #' @param lambda The tuning parameter.
 #' @return A list containing global model fit components.
 #' @keywords internal
-fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5)) {
+fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda) {
   
   # 1. Preparation: basis generation, smoothness conditions, and penalty function
   n <- length(Y)
@@ -426,7 +426,7 @@ fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by =
 #' @param load.all Preloaded data for distributed processing.
 #' @return A list containing distributed model fit components.
 #' @keywords internal                          
-fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl, load.all) {
+fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.all) {
   # ns = parallel::detectCores()
   # TV = as.matrix(tdata(V, Tr)$TV)
   # inVT.list = inVT(V, Tr, Z)
