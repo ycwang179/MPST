@@ -75,14 +75,14 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
   } else {
     # Use the existing Zgrid to extract coordinates
     if (nd == 3) {
-      u1 <- sort(unique(Zgrid[, 1]))
-      v1 <- sort(unique(Zgrid[, 2]))
-      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1))
+      z1.grid <- sort(unique(Zgrid[, 1]))
+      z2.grid <- sort(unique(Zgrid[, 2]))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid))
     } else if (nd == 4) {
-      u1 <- sort(unique(Zgrid[, 1]))
-      v1 <- sort(unique(Zgrid[, 2]))
-      w1 <- sort(unique(Zgrid[, 3]))
-      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1, w1 = w1))
+      z1.grid <- sort(unique(Zgrid[, 1]))
+      z2.grid <- sort(unique(Zgrid[, 2]))
+      z3.grid <- sort(unique(Zgrid[, 3]))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, w1 = z3.grid))
     } else {
       stop("Unsupported dimensionality for grid initialization.")
     }
