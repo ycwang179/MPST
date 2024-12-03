@@ -43,9 +43,6 @@
 #' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
 #' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list, lambda = 10^seq(-6, 6, by = 0.5), method = "G")
 #' 
-#' # Example using individual arguments
-#' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), Y = y, Z = Z, V = V, Tr = Tr, lambda = 10^seq(-6, 6, by = 0.5), method = "G")
-#' 
 #' # Print model summary
 #' print(model)
 #' }
