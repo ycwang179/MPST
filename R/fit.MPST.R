@@ -47,7 +47,7 @@
 #' print(model)
 #' }
 #' @export
-fit.MPST <- function(formula, lambda, method, P.func = NULL, data = list()) {
+fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   # Set default for 'method'
   if (is.null(method)) {
     method <- "G" # Default to Global learning
@@ -55,8 +55,10 @@ fit.MPST <- function(formula, lambda, method, P.func = NULL, data = list()) {
     stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Validate 'lambda'
-  if (missing(lambda) || !is.numeric(lambda)) {
+  # Set default for 'lambda'
+  if (is.null(lambda)) {
+    lambda <- 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  } else if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
