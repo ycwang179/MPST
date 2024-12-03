@@ -6,18 +6,19 @@
 #'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
-#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}), where \( k \) represents the dimensionality 
-#'   of the space (2 for 2D or 3 for 3D). Rows correspond to observation points.
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
 #' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
 #'   in the triangulation.
 #' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
-#'   - For 2D (\( k = 2 \)): Rows have three indices for triangles.
-#'   - For 3D (\( k = 3 \)): Rows have four indices for tetrahedra.
+#'   - For 2D: Rows have three indices for triangles.
+#'   - For 3D: Rows have four indices for tetrahedra.
 #' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda A numeric vector of smoothing parameters. If not provided, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
-#' @param method A character string specifying the learning method. If not provided, defaults to `"G"` (Global learning):
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
 #' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
