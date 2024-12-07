@@ -2,23 +2,29 @@
 % Please edit documentation in R/plot.MPST.R
 \name{plot.MPST}
 \alias{plot.MPST}
-\title{Produces the contour plot for the estimated surface of a fitted "BPST" object.}
+\title{Plot Different Views for MPST Models}
 \usage{
-\method{plot}{MPST}(mfit, Zgrid = NULL)
+\method{plot}{MPST}(x, Zgrid = NULL, mview = NULL, ...)
 }
 \arguments{
-\item{mfit}{Fitted ``BPST" object.
-\cr}
+\item{x}{An MPST model fit object.}
 
-\item{Zgrid}{The grid points used to construct the contour plot.
-\cr}
+\item{Zgrid}{An optional grid for plotting. If NULL, it will be generated automatically.}
+
+\item{mview}{A character string specifying the view to plot. Must be one of 'contour', 
+'surface', or 'slice'.}
+
+\item{...}{Additional arguments passed to the specific plot functions.}
 }
 \value{
-None
+No return value. The function generates plots.
 }
 \description{
-This function produces the contour map for the estimated surface of a fitted "BPST" object.
+This function allows plotting different views (contour, surface, or slice) 
+for an MPST model fit object.
 }
-\details{
-This R program is modified based on the Matlab program written by Ming-Jun Lai from the University of Georgia and Li Wang from the Iowa State University.
+\examples{
+\dontrun{
+plot.MPST(model_fit_object, mview = "contour")
+}
 }
