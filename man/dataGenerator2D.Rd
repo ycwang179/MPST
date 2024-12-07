@@ -4,7 +4,7 @@
 \alias{dataGenerator2D}
 \title{Generate testing dataset for bivariate spline smoothing.}
 \usage{
-dataGenerator2D(Z, V, Tr, func = 1, sigma = 0.1, seed = 2023)
+dataGenerator2D(Z, V, Tr, func, sigma, seed)
 }
 \arguments{
 \item{Z}{The cooridinates of dimension \code{n} by two. Each row is the coordinates of a point.
@@ -36,3 +36,4 @@ This function generate the testing dataset for bivariate spline smoothing.
 \details{
 This R program is modified based on Lai and Wang (2013).
 }
+\keyword{internal}

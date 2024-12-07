@@ -2,45 +2,73 @@
 % Please edit documentation in R/predict.MPST.R
 \name{predict.MPST}
 \alias{predict.MPST}
-\title{Make predictions from a fitted BPST object.}
+\title{Predict for MPST Models}
 \usage{
-\method{predict}{MPST}(mfit, Znew = NULL)
+\method{predict}{MPST}(
+  formula,
+  lambda = NULL,
+  method = NULL,
+  P.func = NULL,
+  data = list(),
+  data.pred = list()
+)
 }
 \arguments{
-\item{mfit}{Fitted ``MPST" object.
-\cr}
+\item{formula}{A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+- `Y`: The response variable observed over the domain.
+- `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+  2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+  points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+- `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
+  in the triangulation.
+- `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
+  - For 2D: Rows have three indices for triangles.
+  - For 3D: Rows have four indices for tetrahedra.
+- `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
+- `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).}
 
-\item{Znew}{The cooridinates of new locationsfor prediction -- default is the observed coordinates, \code{Z}.
-\cr}
+\item{lambda}{The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.}
+
+\item{method}{A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
+- `"G"`: Global learning.
+- `"D"`: Distributed learning.}
+
+\item{P.func}{An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
+- `1`: Use `mclapply`.
+- `2`: Use `parLapply`.}
+
+\item{data}{(Optional) A list containing the following components:
+- `Y`: The response variable observed over the domain.
+- `Z`: Matrix of observation coordinates.
+- `V`: Matrix of triangulation vertices.
+- `Tr`: Triangulation matrix.}
+
+\item{data.pred}{A list containing prediction-related data:
+- `Z.grid`: The prediction grid coordinates (required).
+- `mu.grid`: (Optional) True mean values for computing mean integrated squared error (MISE).}
 }
 \value{
-A vector of predicted values is returned.
+An object of class `"MPST"` containing the following components:
+- `Ypred`: Predicted values on the specified grid.
+- `mise`: Mean integrated squared error (computed if `mu.grid` is provided).
+- `method`: Learning method used for prediction.
+- `formula`: The formula used for fitting and prediction.
 }
 \description{
-This function is used to make predictions of a fitted BPST object.
-}
-\details{
-This R program is modified based on the Matlab program written by Ming-Jun Lai from the University of Georgia and Li Wang from the Iowa State University.
+Predicts from a fitted MPST model using global ("G") or distributed ("D") learning methods. 
+It allows for flexible prediction grids and computes mean integrated squared error (MISE) if a reference 
+function (`mu.grid`) is provided.
 }
 \examples{
-data(VT.square) 
-d = 5; r = 1; 
-func = 1; sigma = 1;
-n = 2000;
-Z = matrix(runif(2*n, 0, 1), nrow = n, ncol = 2)
-sam = dataGenerator2D(Z, V, Tr, func, sigma)
-Y = as.vector(sam$Y); Z = as.matrix(sam$Z);
-mfit = fit.MPST(Y, Z, V, Tr, d, r)
-# Grid points for evaluation
-n1.grid = 51; n2.grid = 51; n.grid = n1.grid * n2.grid;
-u.grid = seq(0, 1, length.out = n1.grid)
-v.grid = seq(0, 1, length.out = n2.grid)
-uu.grid = rep(u.grid, each = n2.grid)
-vv.grid = rep(v.grid, times = n1.grid)
-Z.grid = as.matrix(cbind(uu.grid, vv.grid))
-pop = dataGenerator2D(Z.grid, V, Tr, func, sigma)
-Y.grid = pop$Y; mu.grid = pop$mu;
-mpred = predict.MPST(mfit, Z.grid)
-rmspe = sqrt(mean((Y.grid - mpred$Ypred)^2, na.rm = TRUE)); rmspe
+\dontrun{
+# Example using a fitted model and prediction grid
+data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
+data_pred <- list(Z.grid = Z_new, mu.grid = mu_new)
+predictions <- predict.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list, data.pred = data_pred)
 
+# View predictions
+print(predictions$Ypred)
+# If MISE was computed
+print(predictions$mise)
+}
 }
