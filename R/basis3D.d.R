@@ -31,7 +31,7 @@
 #' c(0, 0, 1), c(0, 1, 1), c(1, 0, 1), c(1, 1, 1)), ncol = 3)
 #' Th <- matrix(rbind(c(5, 1, 2, 3), c(6, 5, 2, 3), c(6, 7, 5, 3),
 #' c(6, 4, 7, 3), c(6, 2, 4, 3), c(6, 8, 7, 4)), ncol = 4)
-#' B.all = basis3D(V, Th, d, r, Z)
+#' B.all = basis3D.d(V, Th, d, r, Z)
 #'
 #' # example 2
 #' d = 2; r = 1;
@@ -65,7 +65,7 @@
 #' c(11, 13, 14, 20), c(11, 13, 19, 20), c(8, 14, 16, 17),
 #' c(7, 8, 14, 16), c(8, 14, 15, 17), c(8, 9, 15, 17),
 #' c(6, 8, 9, 15)), ncol = 4)
-#' B.all = basis3D(V, Th, d, r, Z)
+#' B.all = basis3D.d(V, Th, d, r, Z)
 #' @export
 
 basis3D.d <- function (V, Tr, d, r, Z) {
