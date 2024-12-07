@@ -1,44 +1,70 @@
 #' Predict for MPST Models
 #'
-#' @description Predicts from a fitted MPST model using global ("G") or distributed ("D") methods.
+#' @description Predicts from a fitted MPST model using global ("G") or distributed ("D") learning methods. 
+#' It allows for flexible prediction grids and computes mean integrated squared error (MISE) if a reference 
+#' function (`mu.grid`) is provided.
 #'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
-#' - `Z`: Matrix of observation coordinates (n by k). Rows represent points in 
-#'   2D or 3D space (k = 2 or k = 3).
-#' - `V`: Matrix of vertices (nV by k). Rows represent coordinates of vertices 
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
 #'   in the triangulation.
-#' - `Tr`: Triangulation matrix (nT by k+1). Rows represent vertex indices:
+#' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
 #'   - For 2D: Rows have three indices for triangles.
 #'   - For 3D: Rows have four indices for tetrahedra.
-#' - `d`: Degree of piecewise polynomials.
-#' - `r`: Smoothness parameter.
+#' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
+#' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda The tuning parameter -- default is \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
-#' @param method A character string specifying the learning method:
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning (default: 2):
+#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
 #' - `1`: Use `mclapply`.
 #' - `2`: Use `parLapply`.
-#' @param data A list containing the following components:
+#' @param data (Optional) A list containing the following components:
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates.
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
-#' @param data.pred A list containing prediction grid data:
-#' - `Z.grid`: The prediction grid coordinates.
+#' 
+#' @param data.pred A list containing prediction-related data:
+#' - `Z.grid`: The prediction grid coordinates (required).
 #' - `mu.grid`: (Optional) True mean values for computing mean integrated squared error (MISE).
-#' @return An object of class "MPST" containing prediction results.
+#'
+#' @return An object of class `"MPST"` containing the following components:
+#' - `Ypred`: Predicted values on the specified grid.
+#' - `mise`: Mean integrated squared error (computed if `mu.grid` is provided).
+#' - `method`: Learning method used for prediction.
+#' - `formula`: The formula used for fitting and prediction.
+#' 
+#' @examples
+#' \dontrun{
+#' # Example using a fitted model and prediction grid
+#' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
+#' data_pred <- list(Z.grid = Z_new, mu.grid = mu_new)
+#' predictions <- predict.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list, data.pred = data_pred)
+#' 
+#' # View predictions
+#' print(predictions$Ypred)
+#' # If MISE was computed
+#' print(predictions$mise)
+#' }
 #' @export
-predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), data.pred = list()) {
-  # Validate 'method'
-  if (missing(method) || !(method %in% c("G", "D"))) {
+predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
+  # Set default for 'method'
+  if (is.null(method)) {
+    method <- "G" # Default to Global learning
+  } else if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Validate 'lambda'
-  if (missing(lambda) || !is.numeric(lambda)) {
+  # Set default for 'lambda'
+  if (is.null(lambda)) {
+    lambda <- 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  } else if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
@@ -56,10 +82,11 @@ predict.MPST <- function(formula, lambda, method, P.func = NULL, data = list(), 
   }
   
   # Extract prediction data
+  if (!("Z.grid" %in% names(data.pred))) {
+    stop("Missing required prediction grid: 'Z.grid'.")
+  }
   Z.grid <- data.pred$Z.grid
   mu.grid <- data.pred$mu.grid
-  
-  if (is.null(Z.grid)) stop("Missing required prediction grid: 'Z.grid'.")
   
   # Extract model data
   mpst.p <- data

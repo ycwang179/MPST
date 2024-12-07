@@ -23,9 +23,7 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
   if (!mview %in% c("contour", "surface", "slice")) {
     stop("Invalid mview. Must be one of 'contour', 'surface', or 'slice'.")
   }
-  
-  #fig <- NULL
-  
+   
   nd <- ncol(x$Tr)
   if ((mview == "contour") && (nd == 3)) {
     fig <- plot.contour.mpst(x, Zgrid = Zgrid, ...)
@@ -70,21 +68,21 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
       z2.grid <- seq(limits[1, 2], limits[2, 2], length.out = n2)
       z3.grid <- seq(limits[1, 3], limits[2, 3], length.out = n3)
       Zgrid <- as.matrix(expand.grid(z1.grid, z2.grid, z3.grid))
-      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, v2 = z3.grid))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, w1 = z3.grid))
     } else {
       stop("Unsupported dimensionality for grid initialization.")
     }
   } else {
     # Use the existing Zgrid to extract coordinates
     if (nd == 3) {
-      u1 <- sort(unique(Zgrid[, 1]))
-      v1 <- sort(unique(Zgrid[, 2]))
-      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1))
+      z1.grid <- sort(unique(Zgrid[, 1]))
+      z2.grid <- sort(unique(Zgrid[, 2]))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid))
     } else if (nd == 4) {
-      u1 <- sort(unique(Zgrid[, 1]))
-      v1 <- sort(unique(Zgrid[, 2]))
-      v2 <- sort(unique(Zgrid[, 3]))
-      return(list(Zgrid = Zgrid, u1 = u1, v1 = v1, v2 = v2))
+      z1.grid <- sort(unique(Zgrid[, 1]))
+      z2.grid <- sort(unique(Zgrid[, 2]))
+      z3.grid <- sort(unique(Zgrid[, 3]))
+      return(list(Zgrid = Zgrid, u1 = z1.grid, v1 = z2.grid, w1 = z3.grid))
     } else {
       stop("Unsupported dimensionality for grid initialization.")
     }
@@ -193,7 +191,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   Zgrid <- grid_info$Zgrid
   z1.grid <- grid_info$u1
   z2.grid <- grid_info$v1
-  z3.grid <- grid_info$v2
+  z3.grid <- grid_info$w1
   
   if (anyNA(Zgrid)) {
     stop("Generated Zgrid contains NA values. Please check input data.")
@@ -220,7 +218,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   # Define the function to select a color palette
   select_color_palette <- function(color_choice) {
     base_palette <- switch(color_choice,
-                           "1" = gray.colors(64, start = 0.2, end = 0.9),
+                           "1" = gray.colors(64),
                            "2" = rainbow(64),
                            "3" = heat.colors(64),
                            "4" = terrain.colors(64),
@@ -230,7 +228,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   }
   
   # Define the function to plot slices
-  plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 4) {
+  plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 2) {
     col_palette <- select_color_palette(color)
     par(mfrow = c(1, 3))
     

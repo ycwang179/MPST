@@ -2,12 +2,14 @@
 #'
 #' @description Fit a Multivariate Penalized Spline over Triangulation (MPST) model using 
 #' global ("G") or distributed ("D") learning methods. The function supports data provided 
-#' either as a formula or through individual arguments.
+#' either as a formula or through individual arguments. Default values are used if certain 
+#' parameters are not specified.
 #'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
-#'   2D or 3D space (\code{k = 2} or \code{k = 3}).
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
 #' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
 #'   in the triangulation.
 #' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
@@ -16,11 +18,11 @@
 #' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda The tuning parameter -- default is \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
-#' @param method A character string specifying the learning method:
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning (default: \code{2}):
+#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
 #' - `1`: Use `mclapply`.
 #' - `2`: Use `parLapply`.
 #' @param data (Optional) A list containing the following components:
@@ -41,23 +43,24 @@
 #' \dontrun{
 #' # Example using a data list
 #' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
-#' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list, lambda = 10^seq(-6, 6, by = 0.5), method = "G")
-#' 
-#' # Example using individual arguments
-#' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), Y = y, Z = Z, V = V, Tr = Tr, lambda = 10^seq(-6, 6, by = 0.5), method = "G")
+#' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
 #' 
 #' # Print model summary
 #' print(model)
 #' }
 #' @export
-fit.MPST <- function(formula, lambda, method, P.func = NULL, data = list()) {
-  # Validate 'method'
-  if (missing(method) || !(method %in% c("G", "D"))) {
+fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
+  # Set default for 'method'
+  if (is.null(method)) {
+    method <- "G" # Default to Global learning
+  } else if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Validate 'lambda'
-  if (missing(lambda) || !is.numeric(lambda)) {
+  # Set default for 'lambda'
+  if (is.null(lambda)) {
+    lambda <- 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  } else if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
@@ -117,7 +120,7 @@ fit.MPST <- function(formula, lambda, method, P.func = NULL, data = list()) {
 #' @param P.func Parallelization method for distributed learning.
 #' @return A list containing model fit components.
 #' @keywords internal
-fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl = 1, method, P.func) {
+fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
   
   this.call <- match.call()
   
@@ -302,7 +305,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0
 #' @param lambda The tuning parameter.
 #' @return A list containing global model fit components.
 #' @keywords internal
-fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5)) {
+fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda) {
   
   # 1. Preparation: basis generation, smoothness conditions, and penalty function
   n <- length(Y)
@@ -425,7 +428,7 @@ fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by =
 #' @param load.all Preloaded data for distributed processing.
 #' @return A list containing distributed model fit components.
 #' @keywords internal                          
-fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda = 10^seq(-6, 6, by = 0.5), nl, load.all) {
+fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.all) {
   # ns = parallel::detectCores()
   # TV = as.matrix(tdata(V, Tr)$TV)
   # inVT.list = inVT(V, Tr, Z)
