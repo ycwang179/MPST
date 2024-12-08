@@ -17,8 +17,6 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
 #'
 #' @description Prints the summary of an MPST model.
 #' @param x An MPST object.
-#' @param digits Number of digits to round numeric outputs. Default is 4.
-#' @param max Number of rows to display for long outputs. Default is 10.
 #' @return No return value; prints to the console.
 #' @export
 print.MPST <- function(x, ...) {
@@ -42,11 +40,11 @@ print.MPST <- function(x, ...) {
       }
     }
     cat("\nd:", x$d, "\n")
-    cat("\nMSE:", round(x$mse, digits), "\n")  
+    cat("\nMSE:", round(x$mse, 4), "\n")  
     cat("\ngamma_hat:\n")
-    print(head(x$gamma.hat, max))
+    print(head(x$gamma.hat, 10))
     cat("\ny_hat:\n")
-    print(head(x$Y.hat, max))
+    print(head(x$Y.hat, 10))
     
   } else if (x$func == "predict") {
     # handle predict Situations
@@ -61,21 +59,21 @@ print.MPST <- function(x, ...) {
       }
     }
     cat("\nd:", x$d, "\n")
-    cat("\nMISE:", round(x$mise, digits), "\n")  
+    cat("\nMISE:", round(x$mise, 4), "\n")  
     cat("\ny_predict:\n")
-    print(head(x$Ypred, max))
+    print(head(x$Ypred, 10))
     
   } else if (x$func == "basis") {
     # handle basis Situations
     if (x$method == "G") {
       cat("\nMethod: Global\n")
       cat("\nbasis:\n")
-      print(head(x$B, max))  
+      print(head(x$B, 10))  
     } else if (x$method == "D") {
       cat("\nMethod: Distributed Learning\n")
       for (item in 1:length(x$basis.all)) {
         cat("\nbasis for triangle", item, ":\n")
-        print(head(x$basis.all[[item]]$B.star, max))  
+        print(head(x$basis.all[[item]]$B.star, 10))  
       }
     }
   }
