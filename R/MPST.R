@@ -21,7 +21,7 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
 #' @param max Number of rows to display for long outputs. Default is 10.
 #' @return No return value; prints to the console.
 #' @export
-print.MPST <- function(x, digits = 4, max = 10) {
+print.MPST <- function(x, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
   }
