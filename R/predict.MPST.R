@@ -54,6 +54,11 @@
 #' }
 #' @export
 predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
+  # Check if the parameter formula is provided
+  if (missing(formula)) {
+    stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
+  }
+  
   # Set default for 'method'
   if (is.null(method)) {
     method <- "G" # Default to Global learning
