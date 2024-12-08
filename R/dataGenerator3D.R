@@ -1,15 +1,38 @@
-#' Data Generator for Numerical Example
+#' Data Generator for Numerical Examples in 3D
 #'
-#' @param V The \code{N} by three matrix of vertices of a tetrahedron, where \code{N} is the number of vertices. Each row is the coordinates for a vertex.
-#' \cr
-#' @param Tr The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
-#' \cr
-#' @param Z The coordinates of dimension \code{n} by three. Each row is the 3D coordinates of a point.
-#' \cr
-#' @return A data frame.
+#' This function generates data for numerical examples based on given 3D coordinates and a tetrahedral partition.
+#'
+#' @param Z A matrix of dimension \code{n} by three, where \code{n} is the number of points. Each row represents the 3D coordinates of a point.
+#' @param V A matrix of dimension \code{N} by three, where \code{N} is the number of vertices in the tetrahedral mesh. Each row represents the 3D coordinates of a vertex.
+#' @param Tr A matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons. Each row contains the indices of four vertices in \code{V} that form a tetrahedron.
+#' @param func An integer specifying the function used to calculate the mean values (\code{mu}) at the 3D points. Supported values are:
+#'   \itemize{
+#'     \item \code{1}: \code{(a * b + d^2) * (2 - z3^2)}
+#'     \item \code{2}: \code{(a * b + d^2) * sin(pi * z3)}
+#'     \item \code{3}: \code{(a * b + d^2) * cos(pi * z3)}
+#'     \item \code{4}: \code{(a * b + d^2) * exp(-8 * z3^2)}
+#'     \item Any other value defaults to \code{(a * b + d^2)}.
+#'   }
+#' @param sigma The standard deviation of the random noise added to the data. Default is \code{0.1}.
+#' @param seed A seed for the random number generator to ensure reproducibility. Default is \code{2024}.
+#'
+#' @return A list containing the following elements:
+#'   \item{Y}{A vector of generated response values, including noise.}
+#'   \item{mu}{A vector of true mean values (\code{mu}) at the 3D points.}
+#'   \item{Z}{The input matrix of 3D coordinates.}
+#'   \item{ind.inside}{A binary vector indicating whether each point is inside (\code{1}) or outside (\code{0}) the tetrahedral partition.}
+#'   \item{ind.T}{A vector containing the indices of the tetrahedron each point belongs to (if inside).}
+#'
+#' @examples
+#' # Example with randomly generated 3D points and a simple tetrahedral partition
+#' Z <- matrix(runif(300, -1, 1), ncol = 3)
+#' V <- matrix(c(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1), ncol = 3, byrow = TRUE)
+#' Tr <- matrix(c(1, 2, 3, 4), ncol = 4, byrow = TRUE)
+#' result <- dataGenerator3D(Z, V, Tr, func = 1, sigma = 0.5, seed = 42)
 #'
 #' @export
-dataGenerator3D <- function(Z, V, Tr, func = 1, sigma = 1, seed = 2023) {
+
+dataGenerator3D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024) {
   set.seed(seed)
   
   # location information
