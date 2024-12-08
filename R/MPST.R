@@ -1,27 +1,11 @@
 # MPST.R - Core Functions and Generic Definitions
 
-# Define the fit generic function
-#' Fit a Model
-#'
-#' @description A generic function for fitting models.
-#' @param object An object to be fitted.
-#' @param ... Additional arguments passed to specific methods.
-#' @return Depends on the specific method used.
 #' @export
-#fit <- function(object, ...) {
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   UseMethod("fit")
 }
 
-# Define the predict generic function
-#' Predict from a Model
-#'
-#' @description A generic function for making predictions from models.
-#' @param object A fitted model object.
-#' @param ... Additional arguments passed to specific methods.
-#' @return Depends on the specific method used.
 #' @export
-#predict <- function(object, ...) {
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
 }
