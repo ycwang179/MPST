@@ -8,7 +8,10 @@
 #' @param ... Additional arguments passed to specific methods.
 #' @return Depends on the specific method used.
 #' @export
-fit <- function(object, ...) {
+#fit <- function(object, ...) {
+fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), ...) {
+  UseMethod("fit")
+}
   UseMethod("fit")
 }
 
