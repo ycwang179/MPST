@@ -1,29 +1,30 @@
-#' Decide whether a point is inside of a given triangulation.
+#' Determine whether points are inside a given triangulation.
 #'
-#' This function is used to decided whether a point is inside of a given triangulation.
-#' 
+#' This function determines whether points are inside a given 2D or 3D triangulation.
+#'
 #' @importFrom Rcpp evalCpp
-#' 
-#' @param V The \code{nV} by two matrix of vertices of a triangulation, where \code{nV} is the number of vertices. Each row is the coordinates for a vertex.
-#' \cr
-#' @param Tr The triangulation matrix of dimention \code{nT} by three, where \code{nT} is the number of triangles in the triangulation. Each row is the indices of vertices in \code{V}.
-#' \cr
-#' @param Z The coordinates of 2D or 3D points. Each row is the 2D or 3D coordinates of a point.
-#' \cr
-#' @return A list of vectors, including:
-#' \item{ind.inside}{A vector of dimension \code{n} by one matrix that lists whether the points are inside of a given triangulation. 0 -- represents outside the triangulation, while 1 -- represents inside the triangulation.}
-#' \item{ind.T}{A vector contains the indexes of which triangle the points falls in.}
-#' \item{lam}{A matrix contains the barycentric coordinates for each points.}
-#' 
-#' @details This R program is modified based on the Matlab program written by Ming-Jun Lai from the University of Georgia and Li Wang from the Iowa State University.
+#'
+#' @param V A \code{nV} by 2 or 3 matrix of vertices of the triangulation, where \code{nV} is the number of vertices. Each row contains the coordinates of a vertex.
+#' @param Tr A triangulation matrix of dimension \code{nT} by 3 or 4, where \code{nT} is the number of triangles (for 2D) or tetrahedra (for 3D). Each row contains the indices of vertices in \code{V}.
+#' @param Z A matrix of 2D or 3D points to check. Each row contains the coordinates of a point.
+#'
+#' @return A list containing:
+#' \item{ind.inside}{A vector indicating whether each point is inside the triangulation. 0 represents outside, and 1 represents inside.}
+#' \item{ind.T}{A vector indicating the index of the triangle (or tetrahedron) that each point falls in. NA if the point is outside.}
+#' \item{lam}{A matrix containing the barycentric coordinates of each point. NA for points outside the triangulation.}
+#'
+#' @details This R function is adapted from the MATLAB program written by Ming-Jun Lai (University of Georgia) and Li Wang (Iowa State University).
 #'
 #' @examples
-#' xx=c(-0.25,0.75,0.25,1.25)
-#' yy=c(-0.25,0.25,0.75,1.25)
-#' V=rbind(c(0,0),c(1,0),c(1,1),c(0,1))
-#' Tr=rbind(c(1,2,3),c(1,3,4))
-#' inVT(V,Tr,xx,yy)
-#' 
+#' # Example: Checking if points are inside a 2D triangulation
+#' xx <- c(-0.25, 0.75, 0.25, 1.25)
+#' yy <- c(-0.25, 0.25, 0.75, 1.25)
+#' V <- rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1))
+#' Tr <- rbind(c(1, 2, 3), c(1, 3, 4))
+#' Z <- cbind(xx, yy)
+#' result <- inVT(V, Tr, Z)
+#' print(result)
+#'
 #' @export
 
 inVT <- function(V, Tr, Z){
