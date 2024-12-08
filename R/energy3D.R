@@ -19,7 +19,7 @@
 #' c(0, 0, 1), c(0, 1, 1), c(1, 0, 1), c(1, 1, 1)), ncol = 3)
 #' Tr <- matrix(rbind(c(5, 1, 2, 3), c(6, 5, 2, 3), c(6, 7, 5, 3),
 #' c(6, 4, 7, 3), c(6, 2, 4, 3), c(6, 8, 7, 4)), ncol = 4)
-#' P <- energyM3D(V, Tr, d)
+#' P <- energy3D(V, Tr, d)
 #' @export
 #'
 energy3D <- function (V, Tr, d) {
