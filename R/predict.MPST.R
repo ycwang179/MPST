@@ -58,28 +58,23 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   if (missing(formula)) {
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
-  
-  # Set default for 'method'
-  if (is.null(method)) {
-    method <- "G" # Default to Global learning
-  } else if (!(method %in% c("G", "D"))) {
-    stop("Invalid 'method'. Please specify 'G' for Global or 'D' for Distributed learning.")
+
+  # Set default parameters and check validity
+  method <- method %||% "G"  # Default to Global Learning
+  if (!(method %in% c("G", "D"))) {
+    stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Set default for 'lambda'
-  if (is.null(lambda)) {
-    lambda <- 10^seq(-6, 6, by = 0.5) # Default range for lambda
-  } else if (!is.numeric(lambda)) {
+  lambda <- lambda %||% 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
-  # Set default for 'P.func'
-  if (is.null(P.func)) {
-    P.func <- 2 # Default to parLapply
-  } else if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
+  P.func <- P.func %||% 2 # Default to parLapply
+  if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
-  
+    
   # Check required data components
   required_components <- c("Y", "Z", "V", "Tr")
   if (!all(required_components %in% names(data))) {
