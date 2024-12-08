@@ -22,7 +22,7 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' @return Depends on the specific method used.
 #' @export
 #predict <- function(object, ...) {
-predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
+predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
 }
 
