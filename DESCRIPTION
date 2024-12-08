@@ -26,7 +26,10 @@ Depends:
     magrittr,
     plotly,
     fields,
-    manipulate
+    manipulate,
+    stats, 
+    graphics, 
+    utils
 Encoding: UTF-8
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
