@@ -53,6 +53,7 @@
 #' print(predictions$mise)
 #' }
 #' @export
+#' @method predict MPST
 predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   # Check if the parameter formula is provided
   if (missing(formula)) {
