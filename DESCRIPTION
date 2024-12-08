@@ -1,22 +1,24 @@
 Package: MPST
 Type: Package
-Title: Multivariate Penalized Spline over Triangulation
+Title: Multivariate Penalized Spline Over Triangulation
 Version: 1.0.0
-Author@R: c(person("Lily", "Wang", role = "aut", email = "lwang41@gmu.edu"),
-          person("Guannan", "Wang", role = c("aut", "trl", "cre"), email = "gwang01@wm.edu"),
-          person("Myungjin", "Kim", role = "trl"),
-          person("Xinyi", "Li", role = "trl"),
-          person("Jingru", "Mu", role = "trl"),
-          person("Jue", "Wang", role = "trl"),
-	  person("Yuchun", "Wang", role = "aut","trl"),
-          person("Yueying", "Wang", role = "trl"),
-          person("Shan", "Yu", role = "trl"))
-Author: GuanNan Wang [trl, cre]
-Maintainer: GuanNan Wang <gwang01@wm.edu>
-Description: Spline smoothing via multivariate spline over triangulation.
-License: GPL (>= 2)
-Imports: Rcpp (>= 1.0.0)
-Depends:
+Author@R: c(
+  person("Lily", "Wang", role = "aut", email = "lwang41@gmu.edu"),
+  person("Guannan", "Wang", role = c("aut", "trl", "cre"), email = "gwang01@wm.edu"),
+  person("Myungjin", "Kim", role = "trl"),
+  person("Xinyi", "Li", role = "trl"),
+  person("Jingru", "Mu", role = "trl"),
+  person("Jue", "Wang", role = "trl"),
+  person("Yuchun", "Wang", role = c("aut", "trl", "cre"), email = "ywang68@gmu.edu"),
+  person("Yueying", "Wang", role = "trl"),
+  person("Shan", "Yu", role = "trl")
+)
+Maintainer: Guannan Wang <gwang01@wm.edu>, Yuchun Wang <ywang68@gmu.edu>
+Description: Provides spline smoothing methods using multivariate spline functions over triangulation. 
+    The package supports both global and distributed learning for efficient computation in large-scale datasets.
+License: GPL-3
+Imports: 
+    Rcpp (>= 1.0.0),
     Matrix,
     MatrixExtra,
     pracma,
