@@ -55,25 +55,23 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("'formula' is required. Please specify a formula (e.g., y ~ x1 + x2).")
   }
   
-  # Set default for 'method'
-  method <- method %||% "G" 
+  # Set default parameters and check validity
+  method <- method %||% "G"  # Default to Global Learning
   if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
   }
   
-  # Set default for 'lambda'
-  lambda <- lambda %||% 10^seq(-6, 6, by = 0.5)
+  lambda <- lambda %||% 10^seq(-6, 6, by = 0.5) # Default range for lambda
   if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
-  # Set default for 'P.func'
-  P.func <- P.func %||% 2
+  P.func <- P.func %||% 2 # Default to parLapply
   if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
   
-  # Check required data components
+  # Check if the data contains the required components
   required_components <- c("Y", "Z", "V", "Tr")
   missing_components <- setdiff(required_components, names(data))
   if (length(missing_components) > 0) {
