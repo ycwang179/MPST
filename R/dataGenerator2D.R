@@ -1,6 +1,7 @@
 #' Generate testing dataset for bivariate spline smoothing.
 #'
 #' @importFrom stats rnorm
+#' @importFrom mgcv s
 #'
 #' This function generate the testing dataset for bivariate spline smoothing.
 #' 
