@@ -13,6 +13,8 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
 # Define the print.MPST function
 #' Print Method for MPST Models
 #'
+#' @importFrom utils head
+#'
 #' @description Prints the summary of an MPST model.
 #' @param x An MPST object.
 #' @param digits Number of digits to round numeric outputs. Default is 4.
