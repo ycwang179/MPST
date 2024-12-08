@@ -12,8 +12,6 @@
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), ...) {
   UseMethod("fit")
 }
-  UseMethod("fit")
-}
 
 # Define the predict generic function
 #' Predict from a Model
@@ -23,8 +21,8 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' @param ... Additional arguments passed to specific methods.
 #' @return Depends on the specific method used.
 #' @export
-predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list(), ...) {
 #predict <- function(object, ...) {
+predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list(), ...) {
   UseMethod("predict")
 }
 
