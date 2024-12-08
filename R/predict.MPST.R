@@ -55,6 +55,9 @@
 #' @export
 #' @method predict MPST
 predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
+
+  `%||%` <- function(a, b) if (!is.null(a)) a else b
+    
   # Check if the parameter formula is provided
   if (missing(formula)) {
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
