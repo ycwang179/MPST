@@ -4,7 +4,7 @@
 \alias{print.MPST}
 \title{Print Method for MPST Models}
 \usage{
-\method{print}{MPST}(x, digits = 4, max = 10)
+\method{print}{MPST}(x, ...)
 }
 \arguments{
 \item{x}{An MPST object.}

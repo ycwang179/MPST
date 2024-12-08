@@ -31,7 +31,7 @@ A list of vectors and matrice, including:
 \item{ind.T}{A vector contains the indexes of which triangle the points falls in.}
 }
 \description{
-This function generate the testing dataset for bivariate spline smoothing.
+Generate testing dataset for bivariate spline smoothing.
 }
 \details{
 This R program is modified based on Lai and Wang (2013).
