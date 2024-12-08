@@ -1,10 +1,35 @@
 # MPST.R - Core Functions and Generic Definitions
 
+#' Generic function for model fitting
+#'
+#' The `fit` function is a generic function used to fit a model based on a specified formula, penalty parameters, and method.
+#' Specific methods like \code{fit.MPST()} provide implementations for specific model types.
+#'
+#' @param formula A symbolic description of the model to be fitted.
+#' @param lambda A regularization parameter or a list of parameters. Default is \code{NULL}.
+#' @param method The fitting method to be used. Default is \code{NULL}.
+#' @param P.func An optional penalty function. Default is \code{NULL}.
+#' @param data A list or data frame containing the data for the model fitting.
+#' @return A fitted model object.
+#' @seealso \code{\link{fit.MPST}}
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   UseMethod("fit")
 }
 
+#' Generic function for model prediction
+#'
+#' The `predict` function is a generic function used to generate predictions from a fitted model object.
+#' Specific methods like \code{predict.MPST()} provide implementations for specific model types.
+#'
+#' @param formula A symbolic description of the model used for predictions.
+#' @param lambda A regularization parameter or a list of parameters, matching those used in fitting. Default is \code{NULL}.
+#' @param method The prediction method to be used. Default is \code{NULL}.
+#' @param P.func An optional penalty function, matching the one used in fitting. Default is \code{NULL}.
+#' @param data A list or data frame containing the data used for fitting the model.
+#' @param data.pred A list or data frame containing the new data for prediction.
+#' @return A vector, matrix, or data frame of predicted values.
+#' @seealso \code{\link{predict.MPST}}
 #' @export
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
