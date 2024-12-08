@@ -29,7 +29,8 @@ Depends:
     manipulate,
     stats, 
     graphics, 
-    utils
+    utils,
+    mgcv
 Encoding: UTF-8
 LinkingTo: Rcpp
 RoxygenNote: 7.2.3
