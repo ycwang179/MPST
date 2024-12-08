@@ -1,33 +1,33 @@
-#' Generate testing dataset for bivariate spline smoothing.
+#' Generate Testing Dataset for Bivariate Spline Smoothing
 #'
-#' @importFrom stats rnorm
-#' @importFrom mgcv s
+#' This function generates testing datasets for bivariate spline smoothing based on specified test functions and input coordinates.
 #'
-#' This function generate the testing dataset for bivariate spline smoothing.
-#' 
-#' @param Z The cooridinates of dimension \code{n} by two. Each row is the coordinates of a point.
-#' \cr
-#' @param V The \code{nV} by two matrix of vertices of a triangulation, where \code{nV} is the number of vertices. Each row is the coordinates for a vertex.
-#' \cr
-#' @param Tr The triangulation matrix of dimention \code{nT} by three, where \code{nT} is the number of triangles in the triangulation. Each row is the indices of vertices in \code{V}.
-#' \cr
-#' @param func The choice of test function -- default is 1. Possible choices include 1, 2, 3, 4, 5, 6, 7, 8.
-#' \cr
-#' @param sigma The standard deviation of the white noise --  default is 0.1.
-#' \cr 
-#' @return A list of vectors and matrice, including:
-#' \item{Y}{The response variable.}
-#' \item{mu}{The mean function.}
-#' \item{Z}{The coordinates.}
-#' \item{ind.inside}{A vector contains the indicators whether the point is inside the given triangulation.}
-#' \item{ind.T}{A vector contains the indexes of which triangle the points falls in.}
+#' @param Z A matrix of dimension \code{n} by two, where \code{n} is the number of points. Each row represents the 2D coordinates of a point.
+#' @param V A matrix of dimension \code{nV} by two, where \code{nV} is the number of vertices in the triangulation. Each row represents the 2D coordinates of a vertex.
+#' @param Tr A matrix of dimension \code{nT} by three, where \code{nT} is the number of triangles in the triangulation. Each row contains the indices of three vertices in \code{V} that form a triangle.
+#' @param func An integer specifying the function used to calculate the mean values (\code{mu}) at the 2D points. Supported values range from \code{1} to \code{15}, with different mathematical forms for each choice. Default is \code{1}.
+#' @param sigma The standard deviation of the Gaussian noise added to the response variable. Default is \code{0.1}.
+#' @param seed A seed for the random number generator to ensure reproducibility. Default is \code{2024}.
 #'
-#' @details This R program is modified based on Lai and Wang (2013).
-#' 
-#' @keywords internal
+#' @return A list containing the following elements:
+#'   \item{Y}{A vector of generated response values, including noise.}
+#'   \item{mu}{A vector of true mean values (\code{mu}) at the 2D points.}
+#'   \item{Z}{The input matrix of 2D coordinates.}
+#'   \item{ind.inside}{A binary vector indicating whether each point is inside (\code{1}) or outside (\code{0}) the triangulation.}
+#'   \item{ind.T}{A vector containing the indices of the triangle each point belongs to (if inside).}
+#'
+#' @details This R program is based on methods described in Lai and Wang (2013). It supports up to 15 test functions, each providing different mathematical forms for the mean function (\code{mu}).
+#'
+#' @examples
+#' # Example with randomly generated 2D points and a simple triangulation
+#' Z <- matrix(runif(200, -1, 1), ncol = 2)
+#' V <- matrix(c(0, 0, 1, 0, 0, 1), ncol = 2, byrow = TRUE)
+#' Tr <- matrix(c(1, 2, 3), ncol = 3, byrow = TRUE)
+#' result <- dataGenerator2D(Z, V, Tr, func = 1, sigma = 0.1, seed = 42)
+#'
+#' @export
 
-
-dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
+dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024){
   set.seed(seed)
   cat("(dataGenerator2D) sigma =", sigma, " \n")
   # location information
