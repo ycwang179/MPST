@@ -11,6 +11,12 @@ importFrom(utils, head)
 
 
 # Export all public functions
+export(basis2D.d.R)
+export(basis3D.d.R)
+export(energy3D.R)
+export(smoothness2D.R)
+export(smoothness3D.R)
+export(inVT)
 export(plot.MPST)
 export(fit)
 export(fit.MPST)
