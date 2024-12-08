@@ -2,6 +2,7 @@
 #'
 #' @importFrom plotly plot_ly
 #' @importFrom manipulate manipulate
+#' @importFrom fields image.plot
 #'
 #' @description This function allows plotting different views (contour, surface, or slice) 
 #' for an MPST model fit object.
