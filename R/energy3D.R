@@ -1,27 +1,25 @@
 #' Energy Function for Trivariate Spline over Tetrahedral Partition
 #'
-#' @importFrom pracma cross kron
-#' @importFrom Matrix sparseMatrix
-#' @importFrom pryr mem_used
-#' @param V The \code{N} by three matrix of vertices of a tetrahedron, where \code{N} is the number of vertices. Each row is the coordinates for a vertex.
-#' \cr
-#' @param Th The tetrahedral partition matrix of dimension \code{nT} by four, where \code{nT} is the number of tetrahedrons in the partition. Each row is the indices of vertices in \code{V}.
-#' \cr
-#' @param d The degree of piecewise polynomials -- default is 9, and usually \code{d} is greater than one.
-#' \cr
+#' Computes the energy matrix for a trivariate spline defined over a tetrahedral partition.
+#'
+#' @param V A numeric matrix of dimension \code{N x 3}, where \code{N} is the number of vertices. Each row represents the 3D coordinates of a vertex.
+#' @param Tr A numeric matrix of dimension \code{nT x 4}, where \code{nT} is the number of tetrahedrons in the partition. Each row contains the indices of the four vertices in \code{V} that form a tetrahedron.
+#' @param d An integer specifying the degree of piecewise polynomials (default: \code{9}). It determines the complexity of the spline basis functions. Must be greater than 1.
+#'
 #' @return The energy matrix.
+#'
 #' @details This R program is modified based on the Matlab program written by Ming-Jun Lai from the University of Georgia.
 #'
 #' @examples
-#' # example 1
+#' # Example 1: Computing energy matrix for a simple tetrahedral partition
 #' d <- 4
 #' V <- matrix(rbind(c(0, 0, 0), c(0, 1, 0), c(1, 0, 0), c(1, 1, 0),
-#' c(0, 0, 1), c(0, 1, 1), c(1, 0, 1), c(1, 1, 1)), ncol = 3)
+#'                   c(0, 0, 1), c(0, 1, 1), c(1, 0, 1), c(1, 1, 1)), ncol = 3)
 #' Tr <- matrix(rbind(c(5, 1, 2, 3), c(6, 5, 2, 3), c(6, 7, 5, 3),
-#' c(6, 4, 7, 3), c(6, 2, 4, 3), c(6, 8, 7, 4)), ncol = 4)
+#'                    c(6, 4, 7, 3), c(6, 2, 4, 3), c(6, 8, 7, 4)), ncol = 4)
 #' P <- energy3D(V, Tr, d)
 #' @export
-#'
+
 energy3D <- function (V, Tr, d) {
   n <- nrow(Tr)
   m <- choose((d + 3), 3)
