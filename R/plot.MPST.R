@@ -17,6 +17,7 @@
 #' plot.MPST(model_fit_object, mview = "contour")
 #' }
 #' @export
+#' @method predict MPST
 plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
