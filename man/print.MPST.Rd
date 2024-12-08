@@ -8,10 +8,6 @@
 }
 \arguments{
 \item{x}{An MPST object.}
-
-\item{digits}{Number of digits to round numeric outputs. Default is 4.}
-
-\item{max}{Number of rows to display for long outputs. Default is 10.}
 }
 \value{
 No return value; prints to the console.
