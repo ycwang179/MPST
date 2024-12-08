@@ -23,6 +23,7 @@ Depends:
     parallel,
     MGLM,
     prodlim,
+    magrittr,
     plotly,
     fields,
     manipulate
