@@ -4,7 +4,6 @@
 #'
 #' @importFrom pracma cross kron
 #' @importFrom Matrix sparseMatrix
-#' @importFrom pryr mem_used
 #'
 #' @param V A numeric matrix of dimension \code{N x 3}, where \code{N} is the number of vertices. Each row represents the 3D coordinates of a vertex.
 #' @param Tr A numeric matrix of dimension \code{nT x 4}, where \code{nT} is the number of tetrahedrons in the partition. Each row contains the indices of the four vertices in \code{V} that form a tetrahedron.
