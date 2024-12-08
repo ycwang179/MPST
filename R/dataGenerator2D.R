@@ -1,5 +1,7 @@
 #' Generate testing dataset for bivariate spline smoothing.
 #'
+#' @importFrom stats rnorm
+#'
 #' This function generate the testing dataset for bivariate spline smoothing.
 #' 
 #' @param Z The cooridinates of dimension \code{n} by two. Each row is the coordinates of a point.
