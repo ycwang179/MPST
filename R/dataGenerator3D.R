@@ -13,7 +13,7 @@
 #'     \item \code{4}: \code{(a * b + d^2) * exp(-8 * z3^2)}
 #'     \item Any other value defaults to \code{(a * b + d^2)}.
 #'   }
-#' @param sigma The standard deviation of the random noise added to the data. Default is \code{0.1}.
+#' @param sigma The standard deviation of the Gaussian noise added to the response variable. Default is \code{0.1}.
 #' @param seed A seed for the random number generator to ensure reproducibility. Default is \code{2024}.
 #'
 #' @return A list containing the following elements:
