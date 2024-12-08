@@ -74,11 +74,15 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
-    
-  # Check required data components
+
+  # Check if the data contains the required components
   required_components <- c("Y", "Z", "V", "Tr")
-  if (!all(required_components %in% names(data))) {
-    stop("'data' must contain the following components: 'Y', 'Z', 'V', and 'Tr'.")
+  missing_components <- setdiff(required_components, names(data))
+  if (length(missing_components) > 0) {
+    stop(paste0("'data' must contain the following components: ", 
+                paste(required_components, collapse = ", "), 
+                ". Missing components: ", 
+                paste(missing_components, collapse = ", ")))
   }
   
   # Extract prediction data
