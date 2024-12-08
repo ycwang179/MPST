@@ -5,14 +5,36 @@
 #' The `fit` function is a generic function used to fit a model based on a specified formula, penalty parameters, and method.
 #' Specific methods like \code{fit.MPST()} provide implementations for specific model types.
 #'
-#' @param formula A symbolic description of the model to be fitted.
-#' @param lambda A regularization parameter or a list of parameters. Default is \code{NULL}.
-#' @param method The fitting method to be used. Default is \code{NULL}.
-#' @param P.func An optional penalty function. Default is \code{NULL}.
-#' @param data A list or data frame containing the data for the model fitting.
+#' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
+#'   in the triangulation.
+#' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
+#'   - For 2D: Rows have three indices for triangles.
+#'   - For 3D: Rows have four indices for tetrahedra.
+#' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
+#' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
+#'
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
+#' - `"G"`: Global learning.
+#' - `"D"`: Distributed learning.
+#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
+#' - `1`: Use `mclapply`.
+#' - `2`: Use `parLapply`.
+#' @param data (Optional) A list containing the following components:
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates.
+#' - `V`: Matrix of triangulation vertices.
+#' - `Tr`: Triangulation matrix.
+#'
 #' @return A fitted model object.
 #' @seealso \code{\link{fit.MPST}}
 #' @export
+
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   UseMethod("fit")
 }
@@ -22,15 +44,45 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' The `predict` function is a generic function used to generate predictions from a fitted model object.
 #' Specific methods like \code{predict.MPST()} provide implementations for specific model types.
 #'
-#' @param formula A symbolic description of the model used for predictions.
-#' @param lambda A regularization parameter or a list of parameters, matching those used in fitting. Default is \code{NULL}.
-#' @param method The prediction method to be used. Default is \code{NULL}.
-#' @param P.func An optional penalty function, matching the one used in fitting. Default is \code{NULL}.
-#' @param data A list or data frame containing the data used for fitting the model.
-#' @param data.pred A list or data frame containing the new data for prediction.
-#' @return A vector, matrix, or data frame of predicted values.
+#' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
+#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
+#'   in the triangulation.
+#' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
+#'   - For 2D: Rows have three indices for triangles.
+#'   - For 3D: Rows have four indices for tetrahedra.
+#' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
+#' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
+#'
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
+#' - `"G"`: Global learning.
+#' - `"D"`: Distributed learning.
+#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
+#' - `1`: Use `mclapply`.
+#' - `2`: Use `parLapply`.
+#' @param data (Optional) A list containing the following components:
+#' - `Y`: The response variable observed over the domain.
+#' - `Z`: Matrix of observation coordinates.
+#' - `V`: Matrix of triangulation vertices.
+#' - `Tr`: Triangulation matrix.
+#' 
+#' @param data.pred A list containing prediction-related data:
+#' - `Z.grid`: The prediction grid coordinates (required).
+#' - `mu.grid`: (Optional) True mean values for computing mean integrated squared error (MISE).
+#'
+#' @return An object of class `"MPST"` containing the following components:
+#' - `Ypred`: Predicted values on the specified grid.
+#' - `mise`: Mean integrated squared error (computed if `mu.grid` is provided).
+#' - `method`: Learning method used for prediction.
+#' - `formula`: The formula used for fitting and prediction.
+#' 
 #' @seealso \code{\link{predict.MPST}}
 #' @export
+
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
 }
@@ -44,6 +96,7 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
 #' @param x An MPST object.
 #' @return No return value; prints to the console.
 #' @export
+
 print.MPST <- function(x, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
@@ -116,6 +169,7 @@ print.MPST <- function(x, ...) {
 #'   - `terms`: Parsed formula terms.
 #'   - `response`: Response variable (if present).
 #' @keywords internal
+
 interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.tf <- terms.formula(mpstf, specials = c("m", extra.special)) 
   mpst.terms <- attr(mpst.tf, "term.labels") 
@@ -139,6 +193,7 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param r Smoothness parameter (must be an integer).
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
+
 m <- function(..., V = NULL, Tr = NULL, d, r) {
   # Validate d
   if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
