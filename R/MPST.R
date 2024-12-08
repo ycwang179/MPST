@@ -87,14 +87,36 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
   UseMethod("predict")
 }
 
-# Define the print.MPST function
 #' Print Method for MPST Models
 #'
-#' @importFrom utils head
+#' Prints a summary of an MPST model object to the console, including key attributes and results, based on the function type (\code{"fit"}, \code{"predict"}, or \code{"basis"}).
 #'
-#' @description Prints the summary of an MPST model.
-#' @param x An MPST object.
-#' @return No return value; prints to the console.
+#' @param x An object of class \code{"MPST"}, representing a fitted model, prediction results, or basis functions.
+#'   The object must include the following fields:
+#'   \itemize{
+#'     \item \code{formula}: The formula used in the model.
+#'     \item \code{func}: The function type, one of \code{"fit"}, \code{"predict"}, or \code{"basis"}.
+#'     \item \code{method}: The method type, either \code{"G"} (Global) or \code{"D"} (Distributed Learning).
+#'     \item Additional fields depending on \code{func}, such as \code{gamma.hat}, \code{Y.hat}, \code{mise}, or \code{basis.all}.
+#'   }
+#' @param ... Additional arguments (currently unused).
+#' 
+#' @return Invisibly returns the input \code{x} after printing its summary to the console.
+#' 
+#' @examples
+#' # Example MPST object
+#' x <- list(
+#'   formula = y ~ m(Z, V, Tr, d, r),
+#'   func = "fit",
+#'   method = "G",
+#'   mse = 0.025,
+#'   gamma.hat = runif(10),
+#'   Y.hat = runif(10),
+#'   d = 2
+#' )
+#' class(x) <- "MPST"
+#' print.MPST(x)
+#' 
 #' @export
 
 print.MPST <- function(x, ...) {
