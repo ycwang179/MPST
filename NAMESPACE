@@ -10,6 +10,8 @@ importFrom(stats, rnorm, terms.formula)
 importFrom(utils, head)
 
 # Export all public functions
+export(dataGenerator2D)
+export(dataGenerator3D)
 export(basis2D.d)
 export(basis3D.d)
 export(energy3D)
