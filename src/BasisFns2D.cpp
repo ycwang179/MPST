@@ -1,5 +1,7 @@
 #include <Rcpp.h>
 #include <math.h>
+#include "BasisFns2D.h"
+
 using namespace Rcpp;
 
 // This is a simple example of exporting a C++ function to R. You can
@@ -104,9 +106,7 @@ NumericMatrix mtxrbind(NumericMatrix a, NumericMatrix b) {
   return out;
 }
 
-// [[Rcpp::export]]
-// @keywords internal
-// @noRd
+// Internal function, not exported to R
 NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b) {
   int nca=a.ncol();
   int ncb=b.ncol();
