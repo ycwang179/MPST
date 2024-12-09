@@ -93,7 +93,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
   mpst.p$r <- interp$r
 
   # Fit the model
-  mfit <- fit.mpst(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, mpst.p$method, P.func = mpst.p$P.func)
+  mfit <- fit.mpst.internal(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, mpst.p$method, P.func = mpst.p$P.func)
   
   mfit$P.func <- mpst.p$P.func
   mfit$method <- mpst.p$method
@@ -103,7 +103,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
   return(mfit)
 }
 
-#' @name fit.mpst
+#' @name fit.mpst.internal
 #' @title Internal Function for MPST Model Fitting
 #' @description Internal function to fit a multivariate penalized spline over triangulation 
 #' (MPST) using global or distributed learning.
@@ -123,7 +123,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
 #' @param P.func Parallelization method for distributed learning.
 #' @return A list containing model fit components.
 #' @keywords internal
-fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
+fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
   
   this.call <- match.call()
   
