@@ -32,7 +32,6 @@
 #' - `Tr`: Triangulation matrix.
 #'
 #' @return A fitted model object.
-#' @aliases fit.MPST
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   UseMethod("fit")
@@ -79,7 +78,6 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' - `method`: Learning method used for prediction.
 #' - `formula`: The formula used for fitting and prediction.
 #' 
-#' @aliases predict.MPST
 #' @export
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
