@@ -18,6 +18,7 @@ export(fit.MPST)
 export(predict)
 export(predict.MPST)
 export(plot.MPST)
+export(print.MPST)
 
 importFrom(Matrix, Matrix)
 importFrom(Matrix, det)
