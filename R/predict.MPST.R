@@ -108,7 +108,7 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   mpst.p$r <- interp$r
 
   # Fit and predict
-  mfit <- fit.mpst(mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, method = mpst.p$method, P.func = mpst.p$P.func)
+  mfit <- fit.mpst.internal(mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, method = mpst.p$method, P.func = mpst.p$P.func)
   mpred <- pred.mpst(mfit, Z.grid)
   
   # Compute MISE if 'mu.grid' is provided
