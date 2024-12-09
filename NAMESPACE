@@ -1,4 +1,5 @@
 useDynLib(MPST, .registration=TRUE)
+exportPattern("^[[:alpha:]]+")
 
 S3method(fit,MPST)
 S3method(plot,MPST)
