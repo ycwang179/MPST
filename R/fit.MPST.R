@@ -39,11 +39,6 @@
 #' - `method`: The learning method used ("G" or "D").
 #' - `formula`: The formula provided during fitting.
 #'
-#' @examples
-#' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
-#' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
-#' print(model)
-#'
 #' @export
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
