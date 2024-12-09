@@ -51,9 +51,3 @@ global ("G") or distributed ("D") learning methods. The function supports data p
 either as a formula or through individual arguments. Default values are used if certain 
 parameters are not specified.
 }
-\examples{
-data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
-model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
-print(model)
-
-}
