@@ -105,6 +105,7 @@ NumericMatrix mtxrbind(NumericMatrix a, NumericMatrix b) {
 }
 
 // [[Rcpp::export]]
+/** @noRd */
 NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b) {
   int nca=a.ncol();
   int ncb=b.ncol();
