@@ -11,8 +11,8 @@ Author@R: c(
     person("Jue", "Wang", role = "trl"),
     person("Yuchun", "Wang", role = c("aut", "trl", "cre"), email = "ywang68@gmu.edu"),
     person("Yueying", "Wang", role = "trl"),
-    person("Shan", "Yu", role = "trl")
-)
+    person("Shan", "Yu", role = "trl"))
+Author: GuanNan Wang [trl, cre]
 Maintainer: Guannan Wang <gwang01@wm.edu>
 Description: Provides spline smoothing methods using multivariate spline functions 
     over triangulation. The package supports both global and distributed learning 
