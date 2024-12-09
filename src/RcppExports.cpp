@@ -63,7 +63,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // mtxcbind
-/**  * Combine matrices column-wise  *   * This function combines two numeric matrices column-wise.  *   * @param a A numeric matrix.  * @param b A numeric matrix.  * @return A numeric matrix combining columns of `a` and `b`.  */ NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b);
+NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b);
 RcppExport SEXP _MPST_mtxcbind(SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
