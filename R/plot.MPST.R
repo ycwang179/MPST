@@ -186,6 +186,10 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
 #' @return A manipulate object that provides interactive slices through the 3D array.
 #' @keywords internal
 plot.slice.mpst <- function(mfit, Zgrid = NULL) {
+  if (!requireNamespace("manipulate", quietly = TRUE)) {
+    stop("The 'manipulate' package is required for interactive plots.")
+  }
+
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
   }
@@ -272,9 +276,9 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
   # Use manipulate to create an interactive interface
   manipulate::manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
-    axial_slice = slider(1, max(1, dim.size[3]), initial = max(1, dim.size[3] %/% 2), label = "Axial Slice"),
-    coronal_slice = slider(1, max(1, dim.size[2]), initial = max(1, dim.size[2] %/% 2), label = "Coronal Slice"),
-    sagittal_slice = slider(1, max(1, dim.size[1]), initial = max(1, dim.size[1] %/% 2), label = "Sagittal Slice"),
+    axial_slice = manipulate::slider(1, max(1, dim.size[3]), initial = max(1, dim.size[3] %/% 2), label = "Axial Slice"),
+    coronal_slice = manipulate::slider(1, max(1, dim.size[2]), initial = max(1, dim.size[2] %/% 2), label = "Coronal Slice"),
+    sagittal_slice = manipulate::slider(1, max(1, dim.size[1]), initial = max(1, dim.size[1] %/% 2), label = "Sagittal Slice"),
     color = slider(1, 6, initial = 1, label = "Color Table (1-Gray, 2-Rainbow, 3-Heat, 4-Terrain, 5-Topo, 6-Cyan Magenta)")
   )
   invisible(NULL)
