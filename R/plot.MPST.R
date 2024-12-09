@@ -3,7 +3,6 @@
 #' @importFrom plotly plot_ly
 #' @importFrom manipulate manipulate
 #' @importFrom fields image.plot
-#' @importFrom magrittr %>%
 #'
 #' @description This function allows plotting different views (contour, surface, or slice) 
 #' for an MPST model fit object.
@@ -160,22 +159,21 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
     y = v1, 
     z = t(z1),
     type = "surface"
-  ) magrittr::%>% 
-    add_trace(
-      data = df1,
-      x = ~x, y = ~y, z = ~z,
-      mode = "markers", type = "scatter3d",
-      marker = list(size = 1, color = "black")
-    ) magrittr::%>%
-    layout(
-      scene = list(
-        camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
-        xaxis = list(title = "Z1"),
-        yaxis = list(title = "Z2"),
-        zaxis = list(title = "Value")
-      )
-    )
-  
+  )
+  fig <- add_trace(fig, 
+                   data = df1,
+                   x = ~x, y = ~y, z = ~z,
+                   mode = "markers", type = "scatter3d",
+                   marker = list(size = 1, color = "black")
+                  ) 
+  fig <- layout(fig,
+                scene = list(
+                  camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
+                  xaxis = list(title = "Z1"),
+                  yaxis = list(title = "Z2"),
+                  zaxis = list(title = "Value")
+                )
+               )
   return(fig)
 }
 
