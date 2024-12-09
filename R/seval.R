@@ -1,12 +1,12 @@
 seval <- function(V, Tr, c, sz, IndP, cnt, Lam){
   k <- dim(Tr)[1]
-  Z <- rep(0,sz)
-  m <- length(c)/k
+  Z <- rep(0, sz)
+  m <- length(c)/ k
   d <- degree(m)
-  Ind1 <- matrix(0,nr=1/6*d*(d+1)*(d+2),nc=1)
+  Ind1 <- matrix(0, nrow = 1 / 6 * d * (d + 1) * (d + 2), ncol = 1)
   Ind2 <- Ind1
   Ind3 <- Ind1
-  cnt1 <- matrix(0,nr=d+1,nc=1)
+  cnt1 <- matrix(0, nrow = d + 1, ncol = 1)
   for (i in 1:d){
     cnt1[i+1] <- cnt1[i]+(d-i+1)*(d-i+2)/2
     IJK <- indices(d-i+1)
@@ -21,13 +21,13 @@ seval <- function(V, Tr, c, sz, IndP, cnt, Lam){
     Ind2[(cnt1[i]+1):cnt1[i+1]] <- locate(I1,J1+1,K1,I,J,K)
     Ind3[(cnt1[i]+1):cnt1[i+1]] <- locate(I1,J1,K1+1,I,J,K)
   }
-  C <- matrix(c,nr=m,nc=k)
+  C <- matrix(c, nrow = m, ncol = k)
   cnt <- as.matrix(cnt)
-  Lam <- matrix(Lam,nc=3)
+  Lam <- matrix(Lam, ncol = 3)
   B <- apply(Lam,2,function(X){X=as.matrix(X); HQblkdiag(X,cnt)})
-  B1 <- matrix(B[,1],nr=sz)
-  B2 <- matrix(B[,2],nr=sz)
-  B3 <- matrix(B[,3],nr=sz)
+  B1 <- matrix(B[,1], nrow =sz)
+  B2 <- matrix(B[,2], nrow =sz)
+  B3 <- matrix(B[,3], nrow =sz)
   C <- C[Ind1[(cnt1[1]+1):cnt1[1+1]],]%*%t(B1)+
     C[Ind2[(cnt1[1]+1):cnt1[1+1]],]%*%t(B2)+
     C[Ind3[(cnt1[1]+1):cnt1[1+1]],]%*%t(B3)
