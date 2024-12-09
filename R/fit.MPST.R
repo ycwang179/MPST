@@ -345,7 +345,7 @@ fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda) {
   D <- crossprod(t(crossprod(Q2, as.matrix(K))), Q2)
   D <- as.matrix(D)
   
-  flag <- (rankMatrix(WW) < nq)
+  flag <- (Matrix::rankMatrix(WW) < nq)
   if(!flag){
     Ainv <- chol(WW, pivot = TRUE)
     A <- solve(t(Ainv))
@@ -492,7 +492,7 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   D <- crossprod(t(crossprod(Q2, as.matrix(K))), Q2)
   D <- as.matrix(D)
   
-  flag <- (rankMatrix(WW) < nq.all)
+  flag <- (Matrix::rankMatrix(WW) < nq.all)
   if(!flag){
     Ainv <- chol(WW, pivot = TRUE)
     A <- solve(t(Ainv))
