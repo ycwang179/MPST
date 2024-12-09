@@ -72,8 +72,8 @@ List HQgetInd(NumericMatrix V, NumericMatrix Tr, NumericVector xx, NumericVector
   NumericMatrix L=HQbary(V,Tr,xx,yy);
   
   for(int ii=0; ii<nT; ii++){
-    // NumericVector I=which(L((ii*3),_)>=tol & L((ii*3+1),_)>=tol & L((ii*3+2),_)>=tol);
-    NumericVector I = which((L((ii * 3), _) >= tol) & (L((ii * 3 + 1), _) >= tol) & (L((ii * 3 + 2), _) >= tol));
+    NumericVector I=which(L((ii*3),_)>=tol & L((ii*3+1),_)>=tol & L((ii*3+2),_)>=tol);
+    // NumericVector I = which((L((ii * 3), _) >= tol) & (L((ii * 3 + 1), _) >= tol) & (L((ii * 3 + 2), _) >= tol));
     for(int jj=0; jj<I.length(); jj++){
       tmp1.push_back(L(ii*3,I(jj)-1));
       tmp2.push_back(L(ii*3+1,I(jj)-1));
