@@ -108,11 +108,11 @@ smoothness2D <- function(V, Tr, d, r){
 			numeq <- dim(T1mat)[1]
 			numVar <- (dim(T1mat)[2] + 1) * numeq
 
-			T1Values <- matrix(1, nrow=dim(T1mat)[1],
+			T1Values <- matrix(1, nrow = dim(T1mat)[1],
 				ncol = dim(T1mat)[2]) %*% diag(c(Lambda))
 
 			eqnums <- (j - 1) * Neq + EqCt + diag(1: numeq) %*%
-				matrix(1, nr=numeq, nc=dim(T1mat)[2] + 1)
+				matrix(1, nrow = numeq, ncol = dim(T1mat)[2] + 1)
 
 			Index1[((j - 1) * N + VarCT + 1) : ((j - 1) * N + VarCT + numVar)] <- eqnums
 
