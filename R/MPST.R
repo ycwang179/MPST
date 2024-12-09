@@ -33,7 +33,6 @@
 #'
 #' @return A fitted model object.
 #' @aliases fit.MPST
-#' @seealso \code{\link{fit.MPST}}
 #' @export
 
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
@@ -82,7 +81,6 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' - `formula`: The formula used for fitting and prediction.
 #' 
 #' @aliases predict.MPST
-#' @seealso \code{\link{predict.MPST}}
 #' @export
 
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
