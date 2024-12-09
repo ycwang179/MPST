@@ -9,7 +9,7 @@ Author@R: c(
     person("Xinyi", "Li", role = "trl"),
     person("Jingru", "Mu", role = "trl"),
     person("Jue", "Wang", role = "trl"),
-    person("Yuchun", "Wang", role = c("aut", "trl", "cre"), email = "ywang68@gmu.edu"),
+    person("Yuchun", "Wang", role = c("aut", "trl"), email = "ywang68@gmu.edu"),
     person("Yueying", "Wang", role = "trl"),
     person("Shan", "Yu", role = "trl"))
 Author: GuanNan Wang [trl, cre]
