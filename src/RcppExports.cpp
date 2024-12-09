@@ -63,7 +63,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // mtxcbind
-/**   * @keywords internal  * @noRd  */ NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b);
+/**  * Combine matrices column-wise  *   * This is an internal function used within the package.  * @keywords internal  */ NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b);
 RcppExport SEXP _MPST_mtxcbind(SEXP aSEXP, SEXP bSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
