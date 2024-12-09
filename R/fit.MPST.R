@@ -31,13 +31,13 @@
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
 #'
-#' @return An object of class `"MPST"` with components:
-#' - `gamma.hat`: Estimated spline coefficients.
-#' - `Y.hat`: Predicted values.
-#' - `mse`: Mean squared error.
+#' @return An object of class `"MPST"` with the following components:
+#' - `gamma.hat`: Estimated spline coefficients from the fitted model.
+#' - `Y.hat`: Predicted values based on the fitted model.
+#' - `mse`: Mean squared error of the model (computed during fitting).
 #' - `mise`: Mean integrated squared error.
-#' - `method`: Learning method used.
-#' - `formula`: Formula used for fitting.
+#' - `method`: The learning method used ("G" or "D").
+#' - `formula`: The formula provided during fitting.
 #'
 #' @examples
 #' \dontrun{
