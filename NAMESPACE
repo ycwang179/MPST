@@ -1,9 +1,9 @@
 useDynLib(MPST, .registration=TRUE)
 
-S3method(fit,MPST)
-S3method(plot,MPST)
-S3method(predict,MPST)
-S3method(print,MPST)
+S3method(fit, MPST)
+S3method(plot, MPST)
+S3method(predict, MPST)
+S3method(print, MPST)
 
 export(basis2D.d)
 export(basis3D.d)
