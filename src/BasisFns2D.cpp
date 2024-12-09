@@ -106,9 +106,11 @@ NumericMatrix mtxrbind(NumericMatrix a, NumericMatrix b) {
 }
 
 // [[Rcpp::export]]
-/** 
+/**
+ * Combine matrices column-wise
+ * 
+ * This is an internal function used within the package.
  * @keywords internal
- * @noRd
  */
 NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b) {
   int nca=a.ncol();
