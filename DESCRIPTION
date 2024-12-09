@@ -31,7 +31,9 @@ Imports: Rcpp (>= 1.0.0),
     stats, 
     graphics, 
     utils,
-    mgcv
+    mgcv,
+    grDevices,
+    methods
 Encoding: UTF-8
 LinkingTo: Rcpp
 RoxygenNote: 7.3.2
