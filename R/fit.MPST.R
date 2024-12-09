@@ -446,6 +446,7 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   inds = load.list$inds
   Ys = Y[inds]
   Zs = Z[inds, ]
+  n = length(Ys)
   
   # 2. basis generation, smoothness conditions, and penalty function
   nd = ncol(Tr)
