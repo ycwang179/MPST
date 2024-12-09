@@ -32,6 +32,7 @@
 #' - `Tr`: Triangulation matrix.
 #'
 #' @return A fitted model object.
+#' @aliases fit.MPST
 #' @seealso \code{\link{fit.MPST}}
 #' @export
 
@@ -80,6 +81,7 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' - `method`: Learning method used for prediction.
 #' - `formula`: The formula used for fitting and prediction.
 #' 
+#' @aliases predict.MPST
 #' @seealso \code{\link{predict.MPST}}
 #' @export
 
