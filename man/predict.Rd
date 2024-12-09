@@ -59,6 +59,3 @@ An object of class `"MPST"` containing the following components:
 The `predict` function is a generic function used to generate predictions from a fitted model object.
 Specific methods like \code{predict.MPST()} provide implementations for specific model types.
 }
-\seealso{
-\code{\link{predict.MPST}}
-}

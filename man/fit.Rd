@@ -44,6 +44,3 @@ A fitted model object.
 The `fit` function is a generic function used to fit a model based on a specified formula, penalty parameters, and method.
 Specific methods like \code{fit.MPST()} provide implementations for specific model types.
 }
-\seealso{
-\code{\link{fit.MPST}}
-}
