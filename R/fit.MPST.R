@@ -43,6 +43,7 @@
 #' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
 #' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
 #' print(model)
+#' @seealso \code{\link{fit.mpst}}, \code{\link{interpret.mpst}}
 #' @export
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
