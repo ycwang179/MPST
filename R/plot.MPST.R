@@ -119,7 +119,7 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
   
   z1 <- matrix(mpred$Ypred, length(u1), length(v1), byrow = TRUE)
   
-  fig <- plot_ly(
+  fig <- plotly::plot_ly(
     type = "contour",
     x = u1, 
     y = v1, 
@@ -155,18 +155,18 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
   z1 <- matrix(mpred$Ypred, nrow = length(u1), byrow = TRUE)
   df1 <- data.frame(x = mfit$Z[, 1], y = mfit$Z[, 2], z = mfit$Y)
   
-  fig <- plot_ly(
+  fig <- plotly::plot_ly(
     x = u1, 
     y = v1, 
     z = t(z1),
     type = "surface"
-  ) %>% 
+  ) magrittr::%>% 
     add_trace(
       data = df1,
       x = ~x, y = ~y, z = ~z,
       mode = "markers", type = "scatter3d",
       marker = list(size = 1, color = "black")
-    ) %>%
+    ) magrittr::%>%
     layout(
       scene = list(
         camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
@@ -243,7 +243,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
       plot.new()
       text(0.5, 0.5, "Axial slice contains only NA values.", cex = 1.5)
     } else {
-      image.plot(1 : dim.size[1], 1 : dim.size[2], new.array[, , axial_slice], 
+      fields::image.plot(1 : dim.size[1], 1 : dim.size[2], new.array[, , axial_slice], 
                  main = paste("Axial Plane (z =", axial_slice, ")"), 
                  xlab = "x", ylab = "y", col = col_palette, axes = FALSE, useRaster = TRUE)
     }
@@ -254,7 +254,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
       plot.new()
       text(0.5, 0.5, "Coronal slice contains only NA values.", cex = 1.5)
     } else {
-      image.plot(1 : dim.size[1], 1 : dim.size[3], new.array[, coronal_slice, ], 
+      fields::image.plot(1 : dim.size[1], 1 : dim.size[3], new.array[, coronal_slice, ], 
                  main = paste("Coronal Plane (y =", coronal_slice, ")"), 
                  xlab = "x", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
     }
@@ -265,14 +265,14 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
       plot.new()
       text(0.5, 0.5, "Sagittal slice contains only NA values.", cex = 1.5)
     } else {
-      image.plot(1 : dim.size[2], 1 : dim.size[3], new.array[sagittal_slice, , ], 
+      fields::image.plot(1 : dim.size[2], 1 : dim.size[3], new.array[sagittal_slice, , ], 
                  main = paste("Sagittal Plane (x =", sagittal_slice, ")"), 
                  xlab = "y", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
     }
   }
   
   # Use manipulate to create an interactive interface
-  manipulate(
+  manipulate::manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
     axial_slice = slider(1, max(1, dim.size[3]), initial = max(1, dim.size[3] %/% 2), label = "Axial Slice"),
     coronal_slice = slider(1, max(1, dim.size[2]), initial = max(1, dim.size[2] %/% 2), label = "Coronal Slice"),
