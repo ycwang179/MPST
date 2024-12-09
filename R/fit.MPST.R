@@ -18,7 +18,7 @@
 #' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,...,5,5.5,6)}.
 #' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
@@ -43,7 +43,7 @@
 #' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
 #' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
 #' print(model)
-#' @seealso \code{\link{fit.mpst}}, \code{\link{interpret.mpst}}
+#'
 #' @export
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
