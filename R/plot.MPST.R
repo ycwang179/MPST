@@ -1,9 +1,5 @@
 #' Plot Different Views for MPST Models
 #'
-#' @importFrom plotly plot_ly add_trace layout
-#' @importFrom manipulate manipulate slider
-#' @importFrom fields image.plot
-#'
 #' @description This function allows plotting different views (contour, surface, or slice) 
 #' for an MPST model fit object.
 #' @param x An MPST model fit object.
@@ -97,6 +93,9 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
 #'
 #' @description Generates a contour plot for a 3D MPST model. This function is used internally
 #' by `plot.MPST` and is not intended for direct use by end users.
+#'
+#' @importFrom plotly plot_ly
+#'
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid will be generated.
 #' @return A plotly object representing the contour plot.
@@ -132,6 +131,9 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
 #'
 #' @description Generates a 3D surface plot for an MPST model. This function is used internally
 #' by `plot.MPST` and is not intended for direct use by end users.
+#'
+#' @importFrom plotly plot_ly add_trace layout
+#'
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
 #' @return A plotly object representing the surface plot.
@@ -181,6 +183,10 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
 #'
 #' @description Generates interactive 2D slices for a 3D MPST model. This function is used internally
 #' by `plot.MPST` and is not intended for direct use by end users.
+#' 
+#' @importFrom manipulate manipulate slider
+#' @importFrom fields image.plot
+#' 
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
 #' @return A manipulate object that provides interactive slices through the 3D array.
