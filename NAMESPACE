@@ -17,7 +17,6 @@ export(fit)
 export(fit.MPST)
 export(predict)
 export(predict.MPST)
-export(plot)
 export(plot.MPST)
 
 importFrom(Matrix, Matrix)
