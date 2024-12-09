@@ -3,6 +3,7 @@
 #' This function determines whether points are inside a given 2D or 3D triangulation.
 #'
 #' @importFrom Rcpp evalCpp
+#' @importFrom pracma eps
 #'
 #' @param V A \code{nV} by 2 or 3 matrix of vertices of the triangulation, where \code{nV} is the number of vertices. Each row contains the coordinates of a vertex.
 #' @param Tr A triangulation matrix of dimension \code{nT} by 3 or 4, where \code{nT} is the number of triangles (for 2D) or tetrahedra (for 3D). Each row contains the indices of vertices in \code{V}.
