@@ -53,7 +53,6 @@
 #' print(predictions$mise)
 #' }
 #' @export
-#' @method predict MPST
 predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
 
   `%||%` <- function(a, b) if (!is.null(a)) a else b
