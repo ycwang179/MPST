@@ -1,4 +1,4 @@
-#' Suppress NOTES for Undefined Global Variables
+#' Suppress NOTES for Undefined Global Variables 
 #'
 #' Certain global variables are used internally in functions such as \code{plot.slice.mpst}
 #' for interactive visualization. These variables are dynamically created during execution
@@ -18,4 +18,4 @@
 #' }
 #' @importFrom utils globalVariables
 
-utils::globalVariables(c("axial_slice", "coronal_slice", "sagittal_slice", "color", "n"))
+utils::globalVariables(c("axial_slice", "coronal_slice", "sagittal_slice", "color"))
