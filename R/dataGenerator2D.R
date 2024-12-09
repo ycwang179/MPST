@@ -2,6 +2,8 @@
 #'
 #' This function generates testing datasets for bivariate spline smoothing based on specified test functions and input coordinates.
 #'
+#' @importFrom mgcv fs.test
+#'
 #' @param Z A matrix of dimension \code{n} by two, where \code{n} is the number of points. Each row represents the 2D coordinates of a point.
 #' @param V A matrix of dimension \code{nV} by two, where \code{nV} is the number of vertices in the triangulation. Each row represents the 2D coordinates of a vertex.
 #' @param Tr A matrix of dimension \code{nT} by three, where \code{nT} is the number of triangles in the triangulation. Each row contains the indices of three vertices in \code{V} that form a triangle.
@@ -48,66 +50,65 @@ dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024){
   }
   if (func == 1) {
     mu <- z1^2 + z2^2 + 2*z1*z2 # Quadratic
-    hist(mu)
+    # hist(mu)
   }
   if (func == 2) {
     mu <- 2 * z1^3 + 2 * z2^3 # Cubic
-    hist(mu)
+    # hist(mu)
   }
   if (func == 3) {
     mu <- 2 * z1^4 + 2 * z2^4 # Quadruplicate
-    hist(mu)
+    # hist(mu)
   }
   if (func == 4) {
     mu <- 4 * sin(pi * z1) * sin(pi * z2) # Sine
-    hist(mu)
+    # hist(mu)
   }
   if (func == 5) {
     mu <- (1 - cos(2*pi*z1)) * (1 - cos(2*pi*z2)) # Cosine
-    hist(mu)
+    # hist(mu)
   }
   if (func == 6) {
     mu <- 4 * exp(-10 * ((z1-0.5)^2 + (z2-0.5)^2)) # Bump
-    hist(mu)
+    # hist(mu)
   }
   if (func == 7) {
     mu <- 4 / (1 + exp(-10 * (z1 + z2) + 10)) # Logit
-    hist(mu)
+    # hist(mu)
   }
   if (func == 8) {
     mu <- atan((4 * z1 - 4)^2 - (4 * z2 - 4)^2) # arctan
-    hist(mu)
+    # hist(mu)
   }
   if (func == 9) {
     mu <- (-1) * z1^3 + z2^3 # Cubic
-    hist(mu)
+    # hist(mu)
   }
   if (func == 10) {
     mu <- (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) # Sine
-    hist(mu)
-    cat("function =", func, ": (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) \n")
+    # hist(mu)
+    # cat("function =", func, ": (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) \n")
   }
   if (func == 11) {
     mu <- (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) # Sine
-    hist(mu)
-    cat("function =", func, ": (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) \n")
+    # hist(mu)
+    # cat("function =", func, ": (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) \n")
   }
   if (func == 12) {
     mu <- exp(-50 * ((z1-0.5)^2 + (z2-0.5)^2)) # Bump
-    hist(mu)
+    # hist(mu)
   }
   if (func == 13) {
     mu <- 1 / (1 + exp(-10 * (z1 + z2) + 10)) # Logit
-    hist(mu)
+    # hist(mu)
   }
   if (func == 14) {
     mu <- atan((8 * z1 - 4)^2 - (8 * z2 - 4)^2) # arctan
-    hist(mu)
+    # hist(mu)
   }
   if (func == 15) {
-    library(mgcv)
-    mu <- mgcv::fs.test(z1, z2) # mgcv::fs.test(xx, yy)
-    hist(mu)
+    mu <- mgcv::fs.test(z1, z2)
+    # hist(mu)
   }
     
   eps <- rnorm(n, mean = 0, sd = sigma)
