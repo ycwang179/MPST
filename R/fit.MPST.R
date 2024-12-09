@@ -301,7 +301,7 @@ fit.mpst <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.fun
 #' @description Internal function to fit a multivariate penalized spline over 
 #' triangulation (MPST) using global learning.
 #'
-#' @importFrom Matrix Matrix
+#' @importFrom Matrix Matrix rankMatrix
 #'
 #' @param Y The response variable vector.
 #' @param Z A matrix of observation coordinates.
@@ -421,7 +421,7 @@ fit.mpst.g <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda) {
 #' @description Internal function to fit a multivariate penalized spline over 
 #' triangulation (MPST) using distributed learning.
 #'
-#' @importFrom Matrix Matrix
+#' @importFrom Matrix Matrix rankMatrix
 #'
 #' @param ind.Tr Index of the sub-triangulation.
 #' @param Y The response variable vector.
