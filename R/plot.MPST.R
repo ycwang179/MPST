@@ -160,13 +160,13 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
     z = t(z1),
     type = "surface"
   )
-  fig <- add_trace(fig, 
+  fig <- plotly::add_trace(fig, 
                    data = df1,
                    x = ~x, y = ~y, z = ~z,
                    mode = "markers", type = "scatter3d",
                    marker = list(size = 1, color = "black")
                   ) 
-  fig <- layout(fig,
+  fig <- plotly::layout(fig,
                 scene = list(
                   camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
                   xaxis = list(title = "Z1"),
