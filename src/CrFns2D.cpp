@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 #include <math.h>
-#include "BasisFns2D.h"
+
 using namespace Rcpp;
 
 // This is a simple example of exporting a C++ function to R. You can
