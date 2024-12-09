@@ -2,7 +2,6 @@
 % Please edit documentation in R/MPST.R
 \name{predict}
 \alias{predict}
-\alias{predict.MPST}
 \title{Generic function for model prediction}
 \usage{
 predict(
