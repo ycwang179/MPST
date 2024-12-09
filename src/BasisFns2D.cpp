@@ -109,20 +109,24 @@ NumericMatrix mtxrbind(NumericMatrix a, NumericMatrix b) {
 /**
  * Combine matrices column-wise
  * 
- * This is an internal function used within the package.
+ * This function combines two numeric matrices column-wise.
+ * 
+ * @param a A numeric matrix.
+ * @param b A numeric matrix.
+ * @return A numeric matrix combining columns of `a` and `b`.
  */
 NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b) {
-  int nca=a.ncol();
-  int ncb=b.ncol();
-  NumericMatrix out(std::max(a.nrow(),b.nrow()),nca+ncb);
-  for(int ii=0; ii<nca+ncb; ii++){
-    if(ii<nca){
-      out(_,ii)=a(_,ii);
-    }else{
-      out(_,ii)=b(_,ii-nca);
+    int nca = a.ncol();
+    int ncb = b.ncol();
+    NumericMatrix out(std::max(a.nrow(), b.nrow()), nca + ncb);
+    for (int ii = 0; ii < nca + ncb; ii++) {
+        if (ii < nca) {
+            out(_, ii) = a(_, ii);
+        } else {
+            out(_, ii) = b(_, ii - nca);
+        }
     }
-  }
-  return out;
+    return out;
 }
 
 // [[Rcpp::export]]
