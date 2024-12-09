@@ -5,6 +5,7 @@ S3method(plot,MPST)
 S3method(predict,MPST)
 S3method(print,MPST)
 
+export(mtxcbind)
 export(basis2D.d)
 export(basis3D.d)
 export(energy3D)
