@@ -17,4 +17,5 @@
 #'   \item \code{color}
 #' }
 #' @importFrom utils globalVariables
-NULL
+
+utils::globalVariables(c("axial_slice", "coronal_slice", "sagittal_slice", "color", "n"))
