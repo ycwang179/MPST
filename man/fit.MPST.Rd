@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.MPST.R
 \name{fit.mpst}
 \alias{fit.mpst}
-\title{Fit a Multivariate Penalized Spline Model}
+\title{Internal Function for MPST Model Fitting}
 \usage{
 \method{fit}{mpst}(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func)
 }
