@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 #include <math.h>
-#include "BasisFns2D.h"
 
 using namespace Rcpp;
 
