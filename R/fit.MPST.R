@@ -40,14 +40,9 @@
 #' - `formula`: The formula provided during fitting.
 #'
 #' @examples
-#' \dontrun{
-#' # Example using a data list
 #' data_list <- list(Y = y, Z = Z, V = V, Tr = Tr)
 #' model <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1), data = data_list)
-#' 
-#' # Print model summary
 #' print(model)
-#' }
 #' @export
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
