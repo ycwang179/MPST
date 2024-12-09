@@ -28,9 +28,12 @@ List tdata(NumericMatrix V, NumericMatrix Tr) {
     edge1(0)=Ti(0); edge1(1)=Ti(1); std::sort(edge1.begin(),edge1.end());
     edge2(0)=Ti(1); edge2(1)=Ti(2); std::sort(edge2.begin(),edge2.end());
     edge3(0)=Ti(0); edge3(1)=Ti(2); std::sort(edge3.begin(),edge3.end());
-    ind1=which(edge1(0)==tmp1(_,0) & edge1(1)==tmp1(_,1));
-    ind2=which(edge2(0)==tmp1(_,0) & edge2(1)==tmp1(_,1));
-    ind3=which(edge3(0)==tmp1(_,0) & edge3(1)==tmp1(_,1));
+    // ind1=which(edge1(0)==tmp1(_,0) & edge1(1)==tmp1(_,1));
+    // ind2=which(edge2(0)==tmp1(_,0) & edge2(1)==tmp1(_,1));
+    // ind3=which(edge3(0)==tmp1(_,0) & edge3(1)==tmp1(_,1));
+    ind1 = which((edge1(0) == tmp1(_, 0)) & (edge1(1) == tmp1(_, 1)));
+    ind2 = which((edge2(0) == tmp1(_, 0)) & (edge2(1) == tmp1(_, 1)));
+    ind3 = which((edge3(0) == tmp1(_, 0)) & (edge3(1) == tmp1(_, 1)));
     if(ind1.length()==0){tmp1(numEdges,_)=edge1; tmp2(ii,numEdges)=1; numEdges++;}
     else{tmp2(ii,(ind1(0)-1))=1;}
     if(ind2.length()==0){tmp1(numEdges,_)=edge2; tmp2(ii,numEdges)=1; numEdges++;}
