@@ -2,6 +2,7 @@
 % Please edit documentation in R/MPST.R
 \name{fit}
 \alias{fit}
+\alias{fit.MPST}
 \title{Generic function for model fitting}
 \usage{
 fit(formula, lambda = NULL, method = NULL, P.func = NULL, data = list())
