@@ -1,6 +1,6 @@
 #' Plot Different Views for MPST Models
 #'
-#' @importFrom plotly plot_ly
+#' @importFrom plotly plot_ly add_trace layout
 #' @importFrom manipulate manipulate slider
 #' @importFrom fields image.plot
 #'
