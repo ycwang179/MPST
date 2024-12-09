@@ -1,7 +1,7 @@
 #' Plot Different Views for MPST Models
 #'
 #' @importFrom plotly plot_ly
-#' @importFrom manipulate manipulate
+#' @importFrom manipulate manipulate slider
 #' @importFrom fields image.plot
 #'
 #' @description This function allows plotting different views (contour, surface, or slice) 
