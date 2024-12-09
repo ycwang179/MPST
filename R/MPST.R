@@ -34,7 +34,6 @@
 #' @return A fitted model object.
 #' @aliases fit.MPST
 #' @export
-
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   UseMethod("fit")
 }
@@ -82,7 +81,6 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' 
 #' @aliases predict.MPST
 #' @export
-
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   UseMethod("predict")
 }
@@ -118,7 +116,6 @@ predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data =
 #' print.MPST(x)
 #' 
 #' @export
-
 print.MPST <- function(x, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
@@ -191,7 +188,6 @@ print.MPST <- function(x, ...) {
 #'   - `terms`: Parsed formula terms.
 #'   - `response`: Response variable (if present).
 #' @keywords internal
-
 interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.tf <- terms.formula(mpstf, specials = c("m", extra.special)) 
   mpst.terms <- attr(mpst.tf, "term.labels") 
@@ -215,7 +211,6 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param r Smoothness parameter (must be an integer).
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
-
 m <- function(..., V = NULL, Tr = NULL, d, r) {
   # Validate d
   if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
