@@ -110,7 +110,6 @@ NumericMatrix mtxrbind(NumericMatrix a, NumericMatrix b) {
  * Combine matrices column-wise
  * 
  * This is an internal function used within the package.
- * @keywords internal
  */
 NumericMatrix mtxcbind(NumericMatrix a, NumericMatrix b) {
   int nca=a.ncol();
