@@ -1,9 +1,10 @@
 #' Predict for MPST Models
 #'
-#' @description Predicts from a fitted MPST model using global ("G") or distributed ("D") learning methods. 
-#' It allows for flexible prediction grids and computes mean integrated squared error (MISE) if a reference 
-#' function (`mu.grid`) is provided.
+#' @description This method generates predictions from a fitted MPST model using global (`"G"`) 
+#' or distributed (`"D"`) learning methods. It allows for flexible prediction grids and computes 
+#' the mean integrated squared error (MISE) if a reference function (`mu.grid`) is provided.
 #'
+#' @rdname predict
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
