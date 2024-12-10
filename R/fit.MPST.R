@@ -70,13 +70,13 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
   interp <- interpret.mpst(formula)
   
   # Prioritize the value of interp; if it is NULL or NA, use the value from data
-  Y <- if (!is.null(interp$Y) && !is.na(interp$Y)) interp$Y else data$Y
-  Z <- if (!is.null(interp$Z) && !is.na(interp$Z)) interp$Z else data$Z
-  V <- if (!is.null(interp$V) && !is.na(interp$V)) interp$V else data$V
-  Tr <- if (!is.null(interp$Tr) && !is.na(interp$Tr)) interp$Tr else data$Tr
-  d <- if (!is.null(interp$d) && !is.na(interp$d)) interp$d else data$d
-  r <- if (!is.null(interp$r) && !is.na(interp$r)) interp$r else data$r
-  
+  Y <- if (!is.null(interp$Y) && !all(is.na(interp$Y))) interp$Y else data$Y
+  Z <- if (!is.null(interp$Z) && !all(is.na(interp$Z))) interp$Z else data$Z
+  V <- if (!is.null(interp$V) && !all(is.na(interp$V))) interp$V else data$V
+  Tr <- if (!is.null(interp$Tr) && !all(is.na(interp$Tr))) interp$Tr else data$Tr
+  d <- if (!is.null(interp$d) && !all(is.na(interp$d))) interp$d else data$d
+  r <- if (!is.null(interp$r) && !all(is.na(interp$r))) interp$r else data$r
+    
   # Check for the presence of required parameters.
   if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(d) || is.null(r)) {
     stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', 'd', and 'r'.")
