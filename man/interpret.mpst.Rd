@@ -38,15 +38,4 @@ provided in the formula.
 - Model parameters specified within the \code{m()} function are parsed and returned in a list.
 - The function expects the formula to follow the format \code{Y ~ m(Z, V, Tr, d, r)}.
 }
-\examples{
-# Example formula
-Y <- c(1, 2, 3)
-Z <- matrix(c(0, 0, 1, 1), ncol = 2)
-V <- matrix(c(0, 0, 1, 1), ncol = 2)
-Tr <- matrix(c(1, 2, 3), ncol = 3)
-formula <- Y ~ m(Z = Z, V = V, Tr = Tr, d = 2, r = 1)
-params <- interpret.mpst(formula)
-print(params)
-
-}
 \keyword{internal}
