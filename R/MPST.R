@@ -26,7 +26,12 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' @rdname predict
 #' @export
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
-  UseMethod("predict")
+  class(formula) <- c("formula", "MPST")
+  if (("MPST" %in% class(formula) || inherits(data, "MPST")) & (inherits(data.pred, "MPST"))) {
+    return(predict.MPST(formula, lambda, method, P.func, data, data.pred))
+  } else {
+    UseMethod("predict")
+  }
 }
 
 #' Print Method for MPST Models
