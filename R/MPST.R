@@ -9,7 +9,7 @@
 #' @rdname fit
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
-  class(formula) <- c("formula", "MPST")
+  class(formula) <- c(class(formula), "MPST")
   if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
     return(fit.MPST(formula, lambda, method, P.func, data))
   } else {
@@ -26,12 +26,19 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' @rdname predict
 #' @export
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
-  class(formula) <- c("formula", "MPST")
-  if (("MPST" %in% class(formula) || inherits(data, "MPST")) & (inherits(data.pred, "MPST"))) {
-    return(predict.MPST(formula, lambda, method, P.func, data, data.pred))
-  } else {
-    UseMethod("predict")
+  class(formula) <- c(class(formula), "MPST")
+  # Check if formula and data are MPST-compatible
+  if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
+    # Check if data.pred is MPST-compatible
+    if (inherits(data.pred, "MPST")) {
+      # Call predict.MPST if all conditions are met
+      return(predict.MPST(formula, lambda, method, P.func, data, data.pred))
+    } else {
+      stop("'data.pred' must inherit from class 'MPST' for predict.MPST().")
+    }
   }
+  # If no MPST compatibility, fallback to generic method
+  UseMethod("predict")
 }
 
 #' Print Method for MPST Models
