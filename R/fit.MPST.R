@@ -50,7 +50,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
   
-  class(formula) <- c("MPST", "formula")
+  class(formula) <- c("formula", "MPST")
   
   # Set default parameters and check validity
   method <- method %||% "G"  # Default to Global Learning
