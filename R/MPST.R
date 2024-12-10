@@ -5,6 +5,9 @@
 #' The `fit` function is a generic function used to fit a model based on a specified formula, penalty parameters, and method.
 #' Specific methods like \code{fit.MPST()} provide implementations for specific model types.
 #'
+#' @rdname fit
+#' @method fit MPST
+#'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
@@ -41,6 +44,9 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #'
 #' The `predict` function is a generic function used to generate predictions from a fitted model object.
 #' Specific methods like \code{predict.MPST()} provide implementations for specific model types.
+#'
+#' @rdname predict
+#' @method predict MPST
 #'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
