@@ -1,10 +1,10 @@
+#' Fit a Multivariate Penalized Spline Model
+#'
+#' @description `fit.MPST()` fits a Multivariate Penalized Spline over Triangulation (MPST)
+#' model using global (`"G"`) or distributed (`"D"`) learning methods. The function accepts
+#' both a formula and a list of data, along with optional parameters for customization.
+#'
 #' @rdname fit
-#' @name fit.MPST
-#' @title Fit a Multivariate Penalized Spline Model
-#' @description Fit a Multivariate Penalized Spline over Triangulation (MPST) model using 
-#' global ("G") or distributed ("D") learning methods. The function supports data provided 
-#' either as a formula or through individual arguments. Default values are used if certain 
-#' parameters are not specified.
 #'
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
