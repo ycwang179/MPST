@@ -13,6 +13,7 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
   if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
     return(fit.MPST(formula, lambda, method, P.func, data))
   } else {
+    # If no MPST compatibility, fallback to generic method
     UseMethod("fit")
   }
 }
