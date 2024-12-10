@@ -79,17 +79,37 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
-
-  # Check if the data contains the required components
-  required_components <- c("Y", "Z", "V", "Tr")
-  missing_components <- setdiff(required_components, names(data))
-  if (length(missing_components) > 0) {
-    stop(paste0("'data' must contain the following components: ", 
-                paste(required_components, collapse = ", "), 
-                ". Missing components: ", 
-                paste(missing_components, collapse = ", ")))
+  
+  # Extract Y, Z, V, Tr, d, and r from formula or data.
+  interp <- interpret.mpst(formula)
+  
+  # Prioritize the value of interp; if it is NULL or NA, use the value from data
+  Y <- if (!is.null(interp$Y) && !all(is.na(interp$Y))) interp$Y else data$Y
+  Z <- if (!is.null(interp$Z) && !all(is.na(interp$Z))) interp$Z else data$Z
+  V <- if (!is.null(interp$V) && !all(is.na(interp$V))) interp$V else data$V
+  Tr <- if (!is.null(interp$Tr) && !all(is.na(interp$Tr))) interp$Tr else data$Tr
+  d <- if (!is.null(interp$d) && !all(is.na(interp$d))) interp$d else data$d
+  r <- if (!is.null(interp$r) && !all(is.na(interp$r))) interp$r else data$r
+    
+  # Check for the presence of required parameters.
+  if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(d) || is.null(r)) {
+    stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', 'd', and 'r'.")
   }
   
+  # Construct the parameter list.
+  mpst.p <- list(
+    Y = Y,
+    Z = Z,
+    V = V,
+    Tr = Tr,
+    d = d,
+    r = r,
+    lambda = lambda,
+    P.func = P.func,
+    method = method,
+    formula = formula
+  )
+ 
   # Extract prediction data
   if (!("Z.grid" %in% names(data.pred))) {
     stop("Missing required prediction grid: 'Z.grid'.")
@@ -97,18 +117,6 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   Z.grid <- data.pred$Z.grid
   mu.grid <- data.pred$mu.grid
   
-  # Extract model data
-  mpst.p <- data
-  mpst.p$lambda <- lambda
-  mpst.p$P.func <- P.func
-  mpst.p$formula <- formula
-  mpst.p$method <- method
-  
-  # Parse formula
-  interp <- interpret.mpst(formula)
-  mpst.p$d <- interp$d
-  mpst.p$r <- interp$r
-
   # Fit and predict
   mfit <- fit.mpst.internal(mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, method = mpst.p$method, P.func = mpst.p$P.func)
   mpred <- pred.mpst(mfit, Z.grid)
@@ -125,7 +133,6 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   mpred$func <- "predict"
   
   class(mpred) <- "MPST"
-  
   return(mpred)
 }
 
