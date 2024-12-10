@@ -164,16 +164,6 @@ print.MPST <- function(x, ...) {
 #' - Model parameters specified within the \code{m()} function are parsed and returned in a list.
 #' - The function expects the formula to follow the format \code{Y ~ m(Z, V, Tr, d, r)}.
 #'
-#' @examples
-#' # Example formula
-#' Y <- c(1, 2, 3)
-#' Z <- matrix(c(0, 0, 1, 1), ncol = 2)
-#' V <- matrix(c(0, 0, 1, 1), ncol = 2)
-#' Tr <- matrix(c(1, 2, 3), ncol = 3)
-#' formula <- Y ~ m(Z = Z, V = V, Tr = Tr, d = 2, r = 1)
-#' params <- interpret.mpst(formula)
-#' print(params)
-#'
 #' @keywords internal
 interpret.mpst <- function(mpstf, extra.special = NULL) {
   # Parse the formula and check for specific terms
@@ -222,6 +212,7 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #'     - For 2D: \code{Tr} must have 3 columns (triangles).
 #'     - For 3D: \code{Tr} must have 4 columns (tetrahedra).
 #'   - \code{d} and \code{r} are validated to ensure they meet the required conditions.
+#'
 #' @keywords internal
 m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
   # Validate 'd': Must be a numeric value ≥ 1
