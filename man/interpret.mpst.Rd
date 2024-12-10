@@ -7,16 +7,46 @@
 interpret.mpst(mpstf, extra.special = NULL)
 }
 \arguments{
-\item{mpstf}{An MPST formula object.}
+\item{mpstf}{An MPST formula object, such as \code{Y ~ m(Z, V, Tr, d, r)}.
+- `Y`: The response variable observed over the domain.
+- `Z`: Matrix of observation coordinates.
+- `V`: Matrix of triangulation vertices.
+- `Tr`: Triangulation matrix.
+- `d`: Degree of piecewise polynomials.
+- `r`: Smoothness parameter.}
 
-\item{extra.special}{Additional special terms to recognize (default: NULL).}
+\item{extra.special}{(Optional) Additional special terms to recognize in the formula. Defaults to \code{NULL}.}
 }
 \value{
 A list containing:
-  - `terms`: Parsed formula terms.
-  - `response`: Response variable (if present).
+- `Y`: The response variable, extracted from the formula or set to \code{NA} if not found.
+- `Z`: The matrix of observation coordinates.
+- `V`: The matrix of triangulation vertices.
+- `Tr`: The triangulation matrix.
+- `d`: Degree of piecewise polynomials.
+- `r`: Smoothness parameter.
 }
 \description{
-Parses and interprets an MPST formula for use in model fitting.
+Parses and interprets an MPST formula for use in model fitting. 
+This function extracts the response variable, if present, and parses model parameters 
+provided in the formula.
+}
+\details{
+- The function first checks for the presence of a response variable in the formula.
+- If the response variable exists, it is extracted and evaluated in the parent environment.
+- If the response variable is not found, it is set to \code{NA}.
+- Model parameters specified within the \code{m()} function are parsed and returned in a list.
+- The function expects the formula to follow the format \code{Y ~ m(Z, V, Tr, d, r)}.
+}
+\examples{
+# Example formula
+Y <- c(1, 2, 3)
+Z <- matrix(c(0, 0, 1, 1), ncol = 2)
+V <- matrix(c(0, 0, 1, 1), ncol = 2)
+Tr <- matrix(c(1, 2, 3), ncol = 3)
+formula <- Y ~ m(Z = Z, V = V, Tr = Tr, d = 2, r = 1)
+params <- interpret.mpst(formula)
+print(params)
+
 }
 \keyword{internal}
