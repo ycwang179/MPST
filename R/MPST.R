@@ -9,7 +9,11 @@
 #' @rdname fit
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
-  UseMethod("fit")
+  if (inherits(data, "MPST")) {
+    fit.MPST(formula, lambda, method, P.func, data)
+  } else {
+    UseMethod("fit")
+  }
 }
 
 #' Generic function for model prediction
