@@ -66,28 +66,33 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
   
-  # Check if the data contains the required components
-  required_components <- c("Y", "Z", "V", "Tr")
-  missing_components <- setdiff(required_components, names(data))
-  if (length(missing_components) > 0) {
-    stop(paste0("'data' must contain the following components: ", 
-                paste(required_components, collapse = ", "), 
-                ". Missing components: ", 
-                paste(missing_components, collapse = ", ")))
+  # Extract Y, Z, V, Tr, d, and r from formula or data.
+  interp <- interpret.mpst(formula)
+  Y <- interp$Y %||% data$Y
+  Z <- interp$Z %||% data$Z
+  V <- interp$V %||% data$V
+  Tr <- interp$Tr %||% data$Tr
+  d <- interp$d %||% data$d
+  r <- interp$r %||% data$r
+  
+  # Check for the presence of required parameters.
+  if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(d) || is.null(r)) {
+    stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', 'd', and 'r'.")
   }
   
-  # Extract data components
-  mpst.p <- data
-  mpst.p$lambda <- lambda
-  mpst.p$P.func <- P.func
-  mpst.p$formula <- formula
-  mpst.p$method <- method
-  
-  # Parse formula
-  interp <- interpret.mpst(formula)
-  mpst.p$d <- interp$d
-  mpst.p$r <- interp$r
-
+  # Construct the parameter list.
+  mpst.p <- list(
+    Y = Y,
+    Z = Z,
+    V = V,
+    Tr = Tr,
+    d = d,
+    r = r,
+    lambda = lambda,
+    P.func = P.func,
+    method = method,
+    formula = formula
+  )
   # Fit the model
   mfit <- fit.mpst.internal(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, mpst.p$method, P.func = mpst.p$P.func)
   
