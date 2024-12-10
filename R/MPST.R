@@ -150,11 +150,16 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
   mpst.terms <- attr(mpst.tf, "term.labels") 
   
   if (attr(mpst.tf, "response") > 0) {  
-    mpst.response <- as.character(attr(mpst.tf, "variables")[2])
+    response_name <- as.character(attr(mpst.tf, "variables")[2])
+    mpst.response <- eval(parse(text = response_name), envir = parent.frame())
   } else { 
     mpst.response <- NULL
   }
-  mpst.parameters <- eval(parse(text = paste(mpst.terms[1])))
+  
+  mpst.parameters <- eval(parse(text = paste(mpst.terms[1])), envir = parent.frame())
+  mpst.parameters$Y <- mpst.response
+  
+  return(mpst.parameters)
 }
 
 # Define the m function
@@ -168,31 +173,61 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param r Smoothness parameter (must be an integer).
 #' @return A list containing parameters `d` and `r`.
 #' @keywords internal
-m <- function(..., V = NULL, Tr = NULL, d, r) {
-  # Validate d
+m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
+  # Validate 'd': Must be a numeric value ≥ 1
   if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
     stop("Argument 'd' must be a numeric value greater than or equal to 1.")
   }
   
-  # Round d and ensure it's an integer
+  # Round 'd' and ensure it's an integer
   d.new <- round(d)
   if (!isTRUE(all.equal(d.new, d))) {
-    stop("Argument 'd' must be an integer. It was rounded, but this is not allowed.")
+    stop("Argument 'd' must be an integer.")
   }
   
-  # Validate r
+  # Validate 'r': Must be numeric
   if (missing(r) || is.null(r) || !is.numeric(r)) {
     stop("Argument 'r' must be a numeric value.")
   }
   
-  # Round r and ensure it's an integer
+  # Round 'r' and ensure it's an integer
   r.new <- round(r)
   if (!isTRUE(all.equal(r.new, r))) {
-    stop("Argument 'r' must be an integer. It was rounded, but this is not allowed.")
+    stop("Argument 'r' must be an integer.")
   }
   
-  # Return the validated list
-  ret <- list(d = d.new, r = r.new)
+  # Handle missing values for Z, V, Tr, and Y
+  Z <- if (missing(Z) || is.null(Z)) NA else Z
+  V <- if (missing(V) || is.null(V)) NA else V
+  Tr <- if (missing(Tr) || is.null(Tr)) NA else Tr
+  Y <- if (missing(Y) || is.null(Y)) NA else Y
+  
+  # Check if Z, V, and Tr are provided and validate their dimensions
+  if (!anyNA(Z) && !anyNA(V) && !anyNA(Tr)) {
+    # Ensure Z and V are matrices and have the same number of columns (2 or 3)
+    if (!is.matrix(Z) || !is.matrix(V)) {
+      stop("'Z' and 'V' must be matrices.")
+    }
+    
+    if (ncol(Z) != ncol(V)) {
+      stop("'Z' and 'V' must have the same number of columns (2 or 3).")
+    }
+    
+    # Validate Tr's dimensions based on Z and V
+    if (ncol(Z) == 2) {
+      if (!is.matrix(Tr) || ncol(Tr) != 3) {
+        stop("For 2D data: 'Z' and 'V' must each have 2 columns to describe points and vertices, and 'Tr' must have 3 columns to represent triangles.")
+      }
+    } else if (ncol(Z) == 3) {
+      if (!is.matrix(Tr) || ncol(Tr) != 4) {
+        stop("For 3D data: 'Z' and 'V' must each have 3 columns to describe points and vertices, and 'Tr' must have 4 columns to represent tetrahedra.")
+      }
+    } else {
+      stop("'Z', 'V', and 'Tr' must have dimensions corresponding to either 2D or 3D space.")
+    }
+  }
+
+  ret <- list(Y = Y, Z = Z, V = V, Tr = Tr, d = d.new, r = r.new)
   return(ret)
 }
 
