@@ -146,16 +146,24 @@ print.MPST <- function(x, ...) {
 #'   - `response`: Response variable (if present).
 #' @keywords internal
 interpret.mpst <- function(mpstf, extra.special = NULL) {
+  # Parse the formula and check for specific terms
   mpst.tf <- terms.formula(mpstf, specials = c("m", extra.special)) 
   mpst.terms <- attr(mpst.tf, "term.labels") 
   
+  # Check for the presence of a response variable
   if (attr(mpst.tf, "response") > 0) {  
     response_name <- as.character(attr(mpst.tf, "variables")[2])
-    mpst.response <- eval(parse(text = response_name), envir = parent.frame())
+    # Attempt to locate the response variable in the parent environment
+    if (exists(response_name, envir = parent.frame())) {
+      mpst.response <- eval(parse(text = response_name), envir = parent.frame())
+    } else {
+      mpst.response <- NA 
+    }
   } else { 
-    mpst.response <- NULL
+    mpst.response <- NA
   }
   
+  # Parse the parameter section
   mpst.parameters <- eval(parse(text = paste(mpst.terms[1])), envir = parent.frame())
   mpst.parameters$Y <- mpst.response
   
