@@ -1,3 +1,4 @@
+#' @rdname fit
 #' @name fit.MPST
 #' @title Fit a Multivariate Penalized Spline Model
 #' @description Fit a Multivariate Penalized Spline over Triangulation (MPST) model using 
