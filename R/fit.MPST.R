@@ -50,7 +50,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
   
-  class(formula) <- c("formula", "MPST")
+  # class(formula) <- c("formula", "MPST")
   
   # Set default parameters and check validity
   method <- method %||% "G"  # Default to Global Learning
@@ -98,6 +98,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
   mfit$formula <- mpst.p$formula
   mfit$func <- "fit"
   class(mfit) <- "MPST"
+  class(mfit$formula) <- c("formula", "MPST")
   return(mfit)
 }
 
@@ -286,7 +287,6 @@ fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, meth
   
   mfit$call <- this.call;
   class(mfit) <- "MPST"
-  
   return(mfit)
 }
 
