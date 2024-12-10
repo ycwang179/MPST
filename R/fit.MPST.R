@@ -1,12 +1,13 @@
 #' Fit a Multivariate Penalized Spline Model
 #'
 #' @description `fit.MPST()` fits a Multivariate Penalized Spline over Triangulation (MPST)
-#' model using global (`"G"`) or distributed (`"D"`) learning methods. The function accepts
-#' both a formula and a list of data, along with optional parameters for customization.
+#' model using global (`"G"`) or distributed (`"D"`) learning methods. The function can extract
+#' required parameters (`Y`, `Z`, `V`, `Tr`, `d`, `r`) either from the formula or from the provided
+#' data list, prioritizing values in the formula if both sources are available.
 #'
 #' @rdname fit
 #' @method fit MPST
-#' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+#' @param formula A formula specifying the model, e.g., `Y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
 #'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
@@ -19,7 +20,8 @@
 #' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,...,5,5.5,6)}.
+#' @param lambda A numeric vector of tuning parameters for regularization. Defaults to 
+#' \eqn{10^(-6,-5.5,-5,...,5,5.5,6)}.
 #' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
@@ -31,6 +33,8 @@
 #' - `Z`: Matrix of observation coordinates.
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
+#' - `d`: Degree of piecewise polynomials.
+#' - `r`: Smoothness parameter.
 #'
 #' @return An object of class `"MPST"` with the following components:
 #' - `gamma.hat`: Estimated spline coefficients from the fitted model.
@@ -39,6 +43,14 @@
 #' - `mise`: Mean integrated squared error.
 #' - `method`: The learning method used ("G" or "D").
 #' - `formula`: The formula provided during fitting.
+#'
+#' @details
+#' - This function extracts required components (`Y`, `Z`, `V`, `Tr`, `d`, `r`) from the `formula` 
+#'   using `interpret.mpst()`. If a component is not available in the formula, it falls back to the 
+#'   `data` argument.
+#' - If a required component is missing in both `formula` and `data`, the function raises an error.
+#' - The `method` parameter specifies the learning mode, and `lambda` allows for fine-tuning the 
+#'   regularization.
 #'
 #' @export
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
