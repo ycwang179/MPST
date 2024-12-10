@@ -173,13 +173,25 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 # Define the m function
 #' Generate MPST Parameters
 #'
-#' @description Internal function to create a list of parameters for MPST.
+#' @description Internal function to create a list of parameters for MPST. This function validates the input data and parameters to ensure consistency for either 2D or 3D triangulations.
 #' @param ... Additional arguments (not used).
-#' @param V Matrix of vertices (optional).
-#' @param Tr Matrix of triangulations (optional).
-#' @param d Degree of the spline (must be an integer ≥ 1).
-#' @param r Smoothness parameter (must be an integer).
-#' @return A list containing parameters `d` and `r`.
+#' @param Y The response variable observed over the domain.
+#' @param Z Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+#' @param V Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices in the triangulation.
+#' @param Tr Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
+#'   - For 2D: Rows have three indices for triangles.
+#'   - For 3D: Rows have four indices for tetrahedra.
+#' @param d Degree of piecewise polynomials. Must be a numeric integer value greater than or equal to 1 (default: \code{5}). \code{-1} represents piecewise constants.
+#' @param r Smoothness parameter (default: \code{1}). Must satisfy the condition \code{0 <= r < d}.
+#' @return A list containing the validated parameters: `Y`, `Z`, `V`, `Tr`, `d`, and `r`.
+#' @details
+#' - The function validates and processes the input parameters:
+#'   - \code{Y}, \code{Z}, \code{V}, and \code{Tr} default to \code{NA} if not provided.
+#'   - \code{Z} and \code{V} must be matrices with the same number of columns (\code{2} for 2D or \code{3} for 3D).
+#'   - \code{Tr} must have dimensions consistent with \code{Z} and \code{V}: 
+#'     - For 2D: \code{Tr} must have 3 columns (triangles).
+#'     - For 3D: \code{Tr} must have 4 columns (tetrahedra).
+#'   - \code{d} and \code{r} are validated to ensure they meet the required conditions.
 #' @keywords internal
 m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
   # Validate 'd': Must be a numeric value ≥ 1
