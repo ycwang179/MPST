@@ -5,7 +5,7 @@
 #' both a formula and a list of data, along with optional parameters for customization.
 #'
 #' @rdname fit
-#'
+#' @method fit MPST
 #' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
