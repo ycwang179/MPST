@@ -9,7 +9,7 @@
 #' @rdname fit
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
-  if (inherits(formula, "MPST") || inherits(data, "MPST")) {
+  if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
     return(fit.MPST(formula, lambda, method, P.func, data))
   } else {
     UseMethod("fit")
