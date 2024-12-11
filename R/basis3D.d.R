@@ -73,6 +73,7 @@ basis3D.d <- function (V, Tr, d, r, Z) {
   Z <- as.matrix(Z);
   nq <- choose(d + 3, 3)
   nT <- nrow(Tr)
+  
   inVT.list = inVT(V, Tr, Z)
   ind.inside = which(inVT.list$ind.inside == 1)
   ind.T = inVT.list$ind.T
