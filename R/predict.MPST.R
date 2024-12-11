@@ -74,7 +74,6 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
-  
   P.func <- P.func %||% 2 # Default to parLapply
   if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
