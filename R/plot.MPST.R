@@ -278,7 +278,6 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL) {
                  xlab = "y", ylab = "z", col = col_palette, axes = FALSE, useRaster = TRUE)
     }
   }
-  
   # Use manipulate to create an interactive interface
   manipulate::manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
