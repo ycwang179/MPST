@@ -83,6 +83,7 @@ smoothness3D <- function (V, Tr, d, r) {
   SM.sparse <- Matrix(0, ncf * l, nT * t, sparse = TRUE)
   SM.initial <- sparseMatrix(i = SM[, 1], j = SM[, 2], x = SM[, 3])
   SM.sparse[1:dim(SM.initial)[1], 1:dim(SM.initial)[2]] <- SM.initial 
+  
   return(SM.sparse)
 }
 
