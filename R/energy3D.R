@@ -24,7 +24,6 @@
 #' @export
 
 energy3D <- function (V, Tr, d) {
-  
   n <- nrow(Tr)
   m <- choose((d + 3), 3)
   Vl <- V[t(Tr), ]
