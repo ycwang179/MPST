@@ -32,7 +32,7 @@ Imports: Rcpp (>= 1.0.0),
     utils,
     mgcv,
     grDevices,
-    methods
+    methods 
 Encoding: UTF-8
 LinkingTo: Rcpp
 RoxygenNote: 7.3.2
