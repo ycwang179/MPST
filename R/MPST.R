@@ -77,7 +77,7 @@ print.MPST <- function(x, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
   }
-  
+  options(max.print = 10)
   cat("\nFormula: ")
   print(x$formula)
   
@@ -96,9 +96,9 @@ print.MPST <- function(x, ...) {
     cat("\nd:", x$d, "\n")
     cat("\nMSE:", round(x$mse, 4), "\n")  
     cat("\ngamma_hat:\n")
-    print(head(x$gamma.hat, 10))
+    print(as.vector(x$gamma.hat))
     cat("\ny_hat:\n")
-    print(head(x$Y.hat, 10))
+    print(x$Y.hat)
     
   } else if (x$func == "predict") {
     # handle predict Situations
