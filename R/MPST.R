@@ -115,19 +115,19 @@ print.MPST <- function(x, ...) {
     cat("\nd:", x$d, "\n")
     cat("\nMISE:", round(x$mise, 4), "\n")  
     cat("\ny_predict:\n")
-    print(head(x$Ypred, 10))
+    print(x$Ypred)
     
   } else if (x$func == "basis") {
     # handle basis Situations
     if (x$method == "G") {
       cat("\nMethod: Global\n")
       cat("\nbasis:\n")
-      print(head(x$B, 10))  
+      print(x$B)
     } else if (x$method == "D") {
       cat("\nMethod: Distributed Learning\n")
       for (item in 1:length(x$basis.all)) {
         cat("\nbasis for triangle", item, ":\n")
-        print(head(x$basis.all[[item]]$B.star, 10))  
+        print(x$basis.all[[item]]$B.star)
       }
     }
   }
