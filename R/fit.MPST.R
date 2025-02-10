@@ -158,7 +158,8 @@ fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, meth
     i.max <- 4
   } else if (nd == 4) {
     #nq = choose(d + 3, 3)
-    i.max <- 8
+    # i.max <- 8
+    i.max <- 5
   }
   
   if (method == "G") {
