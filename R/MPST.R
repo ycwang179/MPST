@@ -216,8 +216,13 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @keywords internal
 m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
   # Validate 'd': Must be a numeric value ≥ 1
-  if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
-    stop("Argument 'd' must be a numeric value greater than or equal to 1.")
+  #if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
+  #  stop("Argument 'd' must be a numeric value greater than or equal to 1.")
+  #}
+  if (!is.null(d) && length(d) > 0) {
+    if (!is.numeric(d) || (d < 1)) {
+      stop("Argument 'd' must be a numeric value greater than or equal to 1.")
+    }
   }
   
   # Round 'd' and ensure it's an integer
