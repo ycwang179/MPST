@@ -222,14 +222,20 @@ m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) 
   if (!is.null(d) && length(d) > 0) {
     if (!is.numeric(d) || (d < 1)) {
       stop("Argument 'd' must be a numeric value greater than or equal to 1.")
+    } else {
+      # Round 'd' and ensure it's an integer
+      d.new <- round(d)
+      if (!isTRUE(all.equal(d.new, d))) {
+        stop("Argument 'd' must be an integer.")
+      }
     }
   }
   
   # Round 'd' and ensure it's an integer
-  d.new <- round(d)
-  if (!isTRUE(all.equal(d.new, d))) {
-    stop("Argument 'd' must be an integer.")
-  }
+  # d.new <- round(d)
+  # if (!isTRUE(all.equal(d.new, d))) {
+  #   stop("Argument 'd' must be an integer.")
+  # }
   
   # Validate 'r': Must be numeric
   if (missing(r) || is.null(r) || !is.numeric(r)) {
