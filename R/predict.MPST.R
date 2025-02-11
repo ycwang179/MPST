@@ -95,7 +95,8 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   # if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(d) || is.null(r)) {
   #   stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', 'd', and 'r'.")
   # }
-  
+
+  # Check for the presence of required parameters.
   if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(r)) {
     stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', and 'r'.")
   }
