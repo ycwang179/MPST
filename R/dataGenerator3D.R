@@ -81,7 +81,9 @@ dataGenerator3D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024) {
   } else if (func == 4) {
     mu = (a * b + d^2) * exp(-8 * z3^2);
   } else if (func == 5) {
-    mu <- (a * b + d^2) * sin(pi * z3) * cos(pi * z1) + exp(-0.5 * z2^2);
+    mu = (-1) * sin(3 * pi * (z1 + 0.25)) + sin(3 * pi * z2) + 3 * sin(z3);
+  } else if (func == 6) {
+    mu = (-1) * sin(10 * pi * (z1 + 0.25)) + sin(10 * pi * z2) + 10 * sin(z3);
   } else {
     mu = (a * b + d^2);
   }
