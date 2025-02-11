@@ -219,7 +219,9 @@ m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) 
   #if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
   #  stop("Argument 'd' must be a numeric value greater than or equal to 1.")
   #}
-  if (!is.null(d) && length(d) > 0) {
+  if (is.null(d)) {
+    d.new <- NULL
+  } else if (!is.null(d) && length(d) > 0) {
     if (!is.numeric(d) || (d < 1)) {
       stop("Argument 'd' must be a numeric value greater than or equal to 1.")
     } else {
