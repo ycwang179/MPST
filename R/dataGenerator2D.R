@@ -29,7 +29,7 @@
 #'
 #' @export
 
-dataGenerator2D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024){
+dataGenerator2D <- function(Z, V, Tr, func, sigma, seed){
   set.seed(seed)
   cat("(dataGenerator2D) sigma =", sigma, " \n")
   # location information
