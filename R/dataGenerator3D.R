@@ -32,7 +32,7 @@
 #'
 #' @export
 
-dataGenerator3D <- function(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024) {
+dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
   set.seed(seed)
   
   # location information
