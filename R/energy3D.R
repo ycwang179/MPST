@@ -515,7 +515,7 @@ energy3D <- function (V, Tr, d) {
   # End Dxx
   
   # for Dyy
-  dyyv.full <- sparseMatrix(i = dyyv[, 1], j = dyyv[, 2], x = dyyv[, 3])
+  dyyv.full <- sparseMatrix(i = dyyv[, 1], j = dyyv[, 2], x = dyyv[, 3], dims = dim(dyyv.0))
   Dyy <- matrix(nrow = nrow(ridx), ncol = 3)
   Dyy[, 1] <- ridx[, 1]
   Dyy[, 2] <- matrix(cidx, ncol = 1) + matrix(cs, ncol = 1)
@@ -528,7 +528,7 @@ energy3D <- function (V, Tr, d) {
   # End Dyy
   
   # for Dzz
-  dzzv.full <- sparseMatrix(i = dzzv[, 1], j = dzzv[, 2], x = dzzv[, 3])
+  dzzv.full <- sparseMatrix(i = dzzv[, 1], j = dzzv[, 2], x = dzzv[, 3], dims = dim(dzzv.0))
   Dzz <- matrix(nrow = nrow(ridx), ncol = 3)
   Dzz[, 1] <- ridx[, 1]
   Dzz[, 2] <- matrix(cidx, ncol = 1) + matrix(cs, ncol = 1)
@@ -541,7 +541,7 @@ energy3D <- function (V, Tr, d) {
   # End Dzz
   
   # for Dxy
-  dxyv.full <- sparseMatrix(i = dxyv[, 1], j = dxyv[, 2], x = dxyv[, 3])
+  dxyv.full <- sparseMatrix(i = dxyv[, 1], j = dxyv[, 2], x = dxyv[, 3], dims = dim(dxyv.0))
   Dxy <- matrix(nrow = nrow(ridx), ncol = 3)
   Dxy[, 1] <- ridx[, 1]
   Dxy[, 2] <- matrix(cidx, ncol = 1) + matrix(cs, ncol = 1)
@@ -554,7 +554,7 @@ energy3D <- function (V, Tr, d) {
   # End Dxy
   
   # for Dxz
-  dxzv.full <- sparseMatrix(i = dxzv[, 1], j = dxzv[, 2], x = dxzv[, 3])
+  dxzv.full <- sparseMatrix(i = dxzv[, 1], j = dxzv[, 2], x = dxzv[, 3], dims = dim(dxzv.0))
   Dxz <- matrix(nrow = nrow(ridx), ncol = 3)
   Dxz[, 1] <- ridx[, 1]
   Dxz[, 2] <- matrix(cidx, ncol = 1) + matrix(cs, ncol = 1)
@@ -567,7 +567,7 @@ energy3D <- function (V, Tr, d) {
   # End Dxz
   
   # for Dyz
-  dyzv.full <- sparseMatrix(i = dyzv[, 1], j = dyzv[, 2], x = dyzv[, 3])
+  dyzv.full <- sparseMatrix(i = dyzv[, 1], j = dyzv[, 2], x = dyzv[, 3], dims = dim(dyzv.0))
   Dyz <- matrix(nrow = nrow(ridx), ncol = 3)
   Dyz[, 1] <- ridx[, 1]
   Dyz[, 2] <- matrix(cidx, ncol = 1) + matrix(cs, ncol = 1)
