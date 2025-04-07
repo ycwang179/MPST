@@ -54,6 +54,9 @@ dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
   mu = rep(NA, n);
   a = rep(0, n); d = rep(0, n);
 
+  ind.all <- matrix(seq(1, n, by = 1), nrow = 1)
+  ind.out <- setdiff(ind.all, ind.T) 
+
   # Part 1
   ind = which((z1 >= 0) & (z2 > 0));
   a[ind] = q + z1[ind];
@@ -69,6 +72,7 @@ dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
   a[ind] = -atan(z2[ind]/z1[ind]) * r;
   d[ind] = sqrt(z1[ind]^2 + z2[ind]^2) - r;
 
+  ind = (abs(d) > r - r0) | (xx > l & (xx - l)^2 + d^2 > (r - r0)^2);
   # ind = which((abs(d) > r - r0) | (z1 > l & (z1 - l)^2 + d^2 > (r - r0)^2));
   # ind = (1:n)[ind.inside == 1]
   
@@ -87,11 +91,18 @@ dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
   } else {
     mu = (a * b + d^2);
   }
-
-  eps <- rnorm(n, mean = 0, sd = sigma)
-  mu[ind.inside == 0] <- NA; eps[ind.inside == 0] <- NA;
-  Y <- mu + eps
   
+  if ((func == 5) | (func == 6)) {
+    eps <- rnorm(n, mean = 0, sd = sigma)
+    mu[ind.inside == 0] <- NA; eps[ind.inside == 0] <- NA;
+    Y <- mu + eps
+  } else if ((func == 1) | (func == 2) | (func == 3) | (func == 4)) {
+    eps <- rnorm(n, mean = 0, sd = sigma)
+    mu[ind == TRUE] <- NA;
+    mu[ind.out] <- NA;
+    Y <- mu + eps
+  }
+    
   dat = list(Y = Y, 
              mu = mu, 
              Z = Z, 
