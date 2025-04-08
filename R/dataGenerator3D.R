@@ -54,9 +54,6 @@ dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
   mu = rep(NA, n);
   a = rep(0, n); d = rep(0, n);
 
-  # ind.all <- matrix(seq(1, n, by = 1), nrow = 1)
-  # ind.out <- setdiff(ind.all, ind.T) 
-
   # Part 1
   ind = which((z1 >= 0) & (z2 > 0));
   a[ind] = q + z1[ind];
