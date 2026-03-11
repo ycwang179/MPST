@@ -84,7 +84,7 @@ print.MPST <- function(x, ...) {
   if (x$func == "fit") {
     # handle fit Situations
     if (x$method == "G") {
-      cat("\nMethod: Global\n")
+      cat("\nMethod: Global Learning\n")
     } else if (x$method == "D") {
       cat("\nMethod: Distributed Learning\n")
       if (x$P.func == 1) {
