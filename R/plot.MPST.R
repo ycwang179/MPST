@@ -1,19 +1,56 @@
-#' Plot Different Views for MPST Models
+#' Plot Contour, Surface, or Slice Views for MPST Models
 #'
-#' @description Given an MPST model fit object, this function generates contour,
-#' surface, or slice visualizations by evaluating the fitted model on a plotting
-#' grid. If \code{Zgrid} is not supplied, a grid is generated automatically from
-#' the domain of the fitted data.
-#' @param x An MPST model fit object.
-#' @param Zgrid An optional grid for plotting. If NULL, it will be generated automatically.
-#' @param mview A character string specifying the view to plot. Must be one of 'contour', 
-#' 'surface', or 'slice'.
-#' @param ... Additional arguments passed to the specific plot functions.
-#' @return No return value. The function generates plots.
+#' @description
+#' Generates contour, surface, or slice visualizations from a fitted
+#' \pkg{MPST} model object. Rather than directly plotting fitted values at the
+#' original training locations, this function evaluates the fitted model on a
+#' plotting grid and visualizes the resulting values. If \code{Zgrid} is not
+#' supplied, a plotting grid is generated automatically from the domain of the
+#' fitted data.
+#'
+#' For two-dimensional domains, \code{mview = "contour"} and
+#' \code{mview = "surface"} produce contour and surface plots, respectively.
+#' For three-dimensional domains, \code{mview = "slice"} produces orthogonal
+#' slice views through the fitted volume.
+#'
+#' @param x
+#' An object of class \code{"MPST"}, typically returned by
+#' \code{\link{fit.MPST}}.
+#' @param Zgrid
+#' An optional matrix of plotting locations. If \code{NULL}, a plotting grid is
+#' generated automatically from the coordinate range of the fitted data.
+#' @param mview
+#' A character string specifying the type of visualization. Must be one of
+#' \code{"contour"}, \code{"surface"}, or \code{"slice"}.
+#' @param ...
+#' Additional arguments passed to the internal plotting routines.
+#'
+#' @details
+#' The function dispatches to internal plotting methods according to the
+#' dimensionality of the fitted domain and the value of \code{mview}. For
+#' two-dimensional triangulated domains, contour and surface plots are
+#' supported. For three-dimensional tetrahedral domains, slice-based plots are
+#' supported.
+#'
+#' Internally, the fitted model is evaluated on \code{Zgrid} through
+#' prediction, so the resulting plot represents the fitted function on the
+#' plotting grid rather than only at the observed training points.
+#'
+#' @return
+#' No value is returned. This function is called for its side effect of
+#' generating a plot.
+#'
 #' @examples
 #' \dontrun{
-#' plot.MPST(model_fit_object, mview = "contour")
+#' fit.obj <- fit.MPST(y ~ m(Z, V, Tr, d = 3, r = 1),
+#'                     data = ex_square_train$m1$sigma01$tri50,
+#'                     method = "G",
+#'                     lambda = 10^seq(-6, 6, by = 0.5))
+#'
+#' plot(fit.obj, mview = "contour")
+#' plot(fit.obj, mview = "surface")
 #' }
+#'
 #' @export
 plot.MPST <- function(x, Zgrid = NULL, mview = NULL, ...) {
   if (!inherits(x, "MPST")) {
