@@ -1,7 +1,9 @@
 #' Plot Different Views for MPST Models
 #'
-#' @description This function allows plotting different views (contour, surface, or slice) 
-#' for an MPST model fit object.
+#' @description Given an MPST model fit object, this function generates contour,
+#' surface, or slice visualizations by evaluating the fitted model on a plotting
+#' grid. If \code{Zgrid} is not supplied, a grid is generated automatically from
+#' the domain of the fitted data.
 #' @param x An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, it will be generated automatically.
 #' @param mview A character string specifying the view to plot. Must be one of 'contour', 
