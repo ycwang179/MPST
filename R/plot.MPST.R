@@ -154,13 +154,13 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
     stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
   
-  z1 <- matrix(mpred$Ypred, length(u1), length(v1), byrow = TRUE)
+  z1 <- matrix(mpred$Ypred, nrow = length(u1), ncol = length(v1), byrow = FALSE)
   
   fig <- plotly::plot_ly(
     type = "contour",
-    x = u1, 
-    y = v1, 
-    z = t(z1), 
+    x = u1,
+    y = v1,
+    z = t(z1),
     contours = list(showlabels = TRUE)
   )
   return(fig)
@@ -192,29 +192,30 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
     stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
   
-  z1 <- matrix(mpred$Ypred, nrow = length(u1), byrow = TRUE)
+  z1 <- matrix(mpred$Ypred, nrow = length(u1), ncol = length(v1), byrow = FALSE)
   df1 <- data.frame(x = mfit$Z[, 1], y = mfit$Z[, 2], z = mfit$Y)
   
   fig <- plotly::plot_ly(
-    x = u1, 
-    y = v1, 
+    x = u1,
+    y = v1,
     z = t(z1),
     type = "surface"
   )
-  fig <- plotly::add_trace(fig, 
-                   data = df1,
-                   x = ~x, y = ~y, z = ~z,
-                   mode = "markers", type = "scatter3d",
-                   marker = list(size = 1, color = "black")
-                  ) 
+  fig <- plotly::add_trace(
+    fig,
+    data = df1,
+    x = ~x, y = ~y, z = ~z,
+    mode = "markers", type = "scatter3d",
+    marker = list(size = 1, color = "black")
+  )
   fig <- plotly::layout(fig,
-                scene = list(
-                  camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
-                  xaxis = list(title = "Z1"),
-                  yaxis = list(title = "Z2"),
-                  zaxis = list(title = "Value")
-                )
-               )
+    scene = list(
+      camera = list(eye = list(x = -1.6, y = -1.6, z = 0.8)),
+      xaxis = list(title = "Z1"),
+      yaxis = list(title = "Z2"),
+      zaxis = list(title = "Value")
+    )
+  )
   return(fig)
 }
 
