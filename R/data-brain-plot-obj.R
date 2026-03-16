@@ -29,13 +29,13 @@
 #' @format A named list of six MPST-compatible precomputed plotting objects.
 #'
 #' @examples
-#' data(brain_plot_obj)
+#' data(ex_brain_plot_obj)
 #'
 #' \dontrun{
-#' plot.MPST(brain_plot_obj$global, mview = "slice")
-#' plot.MPST(brain_plot_obj$distributed, mview = "slice")
-#' plot.MPST(brain_plot_obj$truth, mview = "slice")
+#' plot.MPST(ex_brain_plot_obj$global, mview = "slice")
+#' plot.MPST(ex_brain_plot_obj$distributed, mview = "slice", slice_style = "brain")
+#' plot.MPST(ex_brain_plot_obj$truth, mview = "slice", slice_style = "brain")
 #' }
 #'
-#' @name brain_plot_obj
+#' @name ex_brain_plot_obj
 NULL
