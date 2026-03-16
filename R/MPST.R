@@ -88,9 +88,9 @@ print.MPST <- function(x, ...) {
     } else if (x$method == "D") {
       cat("\nMethod: Distributed Learning\n")
       if (x$P.func == 1) {
-        cat("\nParallelization function: mclapply() with", x$N.cores, "cores\n")
+        cat("\nParallel backend: mclapply() with", x$N.cores, "cores\n")
       } else if (x$P.func == 2) {
-        cat("\nParallelization function: parLapply() with", x$N.cores, "cores\n")
+        cat("\nParallel backend: parLapply() with", x$N.cores, "cores\n")
       }
     }
     cat("\nd:", x$d, "\n")
@@ -107,9 +107,9 @@ print.MPST <- function(x, ...) {
     } else if (x$method == "D") {
       cat("\nMethod: Distributed Learning\n")
       if (x$P.func == 1) {
-        cat("\nParallel function: mclapply() with", x$N.cores, "cores\n")
+        cat("\nParallel backend: mclapply() with", x$N.cores, "cores\n")
       } else if (x$P.func == 2) {
-        cat("\nParallel function: parLapply() with", x$N.cores, "cores\n")
+        cat("\nParallel backend: parLapply() with", x$N.cores, "cores\n")
       }
     }
     cat("\nd:", x$d, "\n")
