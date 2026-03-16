@@ -317,7 +317,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
       stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
     }
     
-    grid_info <- initialize.grid(mfit, Zgrid, n1 = 30, n2 = 25, n3 = 20)
+    grid_info <- initialize.grid(mfit, Zgrid, n1 = 26, n2 = 28, n3 = 32)
     Zgrid <- grid_info$Zgrid
     z1.grid <- grid_info$u1
     z2.grid <- grid_info$v1
