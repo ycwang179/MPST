@@ -519,3 +519,4 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
   
   invisible()
 }
+

@@ -4,12 +4,16 @@
 \alias{plot.slice.mpst}
 \title{Plot Slices for 3D MPST Models}
 \usage{
-\method{plot}{slice.mpst}(mfit, Zgrid = NULL)
+\method{plot}{slice.mpst}(mfit, Zgrid = NULL, slice_style = NULL)
 }
 \arguments{
-\item{mfit}{An MPST model fit object.}
+\item{mfit}{An MPST model fit object, or an MPST-like object containing
+precomputed \code{Yarray}, \code{xgrid}, \code{ygrid}, and \code{zgrid}.}
 
 \item{Zgrid}{An optional grid for plotting. If NULL, a grid is generated automatically.}
+
+\item{slice_style}{A character string specifying the slice plotting style.
+Supported values are \code{"default"} and \code{"brain"}.}
 }
 \value{
 A manipulate object that provides interactive slices through the 3D array.
@@ -17,5 +21,9 @@ A manipulate object that provides interactive slices through the 3D array.
 \description{
 Generates interactive 2D slices for a 3D MPST model. This function is used internally
 by `plot.MPST` and is not intended for direct use by end users.
+
+It also supports direct slice plotting from a precomputed 3D array stored in
+\code{mfit$Yarray}, together with \code{mfit$xgrid}, \code{mfit$ygrid}, and
+\code{mfit$zgrid}.
 }
 \keyword{internal}

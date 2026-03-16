@@ -280,9 +280,7 @@ m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) 
       stop("'Z', 'V', and 'Tr' must have dimensions corresponding to either 2D or 3D space.")
     }
   }
-
+  
   ret <- list(Y = Y, Z = Z, V = V, Tr = Tr, d = d.new, r = r.new)
   return(ret)
 }
-
-

@@ -2,29 +2,94 @@
 % Please edit documentation in R/plot.MPST.R
 \name{plot.MPST}
 \alias{plot.MPST}
-\title{Plot Different Views for MPST Models}
+\title{Plot Contour, Surface, or Slice Views for MPST Models}
 \usage{
-\method{plot}{MPST}(x, Zgrid = NULL, mview = NULL, ...)
+\method{plot}{MPST}(x, Zgrid = NULL, mview = NULL, slice_style = NULL, ...)
 }
 \arguments{
-\item{x}{An MPST model fit object.}
+\item{x}{An object of class \code{"MPST"}, typically returned by
+\code{\link{fit.MPST}}. For slice plotting, it may also be an MPST-like
+object containing precomputed components \code{Yarray}, \code{xgrid},
+\code{ygrid}, and \code{zgrid}.}
 
-\item{Zgrid}{An optional grid for plotting. If NULL, it will be generated automatically.}
+\item{Zgrid}{An optional matrix of plotting locations. If \code{NULL}, a plotting grid is
+generated automatically from the coordinate range of the fitted data.}
 
-\item{mview}{A character string specifying the view to plot. Must be one of 'contour', 
-'surface', or 'slice'.}
+\item{mview}{A character string specifying the type of visualization. Must be one of
+\code{"contour"}, \code{"surface"}, or \code{"slice"}.}
 
-\item{...}{Additional arguments passed to the specific plot functions.}
+\item{slice_style}{A character string specifying the slice plotting style. Supported values are
+\code{"default"} and \code{"brain"}. This argument is only used when
+\code{mview = "slice"}.}
+
+\item{...}{Additional arguments passed to the internal plotting routines.}
 }
 \value{
-No return value. The function generates plots.
+No value is returned. This function is called for its side effect of
+generating a plot.
 }
 \description{
-This function allows plotting different views (contour, surface, or slice) 
-for an MPST model fit object.
+Generates contour, surface, or slice visualizations from a fitted
+\pkg{MPST} model object. Rather than directly plotting fitted values at the
+original training locations, this function evaluates the fitted model on a
+plotting grid and visualizes the resulting values. If \code{Zgrid} is not
+supplied, a plotting grid is generated automatically from the domain of the
+fitted data.
+
+For two-dimensional domains, \code{mview = "contour"} and
+\code{mview = "surface"} produce contour and surface plots, respectively.
+For three-dimensional domains, \code{mview = "slice"} produces orthogonal
+slice views through the fitted volume.
+
+In addition, precomputed 3D arrays can be plotted directly for slice
+visualization when the input object contains \code{Yarray},
+\code{xgrid}, \code{ygrid}, and \code{zgrid}.
+}
+\details{
+The function dispatches to internal plotting methods according to the
+dimensionality of the fitted domain and the value of \code{mview}. For
+two-dimensional triangulated domains, contour and surface plots are
+supported. For three-dimensional tetrahedral domains, slice-based plots are
+supported.
+
+Internally, the fitted model is evaluated on \code{Zgrid} through
+prediction, so the resulting plot represents the fitted function on the
+plotting grid rather than only at the observed training points.
+
+If a precomputed 3D array is supplied through \code{x$Yarray}, then
+\code{plot.MPST(..., mview = "slice")} directly visualizes that array
+without re-running prediction.
 }
 \examples{
 \dontrun{
-plot.MPST(model_fit_object, mview = "contour")
+## 2D example
+data(ex_square_train)
+fit.obj2d <- fit.MPST(y ~ m(Z, V, Tr, d = 3, r = 1),
+                      data = ex_square_train$m1$sigma01$tri50,
+                      method = "D",
+                      lambda = 10^seq(-6, 6, by = 0.5))
+
+plot.MPST(fit.obj2d, mview = "contour")
+plot.MPST(fit.obj2d, mview = "surface")
+
+## 3D example
+data(ex_hs3d_train_test)
+fit.obj3d <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1),
+                      data = ex_hs3d_train_test,
+                      method = "G",
+                      lambda = 10^seq(-6, 6, by = 2))
+
+xg <- seq(min(fit.obj3d$V[, 1]), max(fit.obj3d$V[, 1]), length.out = 26)
+yg <- seq(min(fit.obj3d$V[, 2]), max(fit.obj3d$V[, 2]), length.out = 28)
+zg <- seq(min(fit.obj3d$V[, 3]), max(fit.obj3d$V[, 3]), length.out = 32)
+Zgrid.custom <- as.matrix(expand.grid(xg, yg, zg))
+
+plot.MPST(fit.obj3d, Zgrid = Zgrid.custom, mview = "slice")
+
+## Precomputed 3D brain array example
+data(brain_plot_obj)
+plot.MPST(brain_plot_obj$global, mview = "slice")
+plot.MPST(brain_plot_obj$global, mview = "slice", slice_style = "brain")
 }
+
 }

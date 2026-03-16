@@ -15,7 +15,7 @@
 A plotly object representing the contour plot.
 }
 \description{
-Generates a contour plot for a 3D MPST model. This function is used internally
+Generates a contour plot for a 2D MPST model. This function is used internally
 by `plot.MPST` and is not intended for direct use by end users.
 }
 \keyword{internal}

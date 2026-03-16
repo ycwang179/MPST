@@ -4,7 +4,7 @@
 \alias{dataGenerator2D}
 \title{Generate Testing Dataset for Bivariate Spline Smoothing}
 \usage{
-dataGenerator2D(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024)
+dataGenerator2D(Z, V, Tr, func, sigma, seed)
 }
 \arguments{
 \item{Z}{A matrix of dimension \code{n} by two, where \code{n} is the number of points. Each row represents the 2D coordinates of a point.}

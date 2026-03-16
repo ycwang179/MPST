@@ -4,7 +4,7 @@
 \alias{dataGenerator3D}
 \title{Data Generator for Numerical Examples in 3D}
 \usage{
-dataGenerator3D(Z, V, Tr, func = 1, sigma = 0.1, seed = 2024)
+dataGenerator3D(Z, V, Tr, func, sigma, seed)
 }
 \arguments{
 \item{Z}{A matrix of dimension \code{n} by three, where \code{n} is the number of points. Each row represents the 3D coordinates of a point.}
