@@ -11,8 +11,6 @@
 #' \itemize{
 #'   \item \code{global}: precomputed global learning MPST estimate
 #'   \item \code{distributed}: precomputed distributed learning MPST estimate
-#'   \item \code{tps1}: precomputed thin-plate spline estimate
-#'   \item \code{tps2}: precomputed tensor product spline estimate
 #'   \item \code{truth}: precomputed true function volume
 #'   \item \code{noise}: precomputed noisy volume
 #' }
