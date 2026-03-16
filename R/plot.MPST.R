@@ -56,14 +56,34 @@
 #'
 #' @examples
 #' \dontrun{
-#' fit.obj <- fit.MPST(y ~ m(Z, V, Tr, d = 3, r = 1),
-#'                     data = ex_square_train$m1$sigma01$tri50,
-#'                     method = "G",
-#'                     lambda = 10^seq(-6, 6, by = 0.5))
+#' ## 2D example
+#' data(ex_square_train)
+#' fit.obj2d <- fit.MPST(y ~ m(Z, V, Tr, d = 3, r = 1),
+#'                       data = ex_square_train$m1$sigma01$tri50,
+#'                       method = "D",
+#'                       lambda = 10^seq(-6, 6, by = 0.5))
 #'
-#' plot(fit.obj, mview = "contour")
-#' plot(fit.obj, mview = "surface")
-#' plot(fit.obj, mview = "slice")
+#' plot.MPST(fit.obj2d, mview = "contour")
+#' plot.MPST(fit.obj2d, mview = "surface")
+#'
+#' ## 3D example
+#' data(ex_hs3d_train_test)
+#' fit.obj3d <- fit.MPST(y ~ m(Z, V, Tr, d = 2, r = 1),
+#'                       data = ex_hs3d_train_test,
+#'                       method = "G",
+#'                       lambda = 10^seq(-6, 6, by = 2))
+#'
+#' xg <- seq(min(fit.obj3d$V[, 1]), max(fit.obj3d$V[, 1]), length.out = 26)
+#' yg <- seq(min(fit.obj3d$V[, 2]), max(fit.obj3d$V[, 2]), length.out = 28)
+#' zg <- seq(min(fit.obj3d$V[, 3]), max(fit.obj3d$V[, 3]), length.out = 32)
+#' Zgrid.custom <- as.matrix(expand.grid(xg, yg, zg))
+#'
+#' plot.MPST(fit.obj3d, Zgrid = Zgrid.custom, mview = "slice")
+#'
+#' ## Precomputed 3D brain array example
+#' data(brain_plot_obj)
+#' plot.MPST(brain_plot_obj$global, mview = "slice")
+#' plot.MPST(brain_plot_obj$global, mview = "slice", slice_style = "brain")
 #' }
 #'
 #' @export
