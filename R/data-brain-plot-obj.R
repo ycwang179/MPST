@@ -3,7 +3,7 @@
 #' A collection of precomputed 3D brain volumes for demonstrating
 #' slice visualization with \code{\link{plot.MPST}}.
 #'
-#' The object \code{brain_plot_obj} is a named list. Each component is an
+#' The object \code{ex_brain_plot_obj} is a named list. Each component is an
 #' MPST-compatible precomputed plotting object that can be directly passed to
 #' \code{plot.MPST(..., mview = "slice")}.
 #'
