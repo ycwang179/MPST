@@ -3,13 +3,13 @@ Type: Package
 Title: Multivariate Penalized Spline Over Triangulation
 Version: 1.0.0
 Author@R: c(
-    person("Lily", "Wang", role = "aut", email = "lwang41@gmu.edu"),
     person("Guannan", "Wang", role = c("aut", "trl", "cre"), email = "gwang01@wm.edu"),
+    person("Yuchun", "Wang", role = c("aut", "trl"), email = "ywang68@gmu.edu"),
+    person("Lily", "Wang", role = "aut", email = "lwang41@gmu.edu"),
     person("Myungjin", "Kim", role = "trl"),
     person("Xinyi", "Li", role = "trl"),
     person("Jingru", "Mu", role = "trl"),
     person("Jue", "Wang", role = "trl"),
-    person("Yuchun", "Wang", role = c("aut", "trl"), email = "ywang68@gmu.edu"),
     person("Yueying", "Wang", role = "trl"),
     person("Shan", "Yu", role = "trl"))
 Author: GuanNan Wang [trl, cre]
