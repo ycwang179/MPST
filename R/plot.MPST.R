@@ -390,14 +390,11 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
   plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 1) {
     par(mfrow = c(1, 3))
 
-    axial_title <- sprintf(
-      "Axial Plane (slice = %d, z = %.4f)", axial_slice)
+    axial_title <- sprintf("Axial Plane (slice = %d)", axial_slice)
 
-    coronal_title <- sprintf(
-      "Coronal Plane (slice = %d, y = %.4f)", coronal_slice)
+    coronal_title <- sprintf("Coronal Plane (slice = %d)", coronal_slice)
 
-    sagittal_title <- sprintf(
-      "Sagittal Plane (slice = %d, x = %.4f)", sagittal_slice)
+    sagittal_title <- sprintf("Sagittal Plane (slice = %d)", sagittal_slice)
 
     if (identical(slice_style, "brain")) {
       arr_plot <- new.array
