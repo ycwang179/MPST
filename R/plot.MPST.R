@@ -381,118 +381,126 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
     }
   }
   
-  plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 1) {
-    par(mfrow = c(1, 3))
+plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 1) {
+  par(mfrow = c(1, 3))
     
-    if (identical(slice_style, "brain")) {
-      arr_plot <- new.array
-      arr_plot[is.na(arr_plot)] <- -1
-      
-      col_palette <- select_color_palette(color, style = "brain")
-      zlim_use <- c(-1, max(arr_plot, na.rm = TRUE))
-      
-      fields::image.plot(
-        1:dim.size[1], 1:dim.size[2], arr_plot[, , axial_slice],
-        main = paste("Axial Plane (z =", axial_slice, ")"),
-        xlab = "",
-        ylab = "",
-        col = col_palette,
-        xlim = rev(c(1, dim.size[1])),
-        ylim = c(-5, max(110, dim.size[2] + 5)),
-        axes = FALSE,
-        zlim = zlim_use,
-        useRaster = TRUE
-      )
-      
-      fields::image.plot(
-        1:dim.size[1], 1:dim.size[3], arr_plot[, coronal_slice, ],
-        main = paste("Coronal Plane (y =", coronal_slice, ")"),
-        xlab = "",
-        ylab = "",
-        col = col_palette,
-        xlim = rev(c(-5, max(80, dim.size[1]))),
-        ylim = c(-60, max(130, dim.size[3] + 10)),
-        axes = FALSE,
-        zlim = zlim_use,
-        useRaster = TRUE
-      )
-      
-      fields::image.plot(
-        1:dim.size[2], 1:dim.size[3], arr_plot[sagittal_slice, , ],
-        main = paste("Sagittal Plane (x =", sagittal_slice, ")"),
-        xlab = "",
-        ylab = "",
-        col = col_palette,
-        xlim = rev(c(-5, max(100, dim.size[2]))),
-        ylim = c(-70, max(150, dim.size[3] + 10)),
-        axes = FALSE,
-        zlim = zlim_use,
-        useRaster = TRUE
-      )
-      
+  axial_title <- sprintf("Axial Plane (slice = %d, z = %.4f)",
+                        axial_slice, z3.grid[axial_slice])
+  
+  coronal_title <- sprintf("Coronal Plane (slice = %d, y = %.4f)",
+                           coronal_slice, z2.grid[coronal_slice])
+  
+  sagittal_title <- sprintf("Sagittal Plane (slice = %d, x = %.4f)",
+                            sagittal_slice, z1.grid[sagittal_slice])
+  
+  if (identical(slice_style, "brain")) {
+    arr_plot <- new.array
+    arr_plot[is.na(arr_plot)] <- -1
+    
+    col_palette <- select_color_palette(color, style = "brain")
+    zlim_use <- c(-1, max(arr_plot, na.rm = TRUE))
+    
+    fields::image.plot(
+      1:dim.size[1], 1:dim.size[2], arr_plot[, , axial_slice],
+      main = axial_title,
+      xlab = "",
+      ylab = "",
+      col = col_palette,
+      xlim = rev(c(1, dim.size[1])),
+      ylim = c(-5, max(110, dim.size[2] + 5)),
+      axes = FALSE,
+      zlim = zlim_use,
+      useRaster = TRUE
+    )
+    
+    fields::image.plot(
+      1:dim.size[1], 1:dim.size[3], arr_plot[, coronal_slice, ],
+      main = coronal_title,
+      xlab = "",
+      ylab = "",
+      col = col_palette,
+      xlim = rev(c(-5, max(80, dim.size[1]))),
+      ylim = c(-60, max(130, dim.size[3] + 10)),
+      axes = FALSE,
+      zlim = zlim_use,
+      useRaster = TRUE
+    )
+    
+    fields::image.plot(
+      1:dim.size[2], 1:dim.size[3], arr_plot[sagittal_slice, , ],
+      main = sagittal_title,
+      xlab = "",
+      ylab = "",
+      col = col_palette,
+      xlim = rev(c(-5, max(100, dim.size[2]))),
+      ylim = c(-70, max(150, dim.size[3] + 10)),
+      axes = FALSE,
+      zlim = zlim_use,
+      useRaster = TRUE
+    )
+    
+  } else {
+    col_palette <- select_color_palette(color, style = "default")
+    
+    axial_mat <- new.array[, , axial_slice, drop = TRUE]
+    coronal_mat <- new.array[, coronal_slice, , drop = TRUE]
+    sagittal_mat <- new.array[sagittal_slice, , , drop = TRUE]
+    
+    if (all(is.na(axial_mat))) {
+      warning("Axial slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Axial slice contains only NA values.", cex = 1.5)
     } else {
-      col_palette <- select_color_palette(color, style = "default")
-      
-      axial_mat <- new.array[, , axial_slice, drop = TRUE]
-      coronal_mat <- new.array[, coronal_slice, , drop = TRUE]
-      sagittal_mat <- new.array[sagittal_slice, , , drop = TRUE]
-      
-      if (all(is.na(axial_mat))) {
-        warning("Axial slice contains only NA values.")
-        plot.new()
-        text(0.5, 0.5, "Axial slice contains only NA values.", cex = 1.5)
-      } else {
-        fields::image.plot(
-          x = z1.grid,
-          y = z2.grid,
-          z = axial_mat,
-          main = paste("Axial Plane (z =", round(z3.grid[axial_slice], 4), ")"),
-          xlab = "x",
-          ylab = "y",
-          col = col_palette,
-          axes = FALSE,
-          useRaster = TRUE
-        )
-      }
-      
-      if (all(is.na(coronal_mat))) {
-        warning("Coronal slice contains only NA values.")
-        plot.new()
-        text(0.5, 0.5, "Coronal slice contains only NA values.", cex = 1.5)
-      } else {
-        fields::image.plot(
-          x = z1.grid,
-          y = z3.grid,
-          z = coronal_mat,
-          main = paste("Coronal Plane (y =", round(z2.grid[coronal_slice], 4), ")"),
-          xlab = "x",
-          ylab = "z",
-          col = col_palette,
-          axes = FALSE,
-          useRaster = TRUE
-        )
-      }
-      
-      if (all(is.na(sagittal_mat))) {
-        warning("Sagittal slice contains only NA values.")
-        plot.new()
-        text(0.5, 0.5, "Sagittal slice contains only NA values.", cex = 1.5)
-      } else {
-        fields::image.plot(
-          x = z2.grid,
-          y = z3.grid,
-          z = sagittal_mat,
-          main = paste("Sagittal Plane (x =", round(z1.grid[sagittal_slice], 4), ")"),
-          xlab = "y",
-          ylab = "z",
-          col = col_palette,
-          axes = FALSE,
-          useRaster = TRUE
-        )
-      }
+      fields::image.plot(
+        x = z1.grid,
+        y = z2.grid,
+        z = axial_mat,
+        main = axial_title,
+        xlab = "x",
+        ylab = "y",
+        col = col_palette,
+        axes = FALSE,
+        useRaster = TRUE
+      )
+    }
+    
+    if (all(is.na(coronal_mat))) {
+      warning("Coronal slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Coronal slice contains only NA values.", cex = 1.5)
+    } else {
+      fields::image.plot(
+        x = z1.grid,
+        y = z3.grid,
+        z = coronal_mat,
+        main = coronal_title,
+        xlab = "x",
+        ylab = "z",
+        col = col_palette,
+        axes = FALSE,
+        useRaster = TRUE
+      )
+    }
+    
+    if (all(is.na(sagittal_mat))) {
+      warning("Sagittal slice contains only NA values.")
+      plot.new()
+      text(0.5, 0.5, "Sagittal slice contains only NA values.", cex = 1.5)
+    } else {
+      fields::image.plot(
+        x = z2.grid,
+        y = z3.grid,
+        z = sagittal_mat,
+        main = sagittal_title,
+        xlab = "y",
+        ylab = "z",
+        col = col_palette,
+        axes = FALSE,
+        useRaster = TRUE
+      )
     }
   }
-  
+}
   manipulate::manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
     axial_slice = manipulate::slider(
