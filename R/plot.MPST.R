@@ -315,9 +315,9 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
   if (!requireNamespace("manipulate", quietly = TRUE)) {
     stop("The 'manipulate' package is required for interactive plots.")
   }
-
+  
   has_precomputed_array <- !is.null(mfit$Yarray)
-
+  
   if (has_precomputed_array) {
     if (length(dim(mfit$Yarray)) != 3) {
       stop("mfit$Yarray must be a 3D array.")
@@ -325,12 +325,12 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
     if (is.null(mfit$xgrid) || is.null(mfit$ygrid) || is.null(mfit$zgrid)) {
       stop("Precomputed array objects must contain xgrid, ygrid, and zgrid.")
     }
-
+    
     new.array <- mfit$Yarray
     z1.grid <- mfit$xgrid
     z2.grid <- mfit$ygrid
     z3.grid <- mfit$zgrid
-
+    
     if (is.null(slice_style) && !is.null(mfit$slice_style)) {
       slice_style <- mfit$slice_style
     }
@@ -341,34 +341,34 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
     if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
       stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
     }
-
+    
     grid_info <- initialize.grid(mfit, Zgrid, n1 = 26, n2 = 28, n3 = 32)
     Zgrid <- grid_info$Zgrid
     z1.grid <- grid_info$u1
     z2.grid <- grid_info$v1
     z3.grid <- grid_info$w1
-
+    
     if (anyNA(Zgrid)) {
       stop("Generated Zgrid contains NA values. Please check input data.")
     }
-
+    
     mpred <- pred.mpst(mfit, Znew = Zgrid)
     if (!("Ypred" %in% names(mpred))) {
       stop("'pred.mpst()' did not return the expected 'Ypred' component.")
     }
-
+    
     new.array <- array(
       mpred$Ypred,
       dim = c(length(z1.grid), length(z2.grid), length(z3.grid))
     )
-
+    
     if (is.null(slice_style)) {
       slice_style <- "default"
     }
   }
-
+  
   dim.size <- dim(new.array)
-
+  
   select_color_palette <- function(color_choice, style = "default") {
     base_palette <- switch(
       as.character(color_choice),
@@ -379,32 +379,66 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
       "5" = topo.colors(64),
       "6" = cm.colors(64)
     )
-
+    
     if (identical(style, "brain")) {
       c("#FFFFFF00", base_palette)
     } else {
       base_palette
     }
   }
-
+  
   plot_slices <- function(axial_slice, coronal_slice, sagittal_slice, color = 1) {
     par(mfrow = c(1, 3))
-
+    
     axial_title <- sprintf("Axial Plane (z = %d)", axial_slice)
-
     coronal_title <- sprintf("Coronal Plane (y = %d)", coronal_slice)
-
     sagittal_title <- sprintf("Sagittal Plane (x = %d)", sagittal_slice)
-
+    
     if (identical(slice_style, "brain")) {
-      arr_plot <- new.array
-      arr_plot[is.na(arr_plot)] <- -1
-
+      
+      special_vals <- mfit$special_values
+      special_cols <- mfit$special_colors
+      has_special <- !is.null(special_vals) &&
+        !is.null(special_cols) &&
+        length(special_vals) == length(special_cols)
+      
+      split_general_special <- function(mat, special_vals) {
+        general_mat <- mat
+        special_mat <- matrix(NA_real_, nrow = nrow(mat), ncol = ncol(mat))
+        
+        if (!is.null(special_vals)) {
+          for (k in seq_along(special_vals)) {
+            idx <- !is.na(mat) & (mat == special_vals[k])
+            special_mat[idx] <- k
+            general_mat[idx] <- NA
+          }
+        }
+        
+        list(general = general_mat, special = special_mat)
+      }
+      
+      general_all <- new.array
+      if (has_special) {
+        for (val in special_vals) {
+          general_all[!is.na(general_all) & general_all == val] <- NA
+        }
+      }
+      general_all[is.na(general_all)] <- -1
+      
+      finite_general <- general_all[is.finite(general_all) & general_all > -1]
+      max_general <- if (length(finite_general) > 0) max(finite_general) else 1
+      
       col_palette <- select_color_palette(color, style = "brain")
-      zlim_use <- c(-1, max(arr_plot, na.rm = TRUE))
-
+      zlim_use <- c(-1, max_general)
+      
+      # Axial
+      axial_obj <- split_general_special(new.array[, , axial_slice, drop = TRUE], special_vals)
+      axial_general <- axial_obj$general
+      axial_special <- axial_obj$special
+      axial_general[is.na(axial_general)] <- -1
+      
       fields::image.plot(
-        1:dim.size[1], 1:dim.size[2], arr_plot[, , axial_slice],
+        1:dim.size[1], 1:dim.size[2], axial_general,
         main = axial_title,
         xlab = "",
         ylab = "",
@@ -415,9 +449,25 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
         zlim = zlim_use,
         useRaster = TRUE
       )
-
+      
+      if (has_special && any(!is.na(axial_special))) {
+        graphics::image(
+          1:dim.size[1], 1:dim.size[2], axial_special,
+          add = TRUE,
+          col = special_cols,
+          zlim = c(1, length(special_cols)),
+          axes = FALSE
+        )
+      }
+      
+      # Coronal
+      coronal_obj <- split_general_special(new.array[, coronal_slice, , drop = TRUE], special_vals)
+      coronal_general <- coronal_obj$general
+      coronal_special <- coronal_obj$special
+      coronal_general[is.na(coronal_general)] <- -1
+      
       fields::image.plot(
-        1:dim.size[1], 1:dim.size[3], arr_plot[, coronal_slice, ],
+        1:dim.size[1], 1:dim.size[3], coronal_general,
         main = coronal_title,
         xlab = "",
         ylab = "",
@@ -428,9 +478,25 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
         zlim = zlim_use,
         useRaster = TRUE
       )
-
+      
+      if (has_special && any(!is.na(coronal_special))) {
+        graphics::image(
+          1:dim.size[1], 1:dim.size[3], coronal_special,
+          add = TRUE,
+          col = special_cols,
+          zlim = c(1, length(special_cols)),
+          axes = FALSE
+        )
+      }
+      
+      # Sagittal
+      sagittal_obj <- split_general_special(new.array[sagittal_slice, , , drop = TRUE], special_vals)
+      sagittal_general <- sagittal_obj$general
+      sagittal_special <- sagittal_obj$special
+      sagittal_general[is.na(sagittal_general)] <- -1
+      
       fields::image.plot(
-        1:dim.size[2], 1:dim.size[3], arr_plot[sagittal_slice, , ],
+        1:dim.size[2], 1:dim.size[3], sagittal_general,
         main = sagittal_title,
         xlab = "",
         ylab = "",
@@ -441,13 +507,24 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
         zlim = zlim_use,
         useRaster = TRUE
       )
+      
+      if (has_special && any(!is.na(sagittal_special))) {
+        graphics::image(
+          1:dim.size[2], 1:dim.size[3], sagittal_special,
+          add = TRUE,
+          col = special_cols,
+          zlim = c(1, length(special_cols)),
+          axes = FALSE
+        )
+      }
+      
     } else {
       col_palette <- select_color_palette(color, style = "default")
-
+      
       axial_mat <- new.array[, , axial_slice, drop = TRUE]
       coronal_mat <- new.array[, coronal_slice, , drop = TRUE]
       sagittal_mat <- new.array[sagittal_slice, , , drop = TRUE]
-
+      
       if (all(is.na(axial_mat))) {
         warning("Axial slice contains only NA values.")
         plot.new()
@@ -465,7 +542,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
           useRaster = TRUE
         )
       }
-
+      
       if (all(is.na(coronal_mat))) {
         warning("Coronal slice contains only NA values.")
         plot.new()
@@ -483,7 +560,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
           useRaster = TRUE
         )
       }
-
+      
       if (all(is.na(sagittal_mat))) {
         warning("Sagittal slice contains only NA values.")
         plot.new()
@@ -503,7 +580,7 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
       }
     }
   }
-
+  
   manipulate::manipulate(
     plot_slices(axial_slice, coronal_slice, sagittal_slice, color),
     axial_slice = manipulate::slider(
@@ -527,6 +604,6 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
       label = "Color Table (1-Gray, 2-Rainbow, 3-Heat, 4-Terrain, 5-Topo, 6-Cyan Magenta)"
     )
   )
-
+  
   invisible()
 }
