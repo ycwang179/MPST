@@ -2,28 +2,22 @@
 % Please edit documentation in R/data-brain-plot-obj.R
 \name{ex_brain_plot_obj}
 \alias{ex_brain_plot_obj}
-\title{Precomputed Brain Slice Volumes for MPST Visualization}
+\title{Precomputed Noisy Brain Slice Volume for MPST Visualization}
 \format{
-A named list of six MPST-compatible precomputed plotting objects.
+A named list containing one MPST-compatible precomputed plotting object.
 }
 \description{
-A collection of precomputed 3D brain volumes for demonstrating
+A precomputed 3D noisy brain volume for demonstrating
 slice visualization with \code{\link{plot.MPST}}.
 }
 \details{
-The object \code{ex_brain_plot_obj} is a named list. Each component is an
-MPST-compatible precomputed plotting object that can be directly passed to
-\code{plot.MPST(..., mview = "slice")}.
-
-Available components include:
+The object \code{ex_brain_plot_obj} is a named list containing one
+MPST-compatible precomputed plotting object:
 \itemize{
-  \item \code{global}: precomputed global learning MPST estimate
-  \item \code{distributed}: precomputed distributed learning MPST estimate
-  \item \code{truth}: precomputed true function volume
-  \item \code{noise}: precomputed noisy volume
+  \item \code{noise}: precomputed noisy brain volume
 }
 
-Each component is a list with:
+The \code{noise} component is a list with:
 \itemize{
   \item \code{Yarray}: a 3D array of voxel values
   \item \code{xgrid}: grid values along the first dimension
@@ -36,9 +30,7 @@ Each component is a list with:
 data(ex_brain_plot_obj)
 
 \dontrun{
-plot.MPST(ex_brain_plot_obj$global, mview = "slice")
-plot.MPST(ex_brain_plot_obj$distributed, mview = "slice", slice_style = "brain")
-plot.MPST(ex_brain_plot_obj$truth, mview = "slice", slice_style = "brain")
+plot.MPST(ex_brain_plot_obj$noise, mview = "slice")
 }
 
 }
