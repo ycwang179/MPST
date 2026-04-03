@@ -16,6 +16,9 @@ tetrahedral resolutions. These datasets are included for illustrating
 model fitting with \code{fit.MPST()}.
 }
 \details{
+The datasets are generated from the underlying mean function
+\eqn{\mu(z_1,z_2,z_3) = -\sin\{3\pi(z_1+0.25)\} + \sin(3\pi z_2) + 3\sin(z_3)}.
+
 The object contains three training datasets:
 \describe{
   \item{tet48}{Training data based on a tetrahedral partition with 48 tetrahedra.}

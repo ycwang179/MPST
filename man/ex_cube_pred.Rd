@@ -16,6 +16,9 @@ resolutions. These datasets are included for illustrating prediction with
 \code{predict.MPST()}.
 }
 \details{
+The prediction datasets correspond to the underlying mean function
+\eqn{\mu(z_1,z_2,z_3) = -\sin\{3\pi(z_1+0.25)\} + \sin(3\pi z_2) + 3\sin(z_3)}.
+
 The object contains three prediction datasets:
 \describe{
   \item{tet48}{Prediction data corresponding to the 48-tetrahedra training example.}
