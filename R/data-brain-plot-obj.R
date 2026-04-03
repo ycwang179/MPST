@@ -1,15 +1,15 @@
-#' Precomputed Noisy Brain Slice Volume for MPST Visualization
+#' Precomputed Degraded Brain Slice Volume for MPST Visualization
 #'
-#' A precomputed 3D noisy brain volume for demonstrating
+#' A precomputed 3D degraded brain volume for demonstrating
 #' slice visualization with \code{\link{plot.MPST}}.
 #'
 #' The object \code{ex_brain_plot_obj} is a named list containing one
 #' MPST-compatible precomputed plotting object:
 #' \itemize{
-#'   \item \code{noise}: precomputed noisy brain volume
+#'   \item \code{degraded}: precomputed degraded brain volume
 #' }
 #'
-#' The \code{noise} component is a list with:
+#' The \code{degraded} component is a list with:
 #' \itemize{
 #'   \item \code{Yarray}: a 3D array of voxel values
 #'   \item \code{xgrid}: grid values along the first dimension
@@ -18,13 +18,16 @@
 #'   \item \code{slice_style}: plotting style, set to \code{"brain"}
 #' }
 #'
+#' The degraded brain volume is constructed by adding salt-and-pepper noise
+#' and introducing missing regions to the original PET image.
+#'
 #' @format A named list containing one MPST-compatible precomputed plotting object.
 #'
 #' @examples
 #' data(ex_brain_plot_obj)
 #'
 #' \dontrun{
-#' plot.MPST(ex_brain_plot_obj$noise, mview = "slice")
+#' plot.MPST(ex_brain_plot_obj$degraded, mview = "slice")
 #' }
 #'
 #' @name ex_brain_plot_obj
