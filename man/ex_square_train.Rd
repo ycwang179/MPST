@@ -6,7 +6,7 @@
 \title{Training datasets for 2D square examples in MPST}
 \format{
 A nested list of training datasets indexed by
-\code{m1}/\code{m2}, \code{sigma01}/\code{sigma05}, and
+\code{m1}/\code{m2}, \code{sigma01}, and
 \code{tri8}/\code{tri18}/\code{tri32}/\code{tri50}/\code{tri72}/\code{tri98}.
 }
 \usage{
@@ -21,14 +21,15 @@ These datasets are included for illustrating model fitting with
 \details{
 The object contains two surface settings:
 \describe{
-  \item{m1}{A moderately oscillating surface, generated with \code{func = 10}.}
-  \item{m2}{A highly oscillating surface, generated with \code{func = 11}.}
+  \item{m1}{A moderately oscillating surface defined by
+  \eqn{m_1(z_1,z_2) = -\sin\{3\pi(z_1+0.25)\} + \sin(3\pi z_2)}.}
+  \item{m2}{A highly oscillating surface defined by
+  \eqn{m_2(z_1,z_2) = -\sin\{10\pi(z_1+0.25)\} + \sin(10\pi z_2)}.}
 }
 
-For each surface, two noise levels are included:
+For each surface, one noise level is included:
 \describe{
   \item{sigma01}{Datasets generated with \code{sigma = 0.1}.}
-  \item{sigma05}{Datasets generated with \code{sigma = 0.5}.}
 }
 
 For each combination of surface and noise level, six triangulation schemes
