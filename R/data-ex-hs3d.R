@@ -4,8 +4,14 @@
 #' used in the visualization studies of \pkg{MPST}. The domain is represented
 #' by a tetrahedral partition with 504 tetrahedra.
 #'
-#' The dataset corresponds to a single representative setting with
-#' \code{func = 1}, noise level \eqn{\sigma = 0.1}, and sample size
+#' The dataset corresponds to a single representative setting based on the
+#' mean function \eqn{m_6}, defined by
+#' \deqn{
+#' m_6(z_1, z_2, z_3) =
+#' -\left\{(z_1 - c_1)^2 + 0.6(z_2 - c_2)^2 + 0.3(z_3 - c_3)^2\right\},
+#' }
+#' where \eqn{c_1}, \eqn{c_2}, and \eqn{c_3} denote the coordinate-wise centers
+#' of the domain, with noise level \eqn{\sigma = 0.1} and sample size
 #' \eqn{n = 10000}.
 #'
 #' The object is a list with the following entries:
@@ -15,7 +21,6 @@
 #'   \item{V}{A numeric matrix of vertex coordinates with 3 columns.}
 #'   \item{Tr}{An integer matrix of tetrahedral indices with 4 columns.}
 #'   \item{lambda}{The candidate smoothing parameter grid.}
-#'   \item{func}{The function identifier used in simulation.}
 #'   \item{sigma}{The noise level used in simulation.}
 #'   \item{iter}{The random seed used to generate the dataset.}
 #'   \item{n}{The sample size.}
@@ -30,7 +35,14 @@
 #'
 #' A prediction dataset for the 3D irregular horseshoe-domain example used in
 #' the visualization studies of \pkg{MPST}. The domain is represented by a
-#' tetrahedral partition with 504 tetrahedra.
+#' tetrahedral partition with 504 tetrahedra. The underlying mean function is
+#' \eqn{m_6}, defined by
+#' \deqn{
+#' m_6(z_1, z_2, z_3) =
+#' -\left\{(z_1 - c_1)^2 + 0.6(z_2 - c_2)^2 + 0.3(z_3 - c_3)^2\right\}.
+#' }
+#' Here, \eqn{c_1}, \eqn{c_2}, and \eqn{c_3} denote the coordinate-wise centers
+#' of the domain.
 #'
 #' The object is a list with the following entries:
 #' \describe{

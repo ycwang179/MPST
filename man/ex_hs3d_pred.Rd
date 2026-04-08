@@ -13,7 +13,14 @@ data(ex_hs3d_pred)
 \description{
 A prediction dataset for the 3D irregular horseshoe-domain example used in
 the visualization studies of \pkg{MPST}. The domain is represented by a
-tetrahedral partition with 504 tetrahedra.
+tetrahedral partition with 504 tetrahedra. The underlying mean function is
+\eqn{m_6}, defined by
+\deqn{
+m_6(z_1, z_2, z_3) =
+-\left\{(z_1 - c_1)^2 + 0.6(z_2 - c_2)^2 + 0.3(z_3 - c_3)^2\right\}.
+}
+Here, \eqn{c_1}, \eqn{c_2}, and \eqn{c_3} denote the coordinate-wise centers
+of the domain.
 }
 \details{
 The object is a list with the following entries:
