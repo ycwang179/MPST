@@ -1,4 +1,4 @@
-findNabr <- function(Tr0, V, Tr, TV, nl = 0){
+findNabr <- function(Tr0, V, Tr, TV, nl = 2){
   nd = ncol(Tr) 
   # TV = tdata(V, Tr)
   # TV <- as.matrix(TV$TV)
