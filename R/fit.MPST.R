@@ -108,7 +108,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     formula = formula
   )
   # Fit the model
-  mfit <- fit.mpst.internal(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, mpst.p$method, P.func = mpst.p$P.func)
+  mfit <- fit.mpst.internal(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 2, mpst.p$method, P.func = mpst.p$P.func)
   
   mfit$P.func <- mpst.p$P.func
   mfit$method <- mpst.p$method
@@ -138,7 +138,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
 #' @param P.func Parallelization method for distributed learning.
 #' @return A list containing model fit components.
 #' @keywords internal
-fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
+fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 2, method, P.func) {
   
   this.call <- match.call()
   
