@@ -1,4 +1,4 @@
-findNabr <- function(Tr0, V, Tr, TV, nl = 1){
+findNabr <- function(Tr0, V, Tr, TV, nl = 2){
   cat(">>> modified findNabr is running, iota =", nl, "\n")
   nd = ncol(Tr) 
   # TV = tdata(V, Tr)
