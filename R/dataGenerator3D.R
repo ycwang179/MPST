@@ -90,7 +90,7 @@ dataGenerator3D <- function(Z, V, Tr, func, sigma, seed) {
     c3 = mean(range(z3));
     mu = -((z1 - c1)^2 + 0.6 * (z2 - c2)^2 + 0.3 * (z3 - c3)^2);
   } else if (func == 8) {
-    mu = -(z1^2 + z2^2 + z3^2);
+    mu = sin(z1) + sin(z2) + sin(z3);
   } else {
     mu = (a * b + d^2);
   }
