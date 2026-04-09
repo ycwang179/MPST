@@ -16,11 +16,8 @@ the visualization studies of \pkg{MPST}. The domain is represented by a
 tetrahedral partition with 504 tetrahedra. The underlying mean function is
 \eqn{m_6}, defined by
 \deqn{
-m_6(z_1, z_2, z_3) =
--\left\{(z_1 - c_1)^2 + 0.6(z_2 - c_2)^2 + 0.3(z_3 - c_3)^2\right\}.
+m_6(z_1, z_2, z_3) = \sin(z_1) + \sin(z_2) + \sin(z_3).
 }
-Here, \eqn{c_1}, \eqn{c_2}, and \eqn{c_3} denote the coordinate-wise centers
-of the domain.
 }
 \details{
 The object is a list with the following entries:
