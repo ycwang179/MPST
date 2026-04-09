@@ -452,38 +452,43 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   # inVT.list = inVT(V, Tr, Z)
   # load.all = worker.load(V = V, Tr = Tr, TV = TV, inVT.list = inVT.list, 
   #                        Y = Y, Z = Z, d = d, nl = nl, ns = ns)
-  
+
   # 1. Preparation: extract data from subregions
-  load.list = load.all[[ind.Tr]]
-  
-  Vs = load.list$Vs
-  Trs = load.list$Trs
-  inds = load.list$inds
-  Ys = Y[inds]
-  Zs = Z[inds, ]
-  n = length(Ys)
-  
+  load.list <- load.all[[ind.Tr]]
+
+  Vs   <- load.list$Vs
+  Trs  <- load.list$Trs
+  inds <- load.list$inds
+  Ys   <- Y[inds]
+  Zs   <- Z[inds, , drop = FALSE]
+  n    <- length(Ys)
+
   # 2. basis generation, smoothness conditions, and penalty function
-  nd = ncol(Tr)
+  nd <- ncol(Tr)
+
   if (nd == 3) {
     Bs <- as.matrix(basis2D.d(Vs, Trs, d, r, Zs)$B)
+    nq <- (d + 2) * (d + 1) / 2
   } else if (nd == 4) {
     Bs <- as.matrix(basis3D.d(Vs, Trs, d, r, Zs)$B)
+    nq <- (d + 3) * (d + 2) * (d + 1) / 2 / 3
+  } else {
+    stop("Tr must have 3 columns (2D triangles) or 4 columns (3D tetrahedra).")
   }
-  
-  if (d < 1 | r < 0 | nrow(Trs) <= 1) {
-    warning("The degree of Bernstein polynomials d has be greater than zero, the smoothness parameter r has be nonnegative!")
-    H <- NA; Q2 <- NA;
+
+  # Smoothness constraints:
+  # - if d < 1 or r < 0: invalid
+  # - if only one simplex: no cross-simplex smoothness constraints
+  # - otherwise: use the usual smoothness matrix
+  if (d < 1 || r < 0) {
+    warning("The degree of Bernstein polynomials d must be greater than zero, and the smoothness parameter r must be nonnegative.")
+    H <- NA
+    Q2 <- NA
   } else if (nrow(Trs) == 1) {
     # single-triangle / single-tetrahedron case:
     # no cross-simplex smoothness constraints
-    if (nd == 3) {
-      nq.all <- (d + 2) * (d + 1) / 2
-    } else if (nd == 4) {
-      nq.all <- (d + 3) * (d + 2) * (d + 1) / 2 / 3
-    }
-    H <- matrix(0, nrow = 0, ncol = nq.all)
-    Q2 <- diag(nq.all)
+    H  <- matrix(0, nrow = 0, ncol = nq)
+    Q2 <- diag(1, nq)
   } else {
     if (nd == 3) {
       H <- as.matrix(smoothness2D(Vs, Trs, d, r))
@@ -492,9 +497,10 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
     }
     Q2 <- qrH(H)
   }
-  
+
+  # Penalty matrix
   if (d < 1) {
-    warning("The degree of Bernstein polynomials d has be greater than zero.")
+    warning("The degree of Bernstein polynomials d must be greater than zero.")
     K <- NA
   } else {
     if (nd == 3) {
@@ -503,46 +509,56 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
       K <- energy3D(Vs, Trs, d)
     }
   }
-  
-  # 2. Sub-model fitting
-  ns <- length(Ys)
+
+  # 3. Sub-model fitting
   nq.all <- ncol(Q2)
-  
-  W <- as.matrix(Bs %*% Q2)
-  WW <- crossprod(W, W)
+
+  W   <- as.matrix(Bs %*% Q2)
+  WW  <- crossprod(W, W)
   rhs <- crossprod(W, Ys)
-  D <- crossprod(t(crossprod(Q2, as.matrix(K))), Q2)
-  D <- as.matrix(D)
-  
+  D   <- crossprod(t(crossprod(Q2, as.matrix(K))), Q2)
+  D   <- as.matrix(D)
+
   flag <- (Matrix::rankMatrix(WW) < nq.all)
-  if(!flag){
+  if (!flag) {
     Ainv <- chol(WW, pivot = TRUE)
-    A <- solve(t(Ainv))
-    ADA <- A %*% D %*% t(A)
+    A    <- solve(t(Ainv))
+    ADA  <- A %*% D %*% t(A)
     eigs <- eigen(ADA)
     Cval <- eigs$values
   }
-  
-  nl <- length(lambda)
-  theta.all <- c(); gamma.all <- c(); beta.all <- c()
-  res.all <- c(); sse.all <- c(); df.all <- c(); gcv.all <- c(); bic.all <- c()
-  for(il in 1:nl){
-    Lam <- lambda[il]
-    Dlam <- Lam * D
-    lhs <- WW + Dlam
-    # chol2inv(chol()) < solve() < qr.solve(); 
-    lhs.inv <- chol2inv(chol(lhs));
-    # crossprod() < %*%;
+
+  nlam <- length(lambda)
+  theta.all <- c()
+  gamma.all <- c()
+  beta.all  <- c()
+  res.all   <- c()
+  sse.all   <- c()
+  df.all    <- c()
+  gcv.all   <- c()
+  bic.all   <- c()
+
+  for (il in 1:nlam) {
+    Lam   <- lambda[il]
+    Dlam  <- Lam * D
+    lhs   <- WW + Dlam
+    lhs.inv <- chol2inv(chol(lhs))
+
     theta <- crossprod(t(lhs.inv), rhs)
     theta.all <- cbind(theta.all, theta)
+
     gamma <- crossprod(t(Q2), theta)
     gamma.all <- cbind(gamma.all, gamma)
+
     beta <- crossprod(t(W), theta)
     beta.all <- cbind(beta.all, beta)
+
     res <- Ys - beta
     res.all <- cbind(res.all, res)
+
     sse <- sum(res^2)
     sse.all <- c(sse.all, sse)
+
     if (!flag) {
       df <- sum(1 / (1 + Cval * Lam))
     } else {
@@ -550,50 +566,51 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
       df <- sum(diag(Hmtx))
     }
     df.all <- c(df.all, df)
+
     gcv <- n * sse / (n - df)^2
     gcv.all <- c(gcv.all, gcv)
+
     bic <- log(sse / n) + df * log(n) / n
     bic.all <- c(bic.all, bic)
   }
-  j <- which.min(gcv.all)
-  
-  lambdac <- lambda[j]
-  theta <- theta.all[, j]
-  gamma <- gamma.all[, j]
-  beta <- beta.all[, j]
-  df <- df.all[j]
-  sse <- sse.all[j]
-  gcv <- gcv.all[j]
-  bic <- bic.all[j]
-  Yhat = beta
-  res = Ys - beta
-  mse = mean((Ys - Yhat)^2, na.rm = TRUE)
-  
-  nd = ncol(Tr)
-  if (nd == 3) {
-    nq = (d + 2) * (d + 1) / 2
-  } else if (nd == 4) {
-    nq = (d + 3) * (d + 2) * (d + 1) / 2 / 3
-  }
-  j = prodlim::row.match(load.list$t0, Trs)
-  gamma.star = gamma[((j - 1) * nq + 1):(j * nq)]
-  
-  inVTs = inVT(Vs, Trs, Zs)
-  ind.T1 = inVTs$ind.T
-  B.star = Bs[which(ind.T1 == j), ((j - 1) * nq + 1):(j * nq)]
 
-  mfit <- list(gamma.hat = gamma, 
-               gamma.star = gamma.star,
-               Bs = Bs,
-               B.star = B.star,
-               lambdac = lambdac,
-               sse = sse,
-               mse = mse,
-               gcv = gcv,
-               bic = bic, 
-               edf = df,
-               Vs = Vs,
-               Trs = Trs)
-  
+  jlam <- which.min(gcv.all)
+
+  lambdac <- lambda[jlam]
+  theta   <- theta.all[, jlam]
+  gamma   <- gamma.all[, jlam]
+  beta    <- beta.all[, jlam]
+  df      <- df.all[jlam]
+  sse     <- sse.all[jlam]
+  gcv     <- gcv.all[jlam]
+  bic     <- bic.all[jlam]
+
+  Yhat <- beta
+  res  <- Ys - Yhat
+  mse  <- mean((Ys - Yhat)^2, na.rm = TRUE)
+
+  # Extract coefficients corresponding to the core simplex t0
+  j0 <- prodlim::row.match(load.list$t0, Trs)
+  gamma.star <- gamma[((j0 - 1) * nq + 1):(j0 * nq)]
+
+  inVTs  <- inVT(Vs, Trs, Zs)
+  ind.T1 <- inVTs$ind.T
+  B.star <- Bs[which(ind.T1 == j0), ((j0 - 1) * nq + 1):(j0 * nq), drop = FALSE]
+
+  mfit <- list(
+    gamma.hat = gamma,
+    gamma.star = gamma.star,
+    Bs = Bs,
+    B.star = B.star,
+    lambdac = lambdac,
+    sse = sse,
+    mse = mse,
+    gcv = gcv,
+    bic = bic,
+    edf = df,
+    Vs = Vs,
+    Trs = Trs
+  )
+
   return(mfit)
 }
