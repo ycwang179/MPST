@@ -474,6 +474,16 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   if (d < 1 | r < 0 | nrow(Trs) <= 1) {
     warning("The degree of Bernstein polynomials d has be greater than zero, the smoothness parameter r has be nonnegative!")
     H <- NA; Q2 <- NA;
+  } else if (nrow(Trs) == 1) {
+    # single-triangle / single-tetrahedron case:
+    # no cross-simplex smoothness constraints
+    if (nd == 3) {
+      nq.all <- (d + 2) * (d + 1) / 2
+    } else if (nd == 4) {
+      nq.all <- (d + 3) * (d + 2) * (d + 1) / 2 / 3
+    }
+    H <- matrix(0, nrow = 0, ncol = nq.all)
+    Q2 <- diag(nq.all)
   } else {
     if (nd == 3) {
       H <- as.matrix(smoothness2D(Vs, Trs, d, r))
