@@ -35,6 +35,7 @@ worker.load <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 2, ns, P.func) {
   ind.expand <- which(conditions.all[, 1] < nq/2)
   nl0 <- nl
   while (length(ind.expand) > 0) {
+    cat(">>> expanding subregions to nl0 =", nl0, "\n")
     nl0 = nl0 + 1
     if (P.func == 1){
       res.all[ind.expand] <- parallel::mclapply(ind.expand, FUN = data.sub, mc.cores = ns, 
