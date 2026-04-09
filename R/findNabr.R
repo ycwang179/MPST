@@ -8,12 +8,12 @@ findNabr <- function(Tr0, V, Tr, TV, nl = 0){
   V1 = c(); Tr1 = c();
 
   if (nl == 0) {
-    V1 <- V[Tr0, , drop = FALSE];
-    Tr1 <- matrix(1:nd, ncol = nd);
-    Tr0.mat <- matrix(Tr0, nrow = 1);
-    V.sub <- prodlim::row.match(as.data.frame(Tr0.mat), as.data.frame(Tr));
-    Tr.sub <- Tr0.mat;
-    Tr0 <- Tr1;
+    V1 <- V[Tr0, , drop = FALSE]
+    Tr1 <- matrix(1:nd, ncol = nd)
+    Tr0.mat <- matrix(Tr0, nrow = 1)
+    V.sub <- c(Tr0)      
+    Tr.sub <- Tr0.mat    
+    Tr0 <- Tr1               
   } else { 
     for (i in 1:nl){
       k = length(V.sub)
