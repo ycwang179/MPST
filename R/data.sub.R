@@ -1,4 +1,4 @@
-data.sub <- function(iT, V, Tr, TV, inVT.list, Y, Z, nl = 2) {
+data.sub <- function(iT, V, Tr, TV, inVT.list, Y, Z, nl = 0) {
   cat("Working on triangle:", iT, "\n")
   
   # obtain subregions
