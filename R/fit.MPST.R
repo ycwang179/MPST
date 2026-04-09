@@ -539,9 +539,9 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   bic.all   <- c()
 
   for (il in 1:nlam) {
-    Lam   <- lambda[il]
-    Dlam  <- Lam * D
-    lhs   <- WW + Dlam
+    Lam     <- lambda[il]
+    Dlam    <- Lam * D
+    lhs     <- WW + Dlam
     lhs.inv <- chol2inv(chol(lhs))
 
     theta <- crossprod(t(lhs.inv), rhs)
@@ -589,13 +589,29 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   res  <- Ys - Yhat
   mse  <- mean((Ys - Yhat)^2, na.rm = TRUE)
 
-  # Extract coefficients corresponding to the core simplex t0
-  j0 <- prodlim::row.match(load.list$t0, Trs)
+  # 4. Extract coefficients corresponding to the core simplex t0
+  if (nrow(Trs) == 1) {
+    j0 <- 1
+  } else {
+    t0.mat <- as.matrix(load.list$t0)
+    if (is.null(dim(t0.mat))) {
+      t0.mat <- matrix(t0.mat, nrow = 1)
+    }
+    j0 <- prodlim::row.match(
+      as.data.frame(t0.mat),
+      as.data.frame(as.matrix(Trs))
+    )
+  }
+
   gamma.star <- gamma[((j0 - 1) * nq + 1):(j0 * nq)]
 
   inVTs  <- inVT(Vs, Trs, Zs)
   ind.T1 <- inVTs$ind.T
-  B.star <- Bs[which(ind.T1 == j0), ((j0 - 1) * nq + 1):(j0 * nq), drop = FALSE]
+  B.star <- Bs[
+    which(ind.T1 == j0),
+    ((j0 - 1) * nq + 1):(j0 * nq),
+    drop = FALSE
+  ]
 
   mfit <- list(
     gamma.hat = gamma,
