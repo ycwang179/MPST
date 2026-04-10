@@ -1,32 +1,36 @@
-#' Predict for MPST Models 
+#' Predict for MPST Models
 #'
-#' @description This method generates predictions from a fitted MPST model using global (`"G"`) 
-#' or distributed (`"D"`) learning methods. It allows for flexible prediction grids and computes 
-#' the mean integrated squared error (MISE) if a reference function (`mu.grid`) is provided.
+#' @description `predict.MPST()` generates predictions for a Multivariate Penalized Spline
+#' over Triangulation (MPST) model using global (`"G"`) or distributed (`"D"`) learning.
+#' It allows prediction on user-supplied locations and can compute the mean integrated squared
+#' error (MISE) when a reference mean function is provided.
 #'
 #' @rdname predict
 #' @method predict MPST
-#' @param formula A formula specifying the model, e.g., `y ~ m(Z, V, Tr, d, r)`. 
+#' @param formula A formula specifying the model, e.g., `Y ~ m(Z, V, Tr, d, r)`.
 #' - `Y`: The response variable observed over the domain.
-#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in
 #'   2D or 3D space (\code{k = 2} or \code{k = 3}).
-#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
+#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices
 #'   in the triangulation.
 #' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
 #'   - For 2D: Rows have three indices for triangles.
 #'   - For 3D: Rows have four indices for tetrahedra.
-#' - `d`: Degree of piecewise polynomials. If omitted, the default behavior depends on the
-#'   learning method and the spatial dimension. Under global learning (`method = "G"`),
-#'   the degree is selected by GCV from \code{2:5} for 2D triangulations and from
-#'   \code{2:9} for 3D triangulations. Under distributed learning (`method = "D"`),
-#'   the default is \code{5}. \code{-1} represents piecewise constants.
+#' - `d`: Degree of piecewise polynomials. If `d = NULL`, the degree is selected automatically
+#'   according to the learning method. Under global learning (`method = "G"`), GCV is used to
+#'   select the degree from \code{2:5} for 2D triangulations and from \code{2:9} for 3D
+#'   triangulations. Under distributed learning (`method = "D"`), the default degree is
+#'   \code{5}. `-1` represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda The tuning parameter. If not specified, defaults to \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
-#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
+#' @param lambda A numeric vector of tuning parameters for regularization. Defaults to
+#' \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified,
+#' defaults to `"G"` (global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
+#' @param P.func An integer specifying the parallelization method for distributed learning.
+#' Defaults to \code{2}:
 #' - `1`: Use `mclapply`.
 #' - `2`: Use `parLapply`.
 #' @param data (Optional) A list containing the following components:
@@ -35,27 +39,34 @@
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
 #' - `d`: (Optional) Degree of piecewise polynomials. If not supplied in either `formula`
-#'   or `data`, the function uses method-specific defaults: under global learning,
-#'   GCV selects `d` from \code{2:5} in 2D and \code{2:9} in 3D; under distributed learning,
-#'   `d = 5` is used.
+#'   or `data`, or if `d = NULL`, the function uses method-specific default behavior:
+#'   under global learning, GCV selects `d` from \code{2:5} in 2D and \code{2:9} in 3D;
+#'   under distributed learning, `d = 5` is used.
 #' - `r`: Smoothness parameter.
-#' 
-#' @param data.pred A list containing prediction-related data:
-#' - `Z.grid`: The prediction grid coordinates (required).
-#' - `mu.grid`: (Optional) True mean values for computing mean integrated squared error (MISE).
 #'
-#' @return An object of class `"MPST"` containing the following components:
-#' - `Ypred`: Predicted values on the specified grid.
-#' - `mise`: Mean integrated squared error (computed if `mu.grid` is provided).
-#' - `method`: Learning method used for prediction.
+#' @param data.pred A list containing prediction-related data:
+#' - `Z.grid`: The prediction coordinates (required).
+#' - `mu.grid`: (Optional) True mean values used to compute mean integrated squared error (MISE).
+#'
+#' @return An object of class `"MPST"` containing:
+#' - `Ypred`: Predicted values at the specified grid locations.
+#' - `ind.inside`: Indices of prediction points lying inside the domain.
+#' - `mise`: Mean integrated squared error, if `mu.grid` is provided.
+#' - `method`: The learning method used for prediction.
 #' - `formula`: The formula used for fitting and prediction.
 #'
 #' @details
-#' This function first fits an MPST model based on the supplied `formula`, `data`,
-#' and tuning parameters, and then generates predictions on `data.pred$Z.grid`.
-#' If `d` is not supplied, the same method-specific default rules as in `fit.MPST()`
-#' are used: under global learning, GCV selects `d` from \code{2:5} in 2D and
-#' \code{2:9} in 3D; under distributed learning, `d = 5` is used.
+#' This function first fits an MPST model using the supplied `formula`, `data`, and tuning
+#' parameters, and then generates predictions on `data.pred$Z.grid`.
+#'
+#' The degree parameter `d` is optional. When `d = NULL`, the function uses the same automatic
+#' degree selection rule as `fit.MPST()`: under global learning, GCV selects the degree from
+#' \code{2:5} in 2D and \code{2:9} in 3D; under distributed learning, the degree defaults to
+#' \code{5}.
+#'
+#' If a required component other than `d` is missing in both `formula` and `data`, the function
+#' raises an error. The prediction grid `Z.grid` must be provided through `data.pred`.
+#'
 #' @export
 predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
 
