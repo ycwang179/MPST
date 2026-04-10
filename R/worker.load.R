@@ -1,5 +1,5 @@
 worker.load <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 1, ns, P.func) {
-  cat(">>> worker.load starting with nl =", nl, "\n")
+  cat(">>> worker.load starting with nl (iota) =", nl, "\n")
   nd = ncol(Tr)
   
   conditions.all <- c()
