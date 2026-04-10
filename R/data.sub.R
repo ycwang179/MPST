@@ -24,7 +24,7 @@ data.sub <- function(iT, V, Tr, TV, inVT.list, Y, Z, nl = 2) {
   n = nrow(Z)
   inds = (1:n)[ind.T2 %in% ind.T1]
   Ys = Y[inds]
-  Zs = Z[inds, ] 
+  Zs = Z[inds, , drop = FALSE]
   # inds0 = (1:n)[iT %in% ind.T1]
   # check whether expand the sub-region.
   # C1: whether there are enough observation points for the sub-domain
