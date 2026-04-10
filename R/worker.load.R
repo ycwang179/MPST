@@ -1,4 +1,4 @@
-worker.load <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 0, ns, P.func) {
+worker.load <- function (V, Tr, TV, inVT.list, Y, Z, d, nl = 2, ns, P.func) {
   cat(">>> worker.load starting with nl =", nl, "\n")
   nd = ncol(Tr)
   
