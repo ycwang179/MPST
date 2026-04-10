@@ -201,7 +201,8 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #' @param Tr Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
 #'   - For 2D: Rows have three indices for triangles.
 #'   - For 3D: Rows have four indices for tetrahedra.
-#' @param d Degree of piecewise polynomials. Must be a numeric integer value greater than or equal to 1 (default: \code{5}). \code{-1} represents piecewise constants.
+#' @param d Degree of piecewise polynomials. If `NULL`, the degree is selected automatically according to the fitting method. Under global learning, GCV selects the degree from
+#'   a candidate set determined by the spatial dimension; under distributed learning, the default degree is `5`. `-1` represents piecewise constants.
 #' @param r Smoothness parameter (default: \code{1}). Must satisfy the condition \code{0 <= r < d}.
 #' @return A list containing the validated parameters: `Y`, `Z`, `V`, `Tr`, `d`, and `r`.
 #' @details
