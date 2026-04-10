@@ -5,15 +5,18 @@ findNabr <- function(Tr0, V, Tr, TV, nl = 2){
   # TV <- as.matrix(TV$TV)
   # V.sub = matrix(Tr0, ncol = 1)
   V.sub = c(Tr0)
-  V1 = c(); Tr1 = c();
-
+  V1 = c(); Tr1 = c()
+  
   if (nl == 0) {
-    V1 <- V[Tr0, , drop = FALSE]
-    Tr1 <- matrix(1:nd, ncol = nd)
-    Tr0.mat <- matrix(Tr0, nrow = 1)
-    V.sub <- c(Tr0)      
-    Tr.sub <- Tr0.mat    
-    Tr0 <- Tr1               
+    # ---- only special-case nl = 0 ----
+    # keep exactly one simplex
+    V1 = V[Tr0, , drop = FALSE]
+    Tr1 = matrix(1:nd, ncol = nd)
+    
+    # keep vertex indices here; row matching is handled later via Tr.sub in data.sub()
+    V.sub = c(Tr0)
+    Tr.sub = matrix(Tr0, ncol = nd)
+    Tr0 = Tr1
   } else { 
     for (i in 1:nl){
       k = length(V.sub)
