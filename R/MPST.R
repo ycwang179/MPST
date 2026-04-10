@@ -227,17 +227,12 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
 #'
 #' @keywords internal
 m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
-  # Validate 'd': Must be a numeric value ≥ 1
-  #if (missing(d) || is.null(d) || !is.numeric(d) || (d < 1)) {
-  #  stop("Argument 'd' must be a numeric value greater than or equal to 1.")
-  #}
   if (is.null(d)) {
     d.new <- NULL
   } else if (!is.null(d) && length(d) > 0) {
     if (!is.numeric(d) || (d < 1)) {
       stop("Argument 'd' must be a numeric value greater than or equal to 1.")
     } else {
-      # Round 'd' and ensure it's an integer
       d.new <- round(d)
       if (!isTRUE(all.equal(d.new, d))) {
         stop("Argument 'd' must be an integer.")
@@ -245,32 +240,21 @@ m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) 
     }
   }
   
-  # Round 'd' and ensure it's an integer
-  # d.new <- round(d)
-  # if (!isTRUE(all.equal(d.new, d))) {
-  #   stop("Argument 'd' must be an integer.")
-  # }
-  
-  # Validate 'r': Must be numeric
   if (missing(r) || is.null(r) || !is.numeric(r)) {
     stop("Argument 'r' must be a numeric value.")
   }
   
-  # Round 'r' and ensure it's an integer
   r.new <- round(r)
   if (!isTRUE(all.equal(r.new, r))) {
     stop("Argument 'r' must be an integer.")
   }
   
-  # Handle missing values for Z, V, Tr, and Y
   Z <- if (missing(Z) || is.null(Z)) NA else Z
   V <- if (missing(V) || is.null(V)) NA else V
   Tr <- if (missing(Tr) || is.null(Tr)) NA else Tr
   Y <- if (missing(Y) || is.null(Y)) NA else Y
   
-  # Check if Z, V, and Tr are provided and validate their dimensions
   if (!anyNA(Z) && !anyNA(V) && !anyNA(Tr)) {
-    # Ensure Z and V are matrices and have the same number of columns (2 or 3)
     if (!is.matrix(Z) || !is.matrix(V)) {
       stop("'Z' and 'V' must be matrices.")
     }
@@ -279,7 +263,6 @@ m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) 
       stop("'Z' and 'V' must have the same number of columns (2 or 3).")
     }
     
-    # Validate Tr's dimensions based on Z and V
     if (ncol(Z) == 2) {
       if (!is.matrix(Tr) || ncol(Tr) != 3) {
         stop("For 2D data: 'Z' and 'V' must each have 2 columns to describe points and vertices, and 'Tr' must have 3 columns to represent triangles.")
