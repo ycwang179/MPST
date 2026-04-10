@@ -67,45 +67,40 @@
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
   `%||%` <- function(a, b) if (!is.null(a)) a else b
-    
-  # Check if the parameter formula is provided
+  
   if (missing(formula)) {
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
   
-  # Set default parameters and check validity
-  method <- method %||% "G"  # Default to Global Learning
+  method <- method %||% "G"
   if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
   }
   
-  lambda <- lambda %||% 10^seq(-6, 6, by = 0.5) # Default range for lambda
+  lambda <- lambda %||% 10^seq(-6, 6, by = 0.5)
   if (!is.numeric(lambda)) {
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
-  P.func <- P.func %||% 2 # Default to parLapply
+  P.func <- P.func %||% 2
   if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
     stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
   }
   
-  # Extract Y, Z, V, Tr, d, and r from formula or data.
   interp <- interpret.mpst(formula)
   
-  # Prioritize the value of interp; if it is NULL or NA, use the value from data
   Y <- if (!is.null(interp$Y) && !all(is.na(interp$Y))) interp$Y else data$Y
   Z <- if (!is.null(interp$Z) && !all(is.na(interp$Z))) interp$Z else data$Z
   V <- if (!is.null(interp$V) && !all(is.na(interp$V))) interp$V else data$V
   Tr <- if (!is.null(interp$Tr) && !all(is.na(interp$Tr))) interp$Tr else data$Tr
   d <- if (!is.null(interp$d) && !all(is.na(interp$d))) interp$d else data$d
   r <- if (!is.null(interp$r) && !all(is.na(interp$r))) interp$r else data$r
-    
-  # Check for the presence of required parameters.
-  if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(d) || is.null(r)) {
-    stop("Both 'formula' and 'data' must provide the components: 'Y' 'Z', 'V', 'Tr', 'd', and 'r'.")
+  
+  # d is now optional: if NULL, fit.mpst.internal() will handle auto degree selection
+  if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(r)) {
+    stop("Both 'formula' and 'data' must provide the components: 'Y', 'Z', 'V', 'Tr', and 'r'.")
   }
   
-  # Construct the parameter list.
   mpst.p <- list(
     Y = Y,
     Z = Z,
@@ -118,8 +113,12 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     method = method,
     formula = formula
   )
-  # Fit the model
-  mfit <- fit.mpst.internal(mpst.p$Y,mpst.p$Z, mpst.p$V, mpst.p$Tr, mpst.p$d, mpst.p$r, mpst.p$lambda, nl = 1, mpst.p$method, P.func = mpst.p$P.func)
+  
+  mfit <- fit.mpst.internal(
+    mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr,
+    mpst.p$d, mpst.p$r, mpst.p$lambda,
+    nl = 1, mpst.p$method, P.func = mpst.p$P.func
+  )
   
   mfit$P.func <- mpst.p$P.func
   mfit$method <- mpst.p$method
