@@ -96,7 +96,6 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
   d <- if (!is.null(interp$d) && !all(is.na(interp$d))) interp$d else data$d
   r <- if (!is.null(interp$r) && !all(is.na(interp$r))) interp$r else data$r
   
-  # d is now optional: if NULL, fit.mpst.internal() will handle auto degree selection
   if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(r)) {
     stop("Both 'formula' and 'data' must provide the components: 'Y', 'Z', 'V', 'Tr', and 'r'.")
   }
