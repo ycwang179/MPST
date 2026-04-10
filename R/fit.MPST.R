@@ -10,14 +10,17 @@
 #' @param formula A formula specifying the model, e.g., `Y ~ m(Z, V, Tr, d, r)`. 
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
-#'   2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed 
-#'   points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
+#'   2D or 3D space (\code{k = 2} or \code{k = 3}).
 #' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
 #'   in the triangulation.
 #' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
 #'   - For 2D: Rows have three indices for triangles.
 #'   - For 3D: Rows have four indices for tetrahedra.
-#' - `d`: Degree of piecewise polynomials (default: \code{5}). \code{-1} represents piecewise constants.
+#' - `d`: Degree of piecewise polynomials. If omitted, the default behavior depends on the
+#'   learning method and the spatial dimension. Under global learning (`method = "G"`),
+#'   the degree is selected by GCV from \code{2:5} for 2D triangulations and from
+#'   \code{2:9} for 3D triangulations. Under distributed learning (`method = "D"`),
+#'   the default is \code{5}. \code{-1} represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
 #' @param lambda A numeric vector of tuning parameters for regularization. Defaults to 
@@ -33,7 +36,10 @@
 #' - `Z`: Matrix of observation coordinates.
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
-#' - `d`: Degree of piecewise polynomials.
+#' - `d`: (Optional) Degree of piecewise polynomials. If not supplied in either `formula`
+#'   or `data`, the function uses method-specific defaults: under global learning,
+#'   GCV selects `d` from \code{2:5} in 2D and \code{2:9} in 3D; under distributed learning,
+#'   `d = 5` is used.
 #' - `r`: Smoothness parameter.
 #'
 #' @return An object of class `"MPST"` with the following components:
@@ -45,14 +51,19 @@
 #' - `formula`: The formula provided during fitting.
 #'
 #' @details
-#' - This function extracts required components (`Y`, `Z`, `V`, `Tr`, `d`, `r`) from the `formula` 
-#'   using `interpret.mpst()`. If a component is not available in the formula, it falls back to the 
+#' - This function extracts required components (`Y`, `Z`, `V`, `Tr`, `d`, `r`) from the `formula`
+#'   using `interpret.mpst()`. If a component is not available in the formula, it falls back to the
 #'   `data` argument.
 #' - If a required component is missing in both `formula` and `data`, the function raises an error.
-#' - The `method` parameter specifies the learning mode, and `lambda` allows for fine-tuning the 
+#' - If `d` is not supplied, the function uses different defaults depending on the learning method.
+#'   For global learning, the degree is selected by GCV over a candidate set determined by the
+#'   triangulation dimension: \code{2:5} for 2D and \code{2:9} for 3D. For distributed learning,
+#'   the degree defaults to \code{5}.
+#' - The `method` parameter specifies the learning mode, and `lambda` allows for fine-tuning the
 #'   regularization.
 #'
 #' @export
+
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
   `%||%` <- function(a, b) if (!is.null(a)) a else b
