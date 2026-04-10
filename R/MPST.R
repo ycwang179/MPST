@@ -190,29 +190,40 @@ interpret.mpst <- function(mpstf, extra.special = NULL) {
   return(mpst.parameters)
 }
 
-# Define the m function
 #' Generate MPST Parameters
 #'
-#' @description Internal function to create a list of parameters for MPST. This function validates the input data and parameters to ensure consistency for either 2D or 3D triangulations.
-#' @param ... Additional arguments (not used).
+#' @description Internal function used to construct and validate a list of model parameters
+#' for MPST. This function checks the consistency of the input data and supports both 2D and
+#' 3D triangulation settings.
+#'
+#' @param ... Additional arguments (currently unused).
 #' @param Y The response variable observed over the domain.
-#' @param Z Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 2D or 3D space (\code{k = 2} or \code{k = 3}). \( k \) is the dimension of the observed points, where \( k = 2 \) for 2D and \( k = 3 \) for 3D.
-#' @param V Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices in the triangulation.
+#' @param Z Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in
+#' 2D or 3D space (\code{k = 2} or \code{k = 3}).
+#' @param V Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices
+#' in the triangulation.
 #' @param Tr Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
-#'   - For 2D: Rows have three indices for triangles.
-#'   - For 3D: Rows have four indices for tetrahedra.
-#' @param d Degree of piecewise polynomials. If `NULL`, the degree is selected automatically according to the fitting method. Under global learning, GCV selects the degree from
-#'   a candidate set determined by the spatial dimension; under distributed learning, the default degree is `5`. `-1` represents piecewise constants.
-#' @param r Smoothness parameter (default: \code{1}). Must satisfy the condition \code{0 <= r < d}.
+#' - For 2D: Rows have three indices for triangles.
+#' - For 3D: Rows have four indices for tetrahedra.
+#' @param d Degree of piecewise polynomials. If `d = NULL`, automatic degree selection will be
+#' handled later by the fitting routine. Under global learning, GCV selects the degree from a
+#' candidate set determined by the spatial dimension; under distributed learning, the default
+#' degree is \code{5}. If provided, `d` must be a numeric integer greater than or equal to 1.
+#' `-1` represents piecewise constants.
+#' @param r Smoothness parameter. Must be a numeric integer satisfying the model requirements.
+#'
 #' @return A list containing the validated parameters: `Y`, `Z`, `V`, `Tr`, `d`, and `r`.
+#'
 #' @details
-#' - The function validates and processes the input parameters:
-#'   - \code{Y}, \code{Z}, \code{V}, and \code{Tr} default to \code{NA} if not provided.
-#'   - \code{Z} and \code{V} must be matrices with the same number of columns (\code{2} for 2D or \code{3} for 3D).
-#'   - \code{Tr} must have dimensions consistent with \code{Z} and \code{V}: 
-#'     - For 2D: \code{Tr} must have 3 columns (triangles).
-#'     - For 3D: \code{Tr} must have 4 columns (tetrahedra).
-#'   - \code{d} and \code{r} are validated to ensure they meet the required conditions.
+#' This function validates and processes the input arguments before model fitting:
+#' - `Y`, `Z`, `V`, and `Tr` default to `NA` if not provided.
+#' - `Z` and `V` must be matrices with the same number of columns.
+#' - `Tr` must be consistent with the spatial dimension:
+#'   - For 2D data, `Tr` must have 3 columns.
+#'   - For 3D data, `Tr` must have 4 columns.
+#' - If `d` is provided, it must be an integer greater than or equal to 1.
+#' - If `d = NULL`, the function leaves degree selection to the downstream fitting routine.
+#' - `r` must be numeric and is coerced to an integer after validation.
 #'
 #' @keywords internal
 m <- function(..., Y = NULL, Z = NULL, V = NULL, Tr = NULL, d = NULL, r = NULL) {
