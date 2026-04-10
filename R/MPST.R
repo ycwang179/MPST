@@ -77,7 +77,16 @@ print.MPST <- function(x, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
   }
-  options(max.print = 10)
+  
+  old_opt <- options(max.print = 10)
+  on.exit(options(old_opt), add = TRUE)
+  
+  input_d_null <- FALSE
+  formula_text <- paste(deparse(x$formula), collapse = "")
+  if (grepl("d[[:space:]]*=[[:space:]]*NULL", formula_text)) {
+    input_d_null <- TRUE
+  }
+  
   cat("\nFormula: ")
   print(x$formula)
   
@@ -93,7 +102,15 @@ print.MPST <- function(x, ...) {
         cat("\nParallel backend: parLapply() with", x$N.cores, "cores\n")
       }
     }
-    cat("\nd:", x$d, "\n")
+    
+    if (input_d_null && x$method == "G") {
+      cat("\nGCV Selected d:", x$d, "\n")
+    } else if (input_d_null && x$method == "D") {
+      cat("\nDefault d used:", x$d, "\n")
+    } else {
+      cat("\nd:", x$d, "\n")
+    }
+    
     cat("\nMSE:", round(x$mse, 4), "\n")  
     cat("\ngamma_hat:\n")
     print(as.vector(x$gamma.hat))
@@ -112,7 +129,15 @@ print.MPST <- function(x, ...) {
         cat("\nParallel backend: parLapply() with", x$N.cores, "cores\n")
       }
     }
-    cat("\nd:", x$d, "\n")
+    
+    if (input_d_null && x$method == "G") {
+      cat("\nGCV Selected d:", x$d, "\n")
+    } else if (input_d_null && x$method == "D") {
+      cat("\nDefault d used:", x$d, "\n")
+    } else {
+      cat("\nd:", x$d, "\n")
+    }
+    
     cat("\nMISE:", round(x$mise, 4), "\n")  
     cat("\ny_predict:\n")
     print(x$Ypred)
