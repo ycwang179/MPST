@@ -1,34 +1,36 @@
 #' Fit a Multivariate Penalized Spline Model
 #'
 #' @description `fit.MPST()` fits a Multivariate Penalized Spline over Triangulation (MPST)
-#' model using global (`"G"`) or distributed (`"D"`) learning methods. The function can extract
-#' required parameters (`Y`, `Z`, `V`, `Tr`, `d`, `r`) either from the formula or from the provided
-#' data list, prioritizing values in the formula if both sources are available.
+#' model using global (`"G"`) or distributed (`"D"`) learning methods. The function extracts
+#' required model components (`Y`, `Z`, `V`, `Tr`, `d`, `r`) either from the formula or from
+#' the supplied `data` list, prioritizing values provided in the formula when both are available.
 #'
 #' @rdname fit
 #' @method fit MPST
-#' @param formula A formula specifying the model, e.g., `Y ~ m(Z, V, Tr, d, r)`. 
+#' @param formula A formula specifying the model, e.g., `Y ~ m(Z, V, Tr, d, r)`.
 #' - `Y`: The response variable observed over the domain.
-#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in 
+#' - `Z`: Matrix of observation coordinates (\code{n} by \code{k}). Rows represent points in
 #'   2D or 3D space (\code{k = 2} or \code{k = 3}).
-#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices 
+#' - `V`: Matrix of vertices (\code{nV} by \code{k}). Rows represent coordinates of vertices
 #'   in the triangulation.
 #' - `Tr`: Triangulation matrix (\code{nT} by \code{k+1}). Rows represent vertex indices:
 #'   - For 2D: Rows have three indices for triangles.
 #'   - For 3D: Rows have four indices for tetrahedra.
-#' - `d`: Degree of piecewise polynomials. If omitted, the default behavior depends on the
-#'   learning method and the spatial dimension. Under global learning (`method = "G"`),
-#'   the degree is selected by GCV from \code{2:5} for 2D triangulations and from
-#'   \code{2:9} for 3D triangulations. Under distributed learning (`method = "D"`),
-#'   the default is \code{5}. \code{-1} represents piecewise constants.
+#' - `d`: Degree of piecewise polynomials. If `d = NULL`, the degree is selected automatically
+#'   according to the learning method. Under global learning (`method = "G"`), GCV is used to
+#'   select the degree from \code{2:5} for 2D triangulations and from \code{2:9} for 3D
+#'   triangulations. Under distributed learning (`method = "D"`), the default degree is
+#'   \code{5}. `-1` represents piecewise constants.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
-#' @param lambda A numeric vector of tuning parameters for regularization. Defaults to 
-#' \eqn{10^(-6,-5.5,-5,...,5,5.5,6)}.
-#' @param method A character string specifying the learning method. If not specified, defaults to `"G"` (Global learning).
+#' @param lambda A numeric vector of tuning parameters for regularization. Defaults to
+#' \eqn{10^(-6,-5.5,-5,\ldots,5,5.5,6)}.
+#' @param method A character string specifying the learning method. If not specified,
+#' defaults to `"G"` (global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning. Defaults to \code{2}:
+#' @param P.func An integer specifying the parallelization method for distributed learning.
+#' Defaults to \code{2}:
 #' - `1`: Use `mclapply`.
 #' - `2`: Use `parLapply`.
 #' @param data (Optional) A list containing the following components:
@@ -37,30 +39,29 @@
 #' - `V`: Matrix of triangulation vertices.
 #' - `Tr`: Triangulation matrix.
 #' - `d`: (Optional) Degree of piecewise polynomials. If not supplied in either `formula`
-#'   or `data`, the function uses method-specific defaults: under global learning,
-#'   GCV selects `d` from \code{2:5} in 2D and \code{2:9} in 3D; under distributed learning,
-#'   `d = 5` is used.
+#'   or `data`, or if `d = NULL`, the function uses method-specific default behavior:
+#'   under global learning, GCV selects `d` from \code{2:5} in 2D and \code{2:9} in 3D;
+#'   under distributed learning, `d = 5` is used.
 #' - `r`: Smoothness parameter.
 #'
-#' @return An object of class `"MPST"` with the following components:
-#' - `gamma.hat`: Estimated spline coefficients from the fitted model.
-#' - `Y.hat`: Predicted values based on the fitted model.
-#' - `mse`: Mean squared error of the model (computed during fitting).
-#' - `mise`: Mean integrated squared error.
-#' - `method`: The learning method used ("G" or "D").
-#' - `formula`: The formula provided during fitting.
+#' @return An object of class `"MPST"` containing the fitted model results, including:
+#' - `gamma.hat`: Estimated spline coefficients.
+#' - `Y.hat`: Fitted values at the observed locations.
+#' - `mse`: Mean squared error of the fitted model.
+#' - `method`: The learning method used (`"G"` or `"D"`).
+#' - `formula`: The formula used for fitting.
 #'
 #' @details
-#' - This function extracts required components (`Y`, `Z`, `V`, `Tr`, `d`, `r`) from the `formula`
-#'   using `interpret.mpst()`. If a component is not available in the formula, it falls back to the
-#'   `data` argument.
-#' - If a required component is missing in both `formula` and `data`, the function raises an error.
-#' - If `d` is not supplied, the function uses different defaults depending on the learning method.
-#'   For global learning, the degree is selected by GCV over a candidate set determined by the
-#'   triangulation dimension: \code{2:5} for 2D and \code{2:9} for 3D. For distributed learning,
-#'   the degree defaults to \code{5}.
-#' - The `method` parameter specifies the learning mode, and `lambda` allows for fine-tuning the
-#'   regularization.
+#' This function first parses the MPST formula using `interpret.mpst()`. If a model component
+#' is not found in the formula, the function attempts to retrieve it from the `data` argument.
+#'
+#' The degree parameter `d` is optional. When `d = NULL`, the function uses automatic degree
+#' selection. Under global learning, the degree is selected by GCV over a candidate set determined
+#' by the triangulation dimension: \code{2:5} for 2D and \code{2:9} for 3D. Under distributed
+#' learning, the degree defaults to \code{5}.
+#'
+#' If a required component other than `d` is missing in both `formula` and `data`, the function
+#' raises an error.
 #'
 #' @export
 
