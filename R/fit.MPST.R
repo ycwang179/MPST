@@ -64,7 +64,6 @@
 #' raises an error.
 #'
 #' @export
-
 fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   
   `%||%` <- function(a, b) if (!is.null(a)) a else b
