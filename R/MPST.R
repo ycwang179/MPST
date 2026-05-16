@@ -1,4 +1,52 @@
-# MPST.R - Core Functions and Generic Definitions
+# MPST.R - Core Functions and Generic Definitions 
+
+#' Choose Parallel Backend for MPST Distributed Learning
+#'
+#' @description
+#' Internal helper function for selecting the parallel backend used by
+#' distributed MPST learning.
+#'
+#' @param P.func Parallel backend indicator. If \code{NULL}, the backend is
+#'   selected automatically according to the operating system.
+#'   \code{1} uses \code{parallel::mclapply()} and
+#'   \code{2} uses \code{parallel::parLapply()}.
+#' @param verbose Logical; if \code{TRUE}, prints the selected backend.
+#'
+#' @return Integer \code{1} or \code{2}.
+#'
+#' @keywords internal
+choose.P.func <- function(P.func = NULL, verbose = FALSE) {
+  # If user provides P.func, validate and return it
+  if (!is.null(P.func)) {
+    if (!is.numeric(P.func) || length(P.func) != 1 || is.na(P.func) || !(P.func %in% c(1, 2))) {
+      stop("Argument 'P.func' must be 1, 2, or NULL. Use 1 for mclapply() and 2 for parLapply().")
+    }
+    return(as.integer(P.func))
+  }
+  
+  # Automatic OS detection
+  os.type <- .Platform$OS.type
+  os.name <- Sys.info()[["sysname"]]
+  
+  if (identical(os.type, "windows")) {
+    P.func <- 2
+    if (verbose) message("Windows detected: using parLapply().")
+  } else if (identical(os.name, "Linux")) {
+    P.func <- 2
+    if (verbose) message("Linux detected: using parLapply().")
+  } else if (identical(os.name, "Darwin")) {
+    P.func <- 1
+    if (verbose) message("macOS detected: using mclapply() by default.")
+  } else {
+    P.func <- 1
+    if (verbose) {
+      message("Unix-like OS detected: using mclapply() by default.")
+      message("OS name: ", os.name)
+    }
+  }
+  
+  return(as.integer(P.func))
+}
 
 #' Generic function for model fitting
 #'
@@ -10,6 +58,12 @@
 #' @export
 fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list()) {
   class(formula) <- c(class(formula), "MPST")
+  
+  # Automatically choose parallel backend only for distributed learning
+  if (!is.null(method) && is.character(method) && length(method) == 1 && toupper(method) == "D") {
+    P.func <- choose.P.func(P.func)
+  }
+  
   if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
     return(fit.MPST(formula, lambda, method, P.func, data))
   } else {
@@ -28,6 +82,12 @@ fit <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = lis
 #' @export
 predict <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
   class(formula) <- c(class(formula), "MPST")
+  
+  # Automatically choose parallel backend only for distributed learning
+  if (!is.null(method) && is.character(method) && length(method) == 1 && toupper(method) == "D") {
+    P.func <- choose.P.func(P.func)
+  }
+  
   # Check if formula and data are MPST-compatible
   if ("MPST" %in% class(formula) || inherits(data, "MPST")) {
     # Check if data.pred is MPST-compatible
