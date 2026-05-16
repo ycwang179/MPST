@@ -1,4 +1,4 @@
-#' Predict for MPST Models
+#' Predict for MPST Models 
 #'
 #' @description `predict.MPST()` generates predictions for a Multivariate Penalized Spline
 #' over Triangulation (MPST) model using global (`"G"`) or distributed (`"D"`) learning.
@@ -20,7 +20,7 @@
 #'   according to the learning method. Under global learning (`method = "G"`), GCV is used to
 #'   select the degree from \code{2:5} for 2D triangulations and from \code{2:9} for 3D
 #'   triangulations. Under distributed learning (`method = "D"`), the default degree is
-#'   \code{5}. `-1` represents piecewise constants.
+#'   \code{5}.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
 #' @param lambda A numeric vector of tuning parameters for regularization. Defaults to
@@ -29,10 +29,14 @@
 #' defaults to `"G"` (global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning.
-#' Defaults to \code{2}:
-#' - `1`: Use `mclapply`.
-#' - `2`: Use `parLapply`.
+#' @param P.func An integer specifying the parallel backend for distributed learning.
+#' If \code{P.func = NULL}, the backend is selected automatically according to the
+#' operating system:
+#' - `1`: Use \code{parallel::mclapply()}.
+#' - `2`: Use \code{parallel::parLapply()}.
+#' By default, \code{parLapply()} is used on Windows and Linux, while \code{mclapply()}
+#' is used on macOS and other Unix-like systems. This argument is ignored when
+#' \code{method = "G"}.
 #' @param data (Optional) A list containing the following components:
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates.
@@ -50,7 +54,7 @@
 #'
 #' @return An object of class `"MPST"` containing:
 #' - `Ypred`: Predicted values at the specified grid locations.
-#' - `ind.inside`: Indices of prediction points lying inside the domain.
+#' - `ind.inside`: Indices of the points inside the domain.
 #' - `mise`: Mean integrated squared error, if `mu.grid` is provided.
 #' - `method`: The learning method used for prediction.
 #' - `formula`: The formula used for fitting and prediction.
@@ -68,15 +72,16 @@
 #' raises an error. The prediction grid `Z.grid` must be provided through `data.pred`.
 #'
 #' @export
-predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data = list(), data.pred = list()) {
-
+predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL,
+                         data = list(), data.pred = list()) {
+  
   `%||%` <- function(a, b) if (!is.null(a)) a else b
-    
+  
   if (missing(formula)) {
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
-
-  method <- method %||% "G"
+  
+  method <- toupper(method %||% "G")
   if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
   }
@@ -86,9 +91,12 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
-  P.func <- P.func %||% 2
-  if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
-    stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
+  # Select or validate the parallel backend only for distributed learning.
+  # For global learning, P.func is not used.
+  if (method == "D") {
+    P.func <- choose.P.func(P.func)
+  } else {
+    P.func <- NULL
   }
   
   interp <- interpret.mpst(formula)
@@ -99,10 +107,17 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
   Tr <- if (!is.null(interp$Tr) && !all(is.na(interp$Tr))) interp$Tr else data$Tr
   d <- if (!is.null(interp$d) && !all(is.na(interp$d))) interp$d else data$d
   r <- if (!is.null(interp$r) && !all(is.na(interp$r))) interp$r else data$r
-
+  
   if (is.null(Y) || is.null(Z) || is.null(V) || is.null(Tr) || is.null(r)) {
     stop("Both 'formula' and 'data' must provide the components: 'Y', 'Z', 'V', 'Tr', and 'r'.")
   }
+  
+  if (!("Z.grid" %in% names(data.pred))) {
+    stop("Missing required prediction grid: 'Z.grid'.")
+  }
+  
+  Z.grid <- data.pred$Z.grid
+  mu.grid <- data.pred$mu.grid
   
   mpst.p <- list(
     Y = Y,
@@ -116,18 +131,13 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
     method = method,
     formula = formula
   )
- 
-  if (!("Z.grid" %in% names(data.pred))) {
-    stop("Missing required prediction grid: 'Z.grid'.")
-  }
-  Z.grid <- data.pred$Z.grid
-  mu.grid <- data.pred$mu.grid
   
   mfit <- fit.mpst.internal(
     mpst.p$Y, mpst.p$Z, mpst.p$V, mpst.p$Tr,
     mpst.p$d, mpst.p$r, mpst.p$lambda,
     nl = 1, method = mpst.p$method, P.func = mpst.p$P.func
   )
+  
   mpred <- pred.mpst(mfit, Z.grid)
   
   if (!is.null(mu.grid)) {
@@ -159,27 +169,41 @@ predict.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, d
 #' - `d`: Degree of the spline.
 #' - `N.cores`: Number of cores used for computation.
 #' @keywords internal
-pred.mpst <- function(mfit, Znew = NULL){
-  if(identical(Znew, mfit$Z) | isempty(Znew)){
-    Ypred <- mfit$beta.hat
-    ind.inside <- mfit$ind.inside
-  }else{
-    nd = ncol(mfit$Tr)
+pred.mpst <- function(mfit, Znew = NULL) {
+  
+  if (is.null(Znew) || pracma::isempty(Znew)) {
+    Ypred <- mfit$Y.hat
+    ind.inside <- which(!is.na(mfit$Y.hat))
+    
+  } else if (is.matrix(Znew) && is.matrix(mfit$Z) && identical(Znew, mfit$Z)) {
+    Ypred <- mfit$Y.hat
+    ind.inside <- which(!is.na(mfit$Y.hat))
+    
+  } else {
+    nd <- ncol(mfit$Tr)
+    
     if (nd == 3) {
       B.all <- basis2D.d(mfit$V, mfit$Tr, mfit$d, mfit$r, Znew)
-      Bnew = B.all$B
+      Bnew <- B.all$B
       ind.inside <- B.all$ind.inside
     } else if (nd == 4) {
       B.all <- basis3D.d(mfit$V, mfit$Tr, mfit$d, mfit$r, Znew)
-      Bnew = B.all$B
+      Bnew <- B.all$B
       ind.inside <- B.all$ind.inside
+    } else {
+      stop("'Tr' must have 3 columns for 2D triangulations or 4 columns for 3D tetrahedralizations.")
     }
+    
     Ypred <- rep(NA, nrow(Znew))
     Ypred[ind.inside] <- Bnew %*% mfit$gamma.hat
   }
-  mpred = list(Ypred = Ypred, 
-               ind.inside = ind.inside,
-               d = mfit$d,
-               N.cores = mfit$N.cores)
+  
+  mpred <- list(
+    Ypred = Ypred, 
+    ind.inside = ind.inside,
+    d = mfit$d,
+    N.cores = mfit$N.cores
+  )
+  
   return(mpred)
 }
