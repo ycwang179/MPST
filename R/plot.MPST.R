@@ -1,4 +1,4 @@
-#' Plot Contour, Surface, or Slice Views for MPST Models
+#' Plot Contour, Surface, or Slice Views for MPST Models 
 #'
 #' @description
 #' Generates contour, surface, or slice visualizations from a fitted
@@ -91,17 +91,26 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, slice_style = NULL, ...) {
   if (!inherits(x, "MPST")) {
     stop("Object must be of class 'MPST'")
   }
-
+  
   if (is.null(mview)) {
     stop("mview must be specified (e.g., 'contour', 'surface', or 'slice').")
   }
-
+  
+  mview <- tolower(mview)
+  
   if (!mview %in% c("contour", "surface", "slice")) {
     stop("Invalid mview. Must be one of 'contour', 'surface', or 'slice'.")
   }
-
+  
+  if (!is.null(slice_style)) {
+    slice_style <- tolower(slice_style)
+    if (!slice_style %in% c("default", "brain")) {
+      stop("Invalid slice_style. Must be one of 'default' or 'brain'.")
+    }
+  }
+  
   has_precomputed_array <- !is.null(x$Yarray)
-
+  
   if (has_precomputed_array) {
     if (mview != "slice") {
       stop("Precomputed Yarray objects currently support only mview = 'slice'.")
@@ -109,9 +118,9 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, slice_style = NULL, ...) {
     plot.slice.mpst(x, Zgrid = Zgrid, slice_style = slice_style, ...)
     return(invisible())
   }
-
+  
   nd <- ncol(x$Tr)
-
+  
   if ((mview == "contour") && (nd == 3)) {
     fig <- plot.contour.mpst(x, Zgrid = Zgrid, ...)
     print(fig)
@@ -121,9 +130,9 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, slice_style = NULL, ...) {
   } else if ((mview == "slice") && (nd == 4)) {
     plot.slice.mpst(x, Zgrid = Zgrid, slice_style = slice_style, ...)
   } else {
-    stop("Invalid mview or unsupported dimensionality")
+    stop("Invalid mview or unsupported dimensionality.")
   }
-
+  
   invisible()
 }
 
@@ -145,12 +154,12 @@ plot.MPST <- function(x, Zgrid = NULL, mview = NULL, slice_style = NULL, ...) {
 #' @keywords internal
 initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
   nd <- ncol(mfit$Tr)
-
+  
   if (is.null(Zgrid)) {
     limits <- apply(mfit$Z[, 1:(nd - 1), drop = FALSE], 2, function(col) {
       c(min(col) - 0.0001, max(col) + 0.0001)
     })
-
+    
     if (nd == 3) {
       z1.grid <- seq(limits[1, 1], limits[2, 1], length.out = n1)
       z2.grid <- seq(limits[1, 2], limits[2, 2], length.out = n2)
@@ -166,6 +175,10 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
       stop("Unsupported dimensionality for grid initialization.")
     }
   } else {
+    if (!is.matrix(Zgrid)) {
+      Zgrid <- as.matrix(Zgrid)
+    }
+    
     if (nd == 3) {
       z1.grid <- sort(unique(Zgrid[, 1]))
       z2.grid <- sort(unique(Zgrid[, 2]))
@@ -192,27 +205,28 @@ initialize.grid <- function(mfit, Zgrid = NULL, n1 = 101, n2 = 101, n3 = 101) {
 #'
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid will be generated.
+#' @param ... Additional arguments currently unused.
 #'
 #' @return A plotly object representing the contour plot.
 #'
 #' @keywords internal
-plot.contour.mpst <- function(mfit, Zgrid = NULL) {
+plot.contour.mpst <- function(mfit, Zgrid = NULL, ...) {
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
   }
-
+  
   grid_info <- initialize.grid(mfit, Zgrid)
   Zgrid <- grid_info$Zgrid
   u1 <- grid_info$u1
   v1 <- grid_info$v1
-
+  
   mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
     stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
-
+  
   z1 <- matrix(mpred$Ypred, nrow = length(u1), ncol = length(v1), byrow = FALSE)
-
+  
   fig <- plotly::plot_ly(
     type = "contour",
     x = u1,
@@ -220,7 +234,7 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
     z = t(z1),
     contours = list(showlabels = TRUE)
   )
-
+  
   return(fig)
 }
 
@@ -235,35 +249,36 @@ plot.contour.mpst <- function(mfit, Zgrid = NULL) {
 #'
 #' @param mfit An MPST model fit object.
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
+#' @param ... Additional arguments currently unused.
 #'
 #' @return A plotly object representing the surface plot.
 #'
 #' @keywords internal
-plot.surface.mpst <- function(mfit, Zgrid = NULL) {
+plot.surface.mpst <- function(mfit, Zgrid = NULL, ...) {
   if (!("Tr" %in% names(mfit)) || !("Z" %in% names(mfit))) {
     stop("The input object 'mfit' must contain 'Tr' and 'Z'.")
   }
-
+  
   grid_info <- initialize.grid(mfit, Zgrid)
   Zgrid <- grid_info$Zgrid
   u1 <- grid_info$u1
   v1 <- grid_info$v1
-
+  
   mpred <- pred.mpst(mfit, Znew = Zgrid)
   if (!("Ypred" %in% names(mpred))) {
     stop("'pred.mpst()' did not return the expected 'Ypred' component.")
   }
-
+  
   z1 <- matrix(mpred$Ypred, nrow = length(u1), ncol = length(v1), byrow = FALSE)
   df1 <- data.frame(x = mfit$Z[, 1], y = mfit$Z[, 2], z = mfit$Y)
-
+  
   fig <- plotly::plot_ly(
     x = u1,
     y = v1,
     z = t(z1),
     type = "surface"
   )
-
+  
   fig <- plotly::add_trace(
     fig,
     data = df1,
@@ -274,7 +289,7 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
     type = "scatter3d",
     marker = list(size = 1, color = "black")
   )
-
+  
   fig <- plotly::layout(
     fig,
     scene = list(
@@ -284,7 +299,7 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
       zaxis = list(title = "Value")
     )
   )
-
+  
   return(fig)
 }
 
@@ -307,13 +322,18 @@ plot.surface.mpst <- function(mfit, Zgrid = NULL) {
 #' @param Zgrid An optional grid for plotting. If NULL, a grid is generated automatically.
 #' @param slice_style A character string specifying the slice plotting style.
 #' Supported values are \code{"default"} and \code{"brain"}.
+#' @param ... Additional arguments currently unused.
 #'
 #' @return A manipulate object that provides interactive slices through the 3D array.
 #'
 #' @keywords internal
-plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
+plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL, ...) {
   if (!requireNamespace("manipulate", quietly = TRUE)) {
     stop("The 'manipulate' package is required for interactive plots.")
+  }
+  
+  if (!requireNamespace("fields", quietly = TRUE)) {
+    stop("The 'fields' package is required for slice plots.")
   }
   
   has_precomputed_array <- !is.null(mfit$Yarray)
@@ -365,6 +385,11 @@ plot.slice.mpst <- function(mfit, Zgrid = NULL, slice_style = NULL) {
     if (is.null(slice_style)) {
       slice_style <- "default"
     }
+  }
+  
+  slice_style <- tolower(slice_style)
+  if (!slice_style %in% c("default", "brain")) {
+    stop("Invalid slice_style. Must be one of 'default' or 'brain'.")
   }
   
   dim.size <- dim(new.array)
