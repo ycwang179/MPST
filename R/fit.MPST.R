@@ -1,4 +1,4 @@
-#' Fit a Multivariate Penalized Spline Model
+#' Fit a Multivariate Penalized Spline Model 
 #'
 #' @description `fit.MPST()` fits a Multivariate Penalized Spline over Triangulation (MPST)
 #' model using global (`"G"`) or distributed (`"D"`) learning methods. The function extracts
@@ -20,7 +20,7 @@
 #'   according to the learning method. Under global learning (`method = "G"`), GCV is used to
 #'   select the degree from \code{2:5} for 2D triangulations and from \code{2:9} for 3D
 #'   triangulations. Under distributed learning (`method = "D"`), the default degree is
-#'   \code{5}. `-1` represents piecewise constants.
+#'   \code{5}.
 #' - `r`: Smoothness parameter (default: \code{1}, where \code{0 <= r < d}).
 #'
 #' @param lambda A numeric vector of tuning parameters for regularization. Defaults to
@@ -29,10 +29,14 @@
 #' defaults to `"G"` (global learning).
 #' - `"G"`: Global learning.
 #' - `"D"`: Distributed learning.
-#' @param P.func An integer specifying the parallelization method for distributed learning.
-#' Defaults to \code{2}:
-#' - `1`: Use `mclapply`.
-#' - `2`: Use `parLapply`.
+#' @param P.func An integer specifying the parallel backend for distributed learning.
+#' If \code{P.func = NULL}, the backend is selected automatically according to the
+#' operating system:
+#' - `1`: Use \code{parallel::mclapply()}.
+#' - `2`: Use \code{parallel::parLapply()}.
+#' By default, \code{parLapply()} is used on Windows and Linux, while \code{mclapply()}
+#' is used on macOS and other Unix-like systems. This argument is ignored when
+#' \code{method = "G"}.
 #' @param data (Optional) A list containing the following components:
 #' - `Y`: The response variable observed over the domain.
 #' - `Z`: Matrix of observation coordinates.
@@ -72,7 +76,7 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("'formula' is required. Please specify a formula (e.g., y ~ m(Z, V, Tr, d, r)).")
   }
   
-  method <- method %||% "G"
+  method <- toupper(method %||% "G")
   if (!(method %in% c("G", "D"))) {
     stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
   }
@@ -82,9 +86,12 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
     stop("Invalid 'lambda'. Please provide a numeric vector of smoothing parameters.")
   }
   
-  P.func <- P.func %||% 2
-  if (!is.numeric(P.func) || !(P.func %in% c(1, 2))) {
-    stop("Invalid 'P.func'. Use 1 for 'mclapply' or 2 for 'parLapply'.")
+  # Select or validate the parallel backend only for distributed learning.
+  # For global learning, P.func is not used.
+  if (method == "D") {
+    P.func <- choose.P.func(P.func)
+  } else {
+    P.func <- NULL
   }
   
   interp <- interpret.mpst(formula)
@@ -147,9 +154,20 @@ fit.MPST <- function(formula, lambda = NULL, method = NULL, P.func = NULL, data 
 #' @param P.func Parallelization method for distributed learning.
 #' @return A list containing model fit components.
 #' @keywords internal
-fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func) {
+fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, method, P.func = NULL) {
   
   this.call <- match.call()
+  
+  method <- toupper(method)
+  if (!(method %in% c("G", "D"))) {
+    stop("Invalid 'method'. Use 'G' for Global or 'D' for Distributed learning.")
+  }
+  
+  if (method == "D") {
+    P.func <- choose.P.func(P.func)
+  } else {
+    P.func <- NULL
+  }
   
   n <- length(Y)
   
@@ -236,6 +254,7 @@ fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, meth
                                      lambda = lambda, nl = nl, load.all = load.all)
     } else if (P.func == 2) {
       cl <- parallel::makeCluster(ns)
+      on.exit(parallel::stopCluster(cl), add = TRUE)
       
       # Load the necessary packages on each worker node
       parallel::clusterEvalQ(cl, {
@@ -245,16 +264,17 @@ fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, meth
       })
       
       # Export custom functions and variables to the cluster
-      parallel::clusterExport(cl, varlist = c("fit.mpst.d", "n","Yi", "Zi", "V", "Tr", "d", "r", "lambda", "nl", "load.all", "mtxcbind"), envir = environment())
+      parallel::clusterExport(
+        cl,
+        varlist = c("fit.mpst.d", "n", "Yi", "Zi", "V", "Tr", "d", "r", 
+                    "lambda", "nl", "load.all", "mtxcbind"),
+        envir = environment()
+      )
       
       mfit.all <- parallel::parLapply(cl, 1:nrow(Tr), function(iT) {
         fit.mpst.d(iT, Y = Yi, Z = Zi, V = V, Tr = Tr, d = d, r = r, 
                    lambda = lambda, nl = nl, load.all = load.all)
       })
-      
-      # Stop the parallel cluster
-      parallel::stopCluster(cl)
-      
     }
     
     # mfit.all = vector(mode = "list", length = nrow(Tr))
@@ -311,7 +331,7 @@ fit.mpst.internal <- function(Y, Z, V, Tr, d = NULL, r = 1, lambda, nl = 1, meth
                Z = Z,
                N.cores = N.cores)
   
-  mfit$call <- this.call;
+  mfit$call <- this.call
   class(mfit) <- "MPST"
   return(mfit)
 }
@@ -595,7 +615,7 @@ fit.mpst.d <- function(ind.Tr, Y, Z, V, Tr, d = NULL, r = 1, lambda, nl, load.al
   inVTs = inVT(Vs, Trs, Zs)
   ind.T1 = inVTs$ind.T
   B.star = Bs[which(ind.T1 == j), ((j - 1) * nq + 1):(j * nq), drop = FALSE]
-
+  
   mfit <- list(gamma.hat = gamma, 
                gamma.star = gamma.star,
                Bs = Bs,
