@@ -311,6 +311,6 @@ This is an active research software project developed for my Ph.D. dissertation 
 
 ## Author
 
-**Yu-Chun Wang**
-Ph.D. Candidate in Statistics
+**Yu-Chun Wang**,
+Ph.D. Candidate in Statistics,
 George Mason University
