@@ -18,6 +18,12 @@ MPST implements penalized spline smoothing over user-supplied triangulations. In
 
 This package was developed as part of my Ph.D. research in Statistics at George Mason University. The package and accompanying manuscript are being prepared for submission to the *Journal of Statistical Software*.
 
+## MPST Package Workflow
+
+The MPST package provides a unified user-facing interface for model fitting, prediction, and visualization through `fit.MPST()`, `predict.MPST()`, and `plot.MPST()`. Internally, the package supports both global and distributed execution paths, while sharing computational modules for basis construction, smoothness constraints, roughness penalty construction, and solver routines.
+
+![MPST package workflow](figures/mpst_package_workflow.png)
+
 ## Key Features
 
 * **2D and 3D smoothing:** Supports bivariate and trivariate domains using triangle-based and tetrahedron-based meshes.
@@ -29,6 +35,32 @@ This package was developed as part of my Ph.D. research in Statistics at George 
 * **2D visualization:** Provides contour and surface plots for fitted functions.
 * **3D visualization:** Provides slice-based views for inspecting fitted values in three-dimensional domains.
 * **Research software design:** Provides an end-to-end workflow for modeling, prediction, visualization, simulation studies, and scalable computation.
+
+## Example Visualizations
+
+### 2D Irregular Domain Example
+
+MPST supports smoothing and visualization over irregular two-dimensional domains, such as horseshoe-shaped regions.
+
+![2D horseshoe contour](figures/horseshoe_2d_contour.png)
+
+*Contour visualization of a fitted function over a two-dimensional horseshoe-shaped domain.*
+
+![2D horseshoe surface](figures/horseshoe_2d_surface.png)
+
+*Surface visualization of a fitted function over a two-dimensional horseshoe-shaped domain.*
+
+### 3D Slice-Based Visualization
+
+For three-dimensional domains, MPST supports slice-based visualization, which is useful for inspecting fitted functions or imaging-style data across axial, coronal, and sagittal planes.
+
+![3D horseshoe slice view](figures/horseshoe_3d_slice_view.png)
+
+*Slice-based visualization for a fitted function on a three-dimensional horseshoe-shaped domain.*
+
+![Brain PET 3D slice view](figures/brain_pet_3d_slice_view.png)
+
+*Slice-based visualization for three-dimensional brain PET imaging-style data.*
 
 ## Code Samples to Review
 
@@ -241,6 +273,7 @@ This example illustrates how MPST can be used to inspect 3D imaging-style data t
 * `src/`: Lower-level computational routines used by the package
 * `man/`: R package documentation files
 * `data/`: Example datasets used in package demonstrations
+* `figures/`: Example workflow and visualization figures used in this README
 * `DESCRIPTION`: Package metadata
 * `NAMESPACE`: Exported functions and package namespace configuration
 
